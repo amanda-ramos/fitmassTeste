@@ -9,7 +9,7 @@ import QtQuick.Controls 2.0
 import "common"
 import "pages"
 
-//teste
+// App com identidade Visual da Massa
 
 App {
     id: root
