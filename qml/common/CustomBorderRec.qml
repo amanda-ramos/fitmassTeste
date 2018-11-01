@@ -12,7 +12,7 @@ Rectangle
 
     property int commonBorderWidth : dp(5)
 
-    z : -1
+    z : -2
 
     property string borderColor : "green"
 

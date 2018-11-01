@@ -16,6 +16,25 @@ App {
     height: 960
     width: 640
 
+    //Variáveis de id Visual
+    property color verdeMassa: "#008f7d"
+    property color amareloMassa: "#f9ba48"
+
+    property color grayDark: "#111111"
+    property color grayLight: "#343434"
+    property color greenDark: "#00ff85"
+    property color greenLight: "#bbfdd2"
+    property color white: "#ffffff"
+    property color contrastColor1: "#ff00ff" // Rosa
+    property color contrastColor2: "#ffff00" // Amarelo
+    property color contrastColor3: "#00dbee" // Azul
+
+    property color bgColor: grayDark // Cor de fundo (background color)
+    property color tfColor: grayLight // Cor de fundo de text fields
+
+    property var screenSizeX: 640
+    property var screenSizeY: 960
+
     //variáveis de teste
     property var user: ["Amanda Ramos", "alc.ramos@yahoo.com.br", "28/12/1992", "Feminino", "1.66", "65", "https://firebasestorage.googleapis.com/v0/b/fitmassapp.appspot.com/o/userPhoto1540304322552.png?alt=media&token=276c9688-2899-4cae-8a5d-d4af25066895", "3"]
     //                      nome                    peso    magra   gorda   agua    imc      pgc      data da medida
@@ -42,6 +61,7 @@ App {
     property var pesoDesejado
     property var userEmail: "alc.ramos@yahoo.com.br"
     property var userSenha: "123456"
+    property var qtdeMedida: 0
 
     property var keyUser: "users/" + root.userID
     property var keyMeasure: ""
@@ -58,13 +78,10 @@ App {
     property bool editProfile: false
     property bool card: false
 
-    property color verdeMassa: "#008f7d"
-    property color amareloMassa: "#f9ba48"
 
-    property var qtdeMedida: 0
 
     onInitTheme: {
-        Theme.colors.tintColor = "gray"
+        Theme.colors.tintColor = "black"
     }
 
     StackView {

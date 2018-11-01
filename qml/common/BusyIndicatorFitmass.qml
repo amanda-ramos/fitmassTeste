@@ -45,7 +45,7 @@ BusyIndicator {
                     implicitWidth: dp(15)
                     implicitHeight: implicitWidth
                     radius: implicitWidth / 2
-                    color: verdeMassa
+                    color: greenDark
                     transform: [
                         Translate {
                             y: -Math.min(item.width, item.height) * 0.5 + 5

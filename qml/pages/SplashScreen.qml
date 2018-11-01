@@ -8,23 +8,23 @@ import "../pages"
 
 Page {
     id: splashScreenPage
-    height: 960
-    width: 640
+    height: screenSizeY
+    width: screenSizeX
 
-    backgroundColor: "#4b4b4b"
+    backgroundColor: bgColor
 
     Rectangle {
         id: backgroundSplash
         width: splashScreenPage.width
         height: splashScreenPage.height
         anchors.centerIn: parent
-        color: "#4b4b4b"
+        color: bgColor
 
         AppImage{
             id:logoFitmass
-            source: "../../assets/fitmass_logo_branco.png"
+            source: "../../assets/fitmass_new_logo_branca.png"
             fillMode: Image.PreserveAspectFit
-            height: dp(100)
+            height: dp(30)
             anchors.centerIn: parent
         }
     }

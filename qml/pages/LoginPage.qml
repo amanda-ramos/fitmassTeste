@@ -8,8 +8,10 @@ import "../pages"
 
 Page {
     id: loginPage
-    height: 960
-    width: 640
+    height: screenSizeY
+    width: screenSizeX
+
+    backgroundColor: bgColor
 
     Component.onCompleted: {
         content.forceActiveFocus()
@@ -52,9 +54,9 @@ Page {
                         color: "transparent"
 
                         AppImage {
-                            source: "../../assets/fitmass_logo_cinzaescuro.png"
+                            source: "../../assets/fitmass_new_logo.png"
                             fillMode: Image.PreserveAspectFit
-                            height: dp(160)
+                            height: dp(60)
                             anchors.centerIn: parent
                         }
                     }
@@ -70,7 +72,7 @@ Page {
                     Text {
                         id: emailTxtLogin
                         text: "E-mail"
-                        color: verdeMassa
+                        color: white
                         font.bold: true
                         anchors.top: parent.top
                         anchors.left: parent.left
@@ -83,13 +85,28 @@ Page {
                         placeholderText: "E-mail"
                         anchors.top: emailTxtLogin.bottom
                         anchors.horizontalCenter: parent.horizontalCenter
-                        cursorColor: verdeMassa
+                        cursorColor: greenDark
                         showClearButton: true
-                        borderColor: amareloMassa
-                        borderWidth: 1
-                        placeholderColor: "#b4b4b4"
+                        borderWidth: 0
+                        placeholderColor: grayLight
                         inputMethodHints: Qt.ImhEmailCharactersOnly
                         text: userEmail
+                        textColor: greenDark
+
+                        Rectangle {
+                            anchors.fill: parent
+                            color: bgColor
+                            z:-1
+                        }
+
+                        CustomBorderRec {
+                                commonBorder: false
+                                lBorderwidth: 0
+                                rBorderwidth: 0
+                                tBorderwidth: 0
+                                bBorderwidth: 2
+                                borderColor: grayLight
+                        }
                     }
                 }
 
@@ -103,7 +120,7 @@ Page {
                     Text {
                         id: senhaTxtLogin
                         text: "Senha"
-                        color: verdeMassa
+                        color: white
                         font.bold: true
                         anchors.top: parent.top
                         anchors.left: parent.left
@@ -116,95 +133,95 @@ Page {
                         placeholderText: "Senha"
                         anchors.top: senhaTxtLogin.bottom
                         anchors.horizontalCenter: parent.horizontalCenter
-                        cursorColor: verdeMassa
+                        cursorColor: greenDark
                         showClearButton: true
-                        borderColor: amareloMassa
-                        borderWidth: 1
-                        placeholderColor: "#b4b4b4"
+                        borderWidth: 0
+                        placeholderColor: grayLight
                         echoMode: TextInput.Password
                         text: userSenha
+                        textColor: greenDark
+
+                        Rectangle {
+                            anchors.fill: parent
+                            color: bgColor
+                            z:-1
+                        }
+
+                        CustomBorderRec {
+                                commonBorder: false
+                                lBorderwidth: 0
+                                rBorderwidth: 0
+                                tBorderwidth: 0
+                                bBorderwidth: 2
+                                borderColor: grayLight
+                        }
+
                     }
+
+
                 }
 
                 Item {
                     id: botaoLogin
-                    width: parent.width
+                    width: parent.width / 2
                     height: botaoEntrarLogin.height
-                    anchors.top: senhaLogin.bottom
-                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.top: botaoEsqueceuSenha.bottom
+                    anchors.left: parent.left
 
-                    AppButton {
+                    CustomButtom {
                         id: botaoEntrarLogin
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.top: parent.top
-                        flat: false
 
-                        backgroundColor: verdeMassa
-                        text: "Entrar"
-                        textColor: "white"
+                        btnColor: bgColor
+                        btnBorderColor: btnLoginMouseArea.pressed ? grayLight : greenDark
+                        btnRadius: root.dp(30)
+                        btnText: "Entrar"
 
-                        onClicked: {
-                            loginPage.forceActiveFocus()
-                            stack.push(mainView)
+                        MouseArea {
+                            id: btnLoginMouseArea
+                            anchors.fill: parent
+                            onClicked: {
+                                 loginPage.forceActiveFocus()
+                                 stack.push(mainView)
+                            }
                         }
                     }
                 }
 
+
                 Item {
                     id: botaoCadastro
-                    width: parent.width
-                    height: btnCriarCadastro.height + dp(5)
+                    width: parent.width / 2
+                    height: botaoEntrarLogin.height
+                    anchors.top: botaoEsqueceuSenha.bottom
+                    anchors.right: parent.right
 
-                    anchors.top: botaoLogin.bottom
-                    anchors.horizontalCenter: parent.horizontalCenter
-
-                    Text {
-                        id: txt1
-                        text: "Ainda não possui conta?"
-                        leftPadding: userTxtPadding
-                        topPadding: userTxtPadding
-                        anchors.left: parent.left
-                        anchors.top: parent.top
-                        color: verdeMassa
-                        font.pointSize: sp(4)
-                    }
-
-                    Rectangle {
+                    CustomButtom {
                         id: btnCriarCadastro
-                        color: "transparent"
-                        width: txt2.width
-                        height: dp(15)
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.top: parent.top
 
-                        anchors.bottom: txt1.bottom
-                        anchors.left: txt1.right
+                        btnColor: bgColor
+                        btnBorderColor: btnCadastroMouseArea.pressed ? grayLight : white
+                        btnRadius: root.dp(30)
+                        btnText: "Cadastre-se"
 
                         MouseArea {
-                            id: btnCadastroMA
+                            id: btnCadastroMouseArea
                             anchors.fill: parent
-
                             onClicked: {
-                                entrarStack.push(cadastroView)
+                                 entrarStack.push(cadastroView)
                             }
                         }
-                    }
-
-                    Text {
-                        id: txt2
-                        text: "Crie uma aqui."
-                        color: btnCadastroMA.pressed ? amareloMassa : verdeMassa
-                        font.pointSize: sp(4)
-                        anchors.left: txt1.right
-                        anchors.top: txt1.top
-                        leftPadding: dp(2)
-                        topPadding: userTxtPadding
-                        font.underline: true
                     }
                 }
 
                 Item {
                     id: botaoEsqueceuSenha
                     width: parent.width
-                    anchors.top: botaoCadastro.bottom
+                    height: txt3.height + root.dp(15)
+                    anchors.top: senhaLogin.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
 
                     Text {
@@ -212,41 +229,29 @@ Page {
                         text: "Esqueceu a senha? "
                         leftPadding: userTxtPadding
                         topPadding: userTxtPadding
-                        anchors.left: parent.left
-                        anchors.top: parent.top
-                        color: verdeMassa
-                        font.pointSize: sp(4)
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        color: btnSenhaMouseArea.pressed ? greenDark : grayLight
+                        font.pointSize: root.sp(4)
+                        horizontalAlignment: Text.AlignHCenter
                     }
 
                     Rectangle {
                         id: btnEsqueceuSenha
                         color: "transparent"
-                        width: txt4.width
+                        width: txt3.width
                         height: dp(15)
 
-                        anchors.bottom: txt3.bottom
-                        anchors.left: txt3.right
+                        anchors.fill: txt3
+                        anchors.horizontalCenter: parent.horizontalCenter
 
                         MouseArea {
-                            id: btnSenhaMA
+                            id: btnSenhaMouseArea
                             anchors.fill: parent
                             onClicked: {
                                 firebaseAuth.sendPasswordResetEmail(
                                             emailUserTxtLogin.text)
                             }
                         }
-                    }
-
-                    Text {
-                        id: txt4
-                        text: "Recupere aqui."
-                        color: btnSenhaMA.pressed ? amareloMassa : verdeMassa
-                        font.pointSize: sp(4)
-                        anchors.left: txt3.right
-                        anchors.top: txt3.top
-                        leftPadding: dp(2)
-                        topPadding: userTxtPadding
-                        font.underline: true
                     }
                 }
             }

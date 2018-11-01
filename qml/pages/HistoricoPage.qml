@@ -11,8 +11,10 @@ import "../pages"
 Page {
     title: "Fitmass"
     id: historicoPage
-    height: 960
-    width: 640
+    height: screenSizeY
+    width: screenSizeX
+
+    backgroundColor: bgColor
 
     property bool initial: true
     property bool dateFilter: false
@@ -164,18 +166,18 @@ Page {
 
         line.pointsVisible = true
         line.width = dp(3)
-        line.color = verdeMassa
+        line.color = greenDark
 
         line2.width = dp(3)
-        line2.color = amareloMassa
+        line2.color = contrastColor3
 
         line3.pointsVisible = true
         line3.width = dp(3)
-        line3.color = verdeMassa
+        line3.color = greenDark
 
         line4.pointsVisible = true
         line4.width = dp(3)
-        line4.color = verdeMassa
+        line4.color = greenDark
 
         axisX1.min = 0
         axisX2.min = 0
@@ -474,7 +476,7 @@ Page {
 
         Rectangle {
             id: spacing
-            color: "white"
+            color: bgColor
             height: graphics.height
             width: parent.width
             anchors.top: parent.top
@@ -500,7 +502,8 @@ Page {
                         width: parent.width
                         height: width / 1.5
                         antialiasing: true
-                        backgroundColor: "#d6d6d6"
+                        backgroundColor: grayLight
+                        titleColor: white
 
                         ValueAxis {
                             id: axisY1
@@ -508,6 +511,7 @@ Page {
                             tickCount: 0
                             min: 0
                             max: 1
+                            labelsColor: white
                         }
 
                         ValueAxis {
@@ -516,6 +520,7 @@ Page {
                             max: 1
                             gridVisible: true
                             tickCount: 5
+                            labelsColor: white
                         }
                     }
                 }
@@ -527,7 +532,7 @@ Page {
                         width: parent.width
                         height: width / 1.5
                         antialiasing: true
-                        backgroundColor: "#d6d6d6"
+                        backgroundColor: grayLight
 
                         ValueAxis {
                             id: axisY2
@@ -554,7 +559,7 @@ Page {
                         width: parent.width
                         height: width / 1.5
                         antialiasing: true
-                        backgroundColor: "#d6d6d6"
+                        backgroundColor: grayLight
 
                         ValueAxis {
                             id: axisY3
@@ -562,6 +567,7 @@ Page {
                             tickCount: 5
                             min: 0
                             max: 1
+
                         }
 
                         ValueAxis {
@@ -583,6 +589,8 @@ Page {
                 clickableIndicator: true
                 spacing: dp(10)
                 onPageSelected: imgSwipeView.currentIndex = index
+                tintColor: grayLight
+                activeTintColor: greenDark
             }
         } // gráficos histórico
 
