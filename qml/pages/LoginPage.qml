@@ -74,6 +74,7 @@ Page {
                         text: "E-mail"
                         color: white
                         font.bold: true
+                        font.pixelSize: root.sp(14)
                         anchors.top: parent.top
                         anchors.left: parent.left
                         leftPadding: txtPadding
@@ -92,12 +93,8 @@ Page {
                         inputMethodHints: Qt.ImhEmailCharactersOnly
                         text: userEmail
                         textColor: greenDark
-
-                        Rectangle {
-                            anchors.fill: parent
-                            color: bgColor
-                            z:-1
-                        }
+                        font.pixelSize: root.sp(14)
+                        backgroundColor: bgColor
 
                         CustomBorderRec {
                                 commonBorder: false
@@ -108,6 +105,9 @@ Page {
                                 borderColor: grayLight
                         }
                     }
+
+
+
                 }
 
                 Item {
@@ -122,6 +122,7 @@ Page {
                         text: "Senha"
                         color: white
                         font.bold: true
+                        font.pixelSize: root.sp(14)
                         anchors.top: parent.top
                         anchors.left: parent.left
                         leftPadding: txtPadding
@@ -140,12 +141,8 @@ Page {
                         echoMode: TextInput.Password
                         text: userSenha
                         textColor: greenDark
-
-                        Rectangle {
-                            anchors.fill: parent
-                            color: bgColor
-                            z:-1
-                        }
+                        font.pixelSize: root.sp(14)
+                        backgroundColor: bgColor
 
                         CustomBorderRec {
                                 commonBorder: false
@@ -231,8 +228,8 @@ Page {
                         topPadding: userTxtPadding
                         anchors.horizontalCenter: parent.horizontalCenter
                         color: btnSenhaMouseArea.pressed ? greenDark : grayLight
-                        font.pointSize: root.sp(4)
                         horizontalAlignment: Text.AlignHCenter
+                        font.pixelSize: root.sp(14)
                     }
 
                     Rectangle {

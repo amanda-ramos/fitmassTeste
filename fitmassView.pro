@@ -51,4 +51,5 @@ macx {
 }
 
 DISTFILES += \
-    qml/common/CustomButtom.qml
+    qml/common/CustomButtom.qml \
+    qml/common/CustomTextField.qml

@@ -5,8 +5,8 @@ Item {
     height: root.dp(40)
     width: root.dp(100)
 
-    property color btnBorderColor: "#ff00ff"
-    property color btnColor: "#00dbee"
+    property color btnBorderColor: contrastColor1
+    property color btnColor: contrastColor3
 
     property var btnRadius: root.dp(30)
     property var btnText: ""
@@ -29,7 +29,7 @@ Item {
         id: btnTextField
         text: btnText
         color: btnBorderColor
-        font.pointSize: root.sp(4)
+        font.pixelSize: root.sp(12)
         anchors.centerIn: parent
     }
 }

@@ -38,7 +38,8 @@ Page {
     }
 
     Timer {
-        interval: 4000; running: true; repeat: false
+        interval: 1000; //4000;
+        running: true; repeat: false
         onTriggered: {
             stack.push(entrarView)
         }

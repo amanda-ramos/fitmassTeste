@@ -168,6 +168,7 @@ Page {
         line.width = dp(3)
         line.color = greenDark
 
+
         line2.width = dp(3)
         line2.color = contrastColor3
 
