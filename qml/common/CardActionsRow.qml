@@ -11,7 +11,7 @@ Item {
 
     Rectangle {
         id: roundRect
-        color: "white"
+        color: cardColor
         width: parent.width
         height: dateTxt.height + 15
         anchors.bottom: parent.top
@@ -22,7 +22,7 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            height: roundRect.height - squareRect.height
+            height: roundRect.height //- squareRect.height
 
             AppImage {
                 id: iconCalendar
@@ -45,24 +45,11 @@ Item {
             Text {
                 id: dateTxt
                 text: Qt.formatDate(dateCard, "dd/MM/yyyy")
-                color: "#b4b4b4"
+                color: grayLight2
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
                 rightPadding: dp(8)
             }
         }
-
-
-    }
-
-    Rectangle {
-      id: squareRect
-
-      color: "#d6d6d6"
-      height: roundRect.radius
-      anchors.top: roundRect.top
-      anchors.left: roundRect.left
-      anchors.right: roundRect.right
-
     }
 }

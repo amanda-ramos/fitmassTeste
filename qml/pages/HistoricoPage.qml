@@ -103,6 +103,7 @@ Page {
     }
 
     function buscaDadosMedida(keyMedida) {
+        var indiceX
         measureIdDB = keyMedida
 
         console.log("busca da Medida " + keyMedida)
@@ -118,14 +119,15 @@ Page {
 
         console.log("medida ID: " + keyMedida)
         if (initial) {
-            line.append(k, keyMedida[1])
-            line2.append(k, pesoDesejado)
-            line3.append(k, keyMedida[2])
-            line4.append(k, keyMedida[3])
+            indiceX = k + 1
+            line.append(indiceX, keyMedida[1])
+            line2.append(indiceX, pesoDesejado)
+            line3.append(indiceX, keyMedida[2])
+            line4.append(indiceX, keyMedida[3])
 
-            axisX1.max = k
-            axisX2.max = k
-            axisX3.max = k
+            axisX1.max = indiceX
+            axisX2.max = indiceX
+            axisX3.max = indiceX
 
             axisY1.min = parseFloat(pesoDesejado) - 20
             axisY2.min = parseFloat(keyMedida[2]) - 5
@@ -165,24 +167,23 @@ Page {
                                           axisX3, axisY3)
 
         line.pointsVisible = true
-        line.width = dp(3)
+        line.width = root.dp(3)
         line.color = greenDark
 
-
-        line2.width = dp(3)
+        line2.width = root.dp(3)
         line2.color = contrastColor3
 
         line3.pointsVisible = true
-        line3.width = dp(3)
+        line3.width = root.dp(3)
         line3.color = greenDark
 
         line4.pointsVisible = true
-        line4.width = dp(3)
+        line4.width = root.dp(3)
         line4.color = greenDark
 
-        axisX1.min = 0
-        axisX2.min = 0
-        axisX3.min = 0
+        axisX1.min = 1
+        axisX2.min = 1
+        axisX3.min = 1
 
         axisY1.tickCount = 4
         axisY2.tickCount = 4
@@ -197,6 +198,7 @@ Page {
             icon: IconType.filter
             id: filterIcon
             visible: false
+            iconSize: root.dp(25)
 
             onClicked: {
                 nativeUtils.displayDatePicker()
@@ -293,6 +295,7 @@ Page {
             title: "Voltar"
             icon: IconType.close
             visible: false
+            iconSize: root.dp(25)
 
             onClicked: {
                 closeIcon.visible = false
@@ -307,6 +310,7 @@ Page {
         IconButtonBarItem {
             title: "Sair"
             icon: IconType.signout
+            iconSize: root.dp(25)
 
             onClicked: {
                 stack.pop()
@@ -318,177 +322,251 @@ Page {
         id: content
         width: parent.width
         anchors.horizontalCenter: parent.horizontalCenter
-        height: graphics.height + listCards.height
+        height: listCards.height + graphics.height + tabIcons.height
 
-        ListView {
-            id: listCards
+        Item {
+            id: tabIcons
             width: parent.width
-            height: parent.height
-            anchors.top: graphics.bottom
-            visible: novato ? false : true
+            height: root.dp(50)
+            anchors.top: parent.top
+            anchors.horizontalCenter: parent.horizontalCenter
 
-            model: cardModel(historicoPage)
-            delegate: AppCard {
-                id: cardView
-                width: parent.width
-                margin: dp(15)
-                paper.radius: dp(5)
+            Item {
+                id: historico
+                width: parent.width / 2
+                height: parent.height
+                anchors.left: parent.left
+                anchors.top: parent.top
 
-                MouseArea {
+                Rectangle {
+                    id: historicoRec
                     anchors.fill: parent
-
-                    onClicked: {
-                        keyCard = measureId.text
-                        var meapage = measureView.createObject()
-                        meapage.dateValor = Qt.formatDate(
-                                    actionsRow.dateCard) //).split(" ")[0]
-                        meapage.wantedWeightValor = 60
-
-                        fitmassStack.push(meapage)
-                    }
+                    color: grayLight
                 }
 
-                media: Rectangle {
-                    id: mediaRec
-                    width: parent.width
-                    height: width / 2 - actionsRow.height
-                    color: "#d6d6d6"
-                    radius: dp(5)
+                Image {
+                    id: historicoIcon
+                    height: root.dp(30)
+                    width: height
+                    anchors.centerIn: parent
+                    source: "../../assets/icon_history.png"
 
-                    Item {
-                        height: mediaRec.height - actionsRow.height
-                        anchors.top: parent.top
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-
-                        Text {
-                            id: measureId
-                            text: measureIdDB
-                            visible: false
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            listCards.visible = true
+                            graphics.visible = false
+                            historicoRec.color = grayLight
+                            graficosRec.color = bgColor
+                            filterIcon.visible = true
                         }
-
-                        Item {
-                            width: parent.width / 3
-                            height: parent.height
-                            anchors.left: parent.left
-
-                            Rectangle {
-                                color: "transparent"
-                                anchors.verticalCenter: parent.verticalCenter
-                                height: iconWeight.height + weightTxt.height
-                                width: parent.width
-
-                                AppImage {
-                                    id: iconWeight
-                                    height: dp(80)
-                                    width: height
-                                    source: "../../assets/icon_weight.png"
-                                    fillMode: Image.PreserveAspectFit
-                                    anchors.bottom: weightTxt.top
-                                    anchors.horizontalCenter: parent.horizontalCenter
-                                }
-
-                                Text {
-                                    id: weightTxt
-                                    color: verdeMassa
-                                    text: weight
-                                    anchors.top: iconWeight.bottom
-                                    anchors.horizontalCenter: parent.horizontalCenter
-                                    topPadding: dp(5)
-                                    font.bold: true
-                                }
-                            }
-                        } // weight icon
-
-                        Item {
-                            width: parent.width / 3
-                            height: parent.height
-                            anchors.horizontalCenter: parent.horizontalCenter
-
-                            Rectangle {
-                                color: "transparent"
-                                anchors.verticalCenter: parent.verticalCenter
-                                height: iconMuscle.height + musclesTxt.height
-                                width: parent.width
-
-                                AppImage {
-                                    id: iconMuscle
-                                    height: dp(80)
-                                    width: height
-                                    source: "../../assets/icon_muscle.png"
-                                    fillMode: Image.PreserveAspectFit
-                                    anchors.bottom: musclesTxt.top
-                                    anchors.horizontalCenter: parent.horizontalCenter
-                                }
-
-                                Text {
-                                    id: musclesTxt
-                                    color: verdeMassa
-                                    text: leanMass
-                                    anchors.top: iconMuscle.bottom
-                                    anchors.horizontalCenter: parent.horizontalCenter
-                                    topPadding: dp(5)
-                                    font.bold: true
-                                }
-                            }
-                        } // leanmass icon
-
-                        Item {
-                            width: parent.width / 3
-                            height: parent.height
-                            anchors.right: parent.right
-
-                            Rectangle {
-                                color: "transparent"
-                                anchors.verticalCenter: parent.verticalCenter
-                                height: iconBodyFat.height + bodyFatTxt.height
-                                width: parent.width
-
-                                AppImage {
-                                    id: iconBodyFat
-                                    height: dp(80)
-                                    width: height
-                                    source: "../../assets/icon_body_fat.png"
-                                    fillMode: Image.PreserveAspectFit
-                                    anchors.bottom: bodyFatTxt.top
-                                    anchors.horizontalCenter: parent.horizontalCenter
-                                }
-
-                                Text {
-                                    id: bodyFatTxt
-                                    color: verdeMassa
-                                    text: bodyFat
-                                    anchors.top: iconBodyFat.bottom
-                                    anchors.horizontalCenter: parent.horizontalCenter
-                                    topPadding: dp(5)
-                                    font.bold: true
-                                }
-                            }
-                        } // bodyfat icon
                     }
                 }
+            }
 
-                actions: CardActionsRow {
-                    id: actionsRow
-                    dateCard: date
+            Item {
+                id: graficos
+                width: parent.width / 2
+                height: parent.height
+                anchors.right: parent.right
+                anchors.top: parent.top
+
+                Rectangle {
+                    id: graficosRec
+                    anchors.fill: parent
+                    color: bgColor
+                }
+
+                Image {
+                    id: graficosIcon
+                    height: root.dp(30)
+                    width: height
+                    anchors.centerIn: parent
+                    source: "../../assets/icon_analytics.png"
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            listCards.visible = false
+                            graphics.visible = true
+                            historicoRec.color = bgColor
+                            graficosRec.color = grayLight
+                            filterIcon.visible = false
+                        }
+                    }
                 }
             }
         }
 
-        Rectangle {
-            id: spacing
-            color: bgColor
-            height: graphics.height
+        Item {
+            id: cardsHistorico
             width: parent.width
-            anchors.top: parent.top
-            visible: novato ? false : true
+            height: listCards.height
+            anchors.top: tabIcons.bottom
+            z: -1
+
+        ListView {
+                    id: listCards
+                    width: parent.width
+                    height: root.dp(450)
+                    anchors.top: parent.top
+                    visible: true //novato ? false : true
+
+                    model: cardModel(historicoPage)
+                    delegate: AppCard {
+                        id: cardView
+                        width: parent.width
+                        margin: dp(15)
+                        paper.radius: dp(5)
+
+                        MouseArea {
+                            anchors.fill: parent
+
+                            onClicked: {
+                                keyCard = measureId.text
+                                var meapage = measureView.createObject()
+                                meapage.dateValor = Qt.formatDate(
+                                            actionsRow.dateCard) //).split(" ")[0]
+                                meapage.wantedWeightValor = 60
+
+                                fitmassStack.push(meapage)
+                            }
+                        }
+
+                        media: Rectangle {
+                            id: mediaRec
+                            width: parent.width
+                            height: width * 4 / 7
+                            color: grayLight
+                            radius: dp(5)
+
+                            Item {
+                                height: parent.height
+                                anchors.top: parent.top
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+
+                                Text {
+                                    id: measureId
+                                    text: measureIdDB
+                                    visible: false
+                                }
+
+                                Item {
+                                    width: parent.width / 3
+                                    height: parent.height
+                                    anchors.left: parent.left
+
+                                    Rectangle {
+                                        color: "transparent"
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        height: iconWeight.height + weightTxt.height
+                                        width: parent.width
+
+                                        AppImage {
+                                            id: iconWeight
+                                            height: dp(80)
+                                            width: height
+                                            source: "../../assets/icon_weight.png"
+                                            fillMode: Image.PreserveAspectFit
+                                            anchors.bottom: weightTxt.top
+                                            anchors.horizontalCenter: parent.horizontalCenter
+                                        }
+
+                                        Text {
+                                            id: weightTxt
+                                            color: white
+                                            text: weight
+                                            anchors.top: iconWeight.bottom
+                                            anchors.horizontalCenter: parent.horizontalCenter
+                                            topPadding: dp(5)
+                                            font.bold: true
+                                        }
+                                    }
+                                } // weight icon
+
+                                Item {
+                                    width: parent.width / 3
+                                    height: parent.height
+                                    anchors.horizontalCenter: parent.horizontalCenter
+
+                                    Rectangle {
+                                        color: "transparent"
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        height: iconMuscle.height + musclesTxt.height
+                                        width: parent.width
+
+                                        AppImage {
+                                            id: iconMuscle
+                                            height: dp(80)
+                                            width: height
+                                            source: "../../assets/icon_muscle.png"
+                                            fillMode: Image.PreserveAspectFit
+                                            anchors.bottom: musclesTxt.top
+                                            anchors.horizontalCenter: parent.horizontalCenter
+                                        }
+
+                                        Text {
+                                            id: musclesTxt
+                                            color: white
+                                            text: leanMass
+                                            anchors.top: iconMuscle.bottom
+                                            anchors.horizontalCenter: parent.horizontalCenter
+                                            topPadding: dp(5)
+                                            font.bold: true
+                                        }
+                                    }
+                                } // leanmass icon
+
+                                Item {
+                                    width: parent.width / 3
+                                    height: parent.height
+                                    anchors.right: parent.right
+
+                                    Rectangle {
+                                        color: "transparent"
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        height: iconBodyFat.height + bodyFatTxt.height
+                                        width: parent.width
+
+                                        AppImage {
+                                            id: iconBodyFat
+                                            height: dp(80)
+                                            width: height
+                                            source: "../../assets/icon_body_fat.png"
+                                            fillMode: Image.PreserveAspectFit
+                                            anchors.bottom: bodyFatTxt.top
+                                            anchors.horizontalCenter: parent.horizontalCenter
+                                        }
+
+                                        Text {
+                                            id: bodyFatTxt
+                                            color: white
+                                            text: bodyFat
+                                            anchors.top: iconBodyFat.bottom
+                                            anchors.horizontalCenter: parent.horizontalCenter
+                                            topPadding: dp(5)
+                                            font.bold: true
+                                        }
+                                    }
+                                } // bodyfat icon
+                            }
+                        }
+
+                        actions: CardActionsRow {
+                            id: actionsRow
+                            dateCard: date
+                        }
+                    }
+                }
         }
 
         Item {
             id: graphics
             width: parent.width
             height: imgSwipeView.height + pageControl.height
-            visible: novato ? false : true
+            visible: false //novato ? false : true
+            anchors.top: tabIcons.bottom
 
             Quick2.SwipeView {
                 id: imgSwipeView
@@ -505,6 +583,8 @@ Page {
                         antialiasing: true
                         backgroundColor: grayLight
                         titleColor: white
+                        legend.font.pixelSize: root.sp(12)
+                        legend.labelColor: white
 
                         ValueAxis {
                             id: axisY1
@@ -513,6 +593,7 @@ Page {
                             min: 0
                             max: 1
                             labelsColor: white
+                            labelsFont: Qt.font({ pixelSize: root.sp(8)})
                         }
 
                         ValueAxis {
@@ -522,6 +603,7 @@ Page {
                             gridVisible: true
                             tickCount: 5
                             labelsColor: white
+                            labelsFont: Qt.font({ pixelSize: root.sp(8)})
                         }
                     }
                 }
@@ -534,6 +616,8 @@ Page {
                         height: width / 1.5
                         antialiasing: true
                         backgroundColor: grayLight
+                        legend.font.pixelSize: root.sp(12)
+                        legend.labelColor: white
 
                         ValueAxis {
                             id: axisY2
@@ -541,6 +625,8 @@ Page {
                             tickCount: 5
                             min: 0
                             max: 1
+                            labelsColor: white
+                            labelsFont: Qt.font({ pixelSize: root.sp(10)})
                         }
 
                         ValueAxis {
@@ -549,6 +635,8 @@ Page {
                             max: 1
                             gridVisible: true
                             tickCount: 0
+                            labelsColor: white
+                            labelsFont: Qt.font({ pixelSize: root.sp(10)})
                         }
                     }
                 }
@@ -561,6 +649,8 @@ Page {
                         height: width / 1.5
                         antialiasing: true
                         backgroundColor: grayLight
+                        legend.font.pixelSize: root.sp(12)
+                        legend.labelColor: white
 
                         ValueAxis {
                             id: axisY3
@@ -568,7 +658,8 @@ Page {
                             tickCount: 5
                             min: 0
                             max: 1
-
+                            labelsColor: white
+                            labelsFont: Qt.font({ pixelSize: root.sp(10)})
                         }
 
                         ValueAxis {
@@ -577,6 +668,8 @@ Page {
                             max: 1
                             gridVisible: true
                             tickCount: 0
+                            labelsColor: white
+                            labelsFont: Qt.font({ pixelSize: root.sp(10)})
                         }
                     }
                 }
@@ -584,11 +677,11 @@ Page {
 
             PageControl {
                 id: pageControl
-                height: 30 + dp(5)
+                height: 30 + root.dp(5)
                 pages: 3
                 currentPage: imgSwipeView.currentIndex
                 clickableIndicator: true
-                spacing: dp(10)
+                spacing: root.dp(10)
                 onPageSelected: imgSwipeView.currentIndex = index
                 tintColor: grayLight
                 activeTintColor: greenDark

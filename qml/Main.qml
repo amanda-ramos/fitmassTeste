@@ -22,12 +22,14 @@ App {
 
     property color grayDark: "#111111"
     property color grayLight: "#343434"
+    property color grayLight2: "#a3a3a3"
     property color greenDark: "#00ff85"
     property color greenLight: "#bbfdd2"
     property color white: "#ffffff"
     property color contrastColor1: "#ff00ff" // Rosa
     property color contrastColor2: "#ffff00" // Amarelo
     property color contrastColor3: "#00dbee" // Azul
+    property color cardColor: "#242524"
 
     property color bgColor: grayDark // Cor de fundo (background color)
     property color tfColor: grayLight // Cor de fundo de text fields
@@ -44,7 +46,7 @@ App {
     property var medida0Gorda: ["1.70", "1.80", "12.50", "3.70", "3.70"]
 
     //                      nome                    peso    magra   gorda   agua    imc      pgc      data da medida
-    property var medida1: ["fitmass20181004121555", "70.8", "26.4", "22.9", "35.0", "25.7", "32.4", "2018-19-04T00:00:00.000"]
+    property var medida1: ["fitmass20181004121555", "70.8", "26.4", "22.9", "35.0", "25.7", "32.4", "2018-04-19T00:00:00.000"]
     //                           SE      SD       ABD      IE      ID
     property var medida1Magra: ["2.50", "2.30", "21.00", "7.41", "7.41"]
     property var medida1Gorda: ["1.50", "1.60", "11.70", "3.50", "3.50"]
