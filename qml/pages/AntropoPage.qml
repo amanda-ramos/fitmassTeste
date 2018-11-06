@@ -9,16 +9,23 @@ import "../pages"
 Page {
     id: antropoPage
     title: "Medidas do Corpo"
-    height: 960
-    width: 640
+    height: screenSizeY
+    width: screenSizeX
+    backgroundColor: bgColor
 
     property var line
     property bool dateTo: false
     property bool dateFrom: false
-    property var muscles: ["Bíceps", "Antebraço", "Peitoral", "Cintura", "Quadril", "Coxa", "Panturrilha"]
+    property var muscles: ["Bíceps", "Antebraço", "Peitoral", "Cintura", "Quadril", "Coxa", "Panturrilha", "Relação Cintura-Quadril"]
     property var diaHoje: Qt.formatDate(new Date(), "dd")
     property int mesPassado: parseInt(Qt.formatDate(new Date(), "MM"))-1
     property var anoHoje: Qt.formatDate(new Date(), "yyyy")
+
+
+    property var dateMin1: "2000-01-01"
+    property var dateMin2: "2000-01-01"
+    property var dateMax1: new Date()
+    property var dateMax2: new Date()
 
     rightBarItem: NavigationBarRow {
         id: rightNavBarRowMeasure
@@ -56,64 +63,35 @@ Page {
 
             Rectangle {
                 id: spacer
-                height: dp(20)
+                height: root.dp(20)
                 width: parent.width
                 anchors.top: parent.top
+                color: bgColor
             }
 
-            Rectangle{
+            Item {
                 id: muscleSelect
-                width: parent.width - dp(40)
-                height: dp(40)
+                width: parent.width
+                height: root.dp(70)
                 anchors.top: spacer.bottom
                 anchors.horizontalCenter: parent.horizontalCenter
-                color: "white"
 
-                CustomBorderRec {
-                        commonBorder: false
-                        lBorderwidth: 0
-                        rBorderwidth: 0
-                        tBorderwidth: 0
-                        bBorderwidth: 3
-                        borderColor: "#4b4b4b"
-                }
-
-                Text {
-                    id: muscleSelected
-                    text: "Bíceps"
-                    anchors.fill: parent
-                    horizontalAlignment: Text.AlignLeft
-                    verticalAlignment: Text.AlignVCenter
-                }
-
-                Rectangle {
-                    id: spacer2
-                    width: dp(20)
-                    height: parent.height
-                    anchors.right: parent.right
-                    anchors.top: parent.top
-                    color: "transparent"
-                }
-
-                Image {
-                    id: seta
-                    source: "../../assets/seta.png"
-                    width: dp(15)
-                    fillMode: Image.PreserveAspectFit
+                CustomComboBox {
+                    id: muscleSelectUser
                     anchors.verticalCenter: parent.verticalCenter
-                    anchors.right: spacer2.left
-                }
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    cbTextTitle: ""
+                    cbTitleColor: white
+                    cbTextColor: greenLight
+                    cbColor: grayLight
+                    cbRadius: root.dp(30)
+                    cbTextSelected: muscles[0]
 
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        nativeUtils.displayAlertSheet("", muscles, true)
-                    }
-                    Connections {
-                        target: nativeUtils
-
-                        onAlertSheetFinished: {
-                            muscleSelected.text = muscles[index]
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            muscleSelectUser.forceActiveFocus()
+                            nativeUtils.displayAlertSheet("Selecione o grupo muscular", muscles, true)
                         }
                     }
                 }
@@ -122,104 +100,85 @@ Page {
             Item {
                 id: spacer4
                 width: dates.width
-                height: dp(35)
+                height: root.dp(35)
                 anchors.top: muscleSelect.bottom
                 anchors.left: muscleSelect.left
-
-                Text {
-                    text: "De: "
-                    color: "#b4b4b4"
-                    anchors.bottom: parent.bottom
-                    anchors.left: dateFromSelect.left
-                }
-
-                Text {
-                    text: "Até: "
-                    color: "#b4b4b4"
-                    width: dateToSelect.width
-                    anchors.right: parent.right
-                    anchors.bottom: parent.bottom
-                    horizontalAlignment: Text.AlignLeft
-                }
             }
 
             Item {
                 id: dates
                 width: parent.width - dp(40)
-                height: dateFromSelected.height
+                height: dateFromSelect.height
                 anchors.top: spacer4.bottom
-                anchors.left: muscleSelect.left
+                anchors.horizontalCenter: parent.horizontalCenter
 
-            Rectangle {
-                id: dateFromSelect
-                width: parent.width / 2 - dp(20)
-                height: dp(40)
-                anchors.top: parent.top
-                anchors.left: parent.left
-                color: "white"
+                Item {
+                    width: parent.width / 2
+                    height: parent.height
+                    anchors.left: parent.left
 
-                CustomBorderRec {
-                        commonBorder: false
-                        lBorderwidth: 0
-                        rBorderwidth: 0
-                        tBorderwidth: 0
-                        bBorderwidth: 3
-                        borderColor: "#4b4b4b"
-                }
+                    Text {
+                        text: "De: "
+                        color: white
+                        anchors.bottom: dateFromSelect.top
+                        anchors.left: dateFromSelect.left
+                    }
 
-                Text {
-                    id: dateFromSelected
-                    text: diaHoje + "/" + mesPassado + "/" + anoHoje
-                    anchors.fill: parent
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                    color: "#b4b4b4"
-                }
+                    CustomButtom {
+                        id: dateFromSelect
+                        btnColor: grayLight
+                        btnBorderColor: grayLight
+                        btnRadius: root.dp(30)
+                        btnText: diaHoje + "/" + mesPassado + "/" + anoHoje
+                        btnBorderWidth: root.dp(1)
+                        btnTextColor: greenLight
+                        btnTextSize: root.sp(14)
 
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        dateFrom = true;
-                        nativeUtils.displayDatePicker(Qt.formatDate(Date.fromLocaleString(Qt.locale(), dateFromSelected.text, "dd/MM/yyyy"), "yyyy-MM-dd"), "2000-01-01", new Date())
+                        anchors.horizontalCenter: parent.horizontalCenter
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                dateFrom = true;
+                                nativeUtils.displayDatePicker(Qt.formatDate(Date.fromLocaleString(Qt.locale(), dateFromSelect.btnText, "dd/MM/yyyy"), "yyyy-MM-dd"), "2000-01-01", dateMax1)
+                            }
+                        }
                     }
                 }
-            }
 
-            Rectangle {
-                id: dateToSelect
-                width: parent.width / 2 - dp(20)
-                height: dp(40)
-                anchors.top: parent.top
-                anchors.right: parent.right
-                color: "white"
+                Item {
+                    width: parent.width / 2
+                    height: parent.height
+                    anchors.right: parent.right
 
-                CustomBorderRec {
-                        commonBorder: false
-                        lBorderwidth: 0
-                        rBorderwidth: 0
-                        tBorderwidth: 0
-                        bBorderwidth: 3
-                        borderColor: "#4b4b4b"
-                }
+                    Text {
+                        text: "Até: "
+                        color: white
+                        anchors.bottom: dateToSelect.top
+                        anchors.left: dateToSelect.left
+                    }
 
-                Text {
-                    id: dateToSelected
-                    text: Qt.formatDate(new Date(), "dd/MM/yyyy")
-                    anchors.fill: parent
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                    color: "#b4b4b4"
-                }
+                    CustomButtom {
+                        id: dateToSelect
+                        btnColor: grayLight
+                        btnBorderColor: grayLight
+                        btnRadius: root.dp(30)
+                        btnText: Qt.formatDate(new Date(), "dd/MM/yyyy")
+                        btnBorderWidth: root.dp(1)
+                        btnTextColor: greenLight
+                        btnTextSize: root.sp(14)
 
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        dateTo = true;
-                        nativeUtils.displayDatePicker(Qt.formatDate(Date.fromLocaleString(Qt.locale(), dateToSelected.text, "dd/MM/yyyy"), "yyyy-MM-dd"), "2000-01-01", new Date())
+                        anchors.horizontalCenter: parent.horizontalCenter
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                dateTo = true;
+                                nativeUtils.displayDatePicker(Qt.formatDate(Date.fromLocaleString(Qt.locale(), dateToSelect.btnText, "dd/MM/yyyy"), "yyyy-MM-dd"), "2000-01-01", dateMax2)
+                            }
+                        }
                     }
                 }
-            }
-
             }
 
             Rectangle {
@@ -236,12 +195,12 @@ Page {
                 width: parent.width
                 height: grafico.height
                 anchors.top: spacer3.bottom
-                anchors.left: muscleSelect.left
 
                 Item {
                     id: grafico
                     width: parent.width - dp(40)
                     height: width * 2 / 3
+                    anchors.horizontalCenter: parent.horizontalCenter
 
                     ChartView {
                         id: muscleChart
@@ -249,7 +208,7 @@ Page {
                         width: parent.width
                         height: parent.height
                         antialiasing: true
-                        backgroundColor: "white"
+                        backgroundColor: bgColor
 
                         ValueAxis {
                             id: axisY1
@@ -272,7 +231,7 @@ Page {
                         SplineSeries{
                             name: "esquerdo     "
                             width: dp(3)
-                            color: amareloMassa
+                            color: greenDark
                             axisX: axisX1
                             axisY: axisY1
 
@@ -285,7 +244,7 @@ Page {
                         SplineSeries{
                             name: "direito"
                             width: dp(3)
-                            color: verdeMassa
+                            color: contrastColor3
                             axisX: axisX1
                             axisY: axisY1
 
@@ -308,7 +267,7 @@ Page {
 
                 Item {
                     id: txtItem
-                    height: muscleSelect.height - dp(5)
+                    height: root.dp(20)
                     width: parent.width
                     anchors.top: parent.top
                     anchors.left: parent.left
@@ -320,9 +279,10 @@ Page {
                         horizontalAlignment: Text.AlignHCenter
 
                         text: "esquerdo"
-                        color: amareloMassa
+                        color: greenDark
                         font.bold: true
-                        topPadding: dp(5)
+                        topPadding: root.dp(2)
+                        font.pixelSize: root.sp(16)
                     }
 
                     Text {
@@ -332,15 +292,15 @@ Page {
                         horizontalAlignment: Text.AlignHCenter
 
                         text: "direito"
-                        color: verdeMassa
+                        color: contrastColor3
                         font.bold: true
-                        topPadding: dp(5)
+                        font.pixelSize: root.sp(16)
                     }
                 }
 
                 Item {
                     id: valueNowItem
-                    height: muscleSelect.height - dp(5)
+                    height: root.dp(20)
                     width: parent.width
                     anchors.top: txtItem.bottom
                     anchors.left: parent.left
@@ -352,7 +312,8 @@ Page {
                         horizontalAlignment: Text.AlignHCenter
 
                         text: "Atual: 27 cm"
-                        color: amareloMassa
+                        color: greenDark
+                        font.pixelSize: root.sp(14)
                     }
 
                     Text {
@@ -362,13 +323,14 @@ Page {
                         horizontalAlignment: Text.AlignHCenter
 
                         text: "Atual: 29 cm"
-                        color: verdeMassa
+                        color: contrastColor3
+                        font.pixelSize: root.sp(14)
                     }
                 }
 
                 Item {
                     id: valueMaxItem
-                    height: muscleSelect.height - dp(5)
+                    height: root.dp(20)
                     width: parent.width
                     anchors.top: valueNowItem.bottom
                     anchors.left: parent.left
@@ -380,7 +342,8 @@ Page {
                         horizontalAlignment: Text.AlignHCenter
 
                         text: "máx: 30 cm"
-                        font.pointSize: sp(4)
+                        font.pixelSize: root.sp(12)
+                        color: white
                     }
 
                     Text {
@@ -390,13 +353,14 @@ Page {
                         horizontalAlignment: Text.AlignHCenter
 
                         text: "máx: 29 cm"
-                        font.pointSize: sp(4)
+                        font.pixelSize: root.sp(12)
+                        color: white
                     }
                 }
 
                 Item {
                     id: valueMinItem
-                    height: muscleSelect.height - dp(5)
+                    height: root.dp(20)
                     width: parent.width
                     anchors.top: valueMaxItem.bottom
                     anchors.left: parent.left
@@ -408,7 +372,8 @@ Page {
                         horizontalAlignment: Text.AlignHCenter
 
                         text: "min: 26 cm"
-                        font.pointSize: sp(4)
+                        font.pixelSize: root.sp(12)
+                        color: white
                     }
 
                     Text {
@@ -418,13 +383,14 @@ Page {
                         horizontalAlignment: Text.AlignHCenter
 
                         text: "min: 24 cm"
-                        font.pointSize: sp(4)
+                        font.pixelSize: root.sp(12)
+                        color: white
                     }
                 }
 
                 Item {
                     id: valueMedItem
-                    height: muscleSelect.height - dp(5)
+                    height: root.dp(20)
                     width: parent.width
                     anchors.top: valueMinItem.bottom
                     anchors.left: parent.left
@@ -436,7 +402,8 @@ Page {
                         horizontalAlignment: Text.AlignHCenter
 
                         text: "méd: 28.7 cm"
-                        font.pointSize: sp(4)
+                        font.pixelSize: root.sp(12)
+                        color: white
                     }
 
                     Text {
@@ -446,7 +413,8 @@ Page {
                         horizontalAlignment: Text.AlignHCenter
 
                         text: "méd: 26.3 cm"
-                        font.pointSize: sp(4)
+                        font.pixelSize: root.sp(12)
+                        color: white
                     }
                 }
             }
@@ -455,6 +423,11 @@ Page {
 
     Connections {
         target: nativeUtils
+
+        onAlertSheetFinished: {
+            if(index>=0)
+                muscleSelectUser.cbTextSelected = muscles[index]
+        }
 
         onDatePickerFinished: {
             var pickedDate
@@ -481,11 +454,11 @@ Page {
 
                 if(dateTo){
                     dateTo = false;
-                    dateToSelected.text = pickedDate;
+                    dateToSelect.btnText = pickedDate;
                 }
                 if(dateFrom){
                     dateFrom = false;
-                    dateFromSelected.text = pickedDate;
+                    dateFromSelect.btnText = pickedDate;
                 }
             }
         }

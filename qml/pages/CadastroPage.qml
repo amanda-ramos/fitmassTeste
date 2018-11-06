@@ -280,7 +280,7 @@ Page {
                         cbTextColor: greenLight
                         cbColor: grayLight
                         cbRadius: root.dp(30)
-                        cbTextSelected: ""
+                        cbTextSelected: "Selecione"
 
                         MouseArea {
                             anchors.fill: parent
@@ -311,7 +311,7 @@ Page {
                         cbTextColor: greenLight
                         cbColor: grayLight
                         cbRadius: root.dp(30)
-                        cbTextSelected: ""
+                        cbTextSelected: "Selecione"
 
                         MouseArea {
                             anchors.fill: parent
@@ -342,7 +342,7 @@ Page {
                         cbTextColor: greenLight
                         cbColor: grayLight
                         cbRadius: root.dp(30)
-                        cbTextSelected: ""
+                        cbTextSelected: "Selecione"
 
                         MouseArea {
                             anchors.fill: parent

@@ -7,9 +7,12 @@ Item {
 
     property color btnBorderColor: contrastColor1
     property color btnColor: contrastColor3
+    property color btnTextColor: btnBorderColor
 
+    property var btnBorderWidth: root.dp(2)
     property var btnRadius: root.dp(30)
     property var btnText: ""
+    property var btnTextSize: root.sp(12)
 
     Rectangle {
         anchors.fill: parent
@@ -20,7 +23,7 @@ Item {
 
     CustomBorderRec {
             commonBorder: true
-            commonBorderWidth: root.dp(2)
+            commonBorderWidth: btnBorderWidth
             borderColor: btnBorderColor
             radius: btnRadius
     }
@@ -28,8 +31,8 @@ Item {
     Text {
         id: btnTextField
         text: btnText
-        color: btnBorderColor
-        font.pixelSize: root.sp(12)
+        color: btnTextColor
+        font.pixelSize: btnTextSize
         anchors.centerIn: parent
     }
 }
