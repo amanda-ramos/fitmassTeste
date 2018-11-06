@@ -30,6 +30,7 @@ App {
     property color contrastColor2: "#ffff00" // Amarelo
     property color contrastColor3: "#00dbee" // Azul
     property color cardColor: "#242524"
+    property color cardText: "#afffc7"
 
     property color bgColor: grayDark // Cor de fundo (background color)
     property color tfColor: grayLight // Cor de fundo de text fields

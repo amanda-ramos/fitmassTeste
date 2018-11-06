@@ -17,42 +17,46 @@ Item {
     property real lowValue
     property real highValue
 
-    property real barWidth: parent.width - dp(30)
+    property real barWidth: parent.width - root.dp(30)
     property real topWidth: value * barWidth / (max - min)
 
     Text {
         id: title1
         text: ""
         anchors.left: back.left
-        bottomPadding: dp(5)
+        bottomPadding: root.dp(5)
+        color: white
+        font.pixelSize: root.sp(12)
     }
 
     Text {
         id: title2
         text: ""
-        font.pointSize: sp(3)
+        font.pixelSize: root.sp(8)
         anchors.left: title1.right
         anchors.bottom: title1.bottom
-        leftPadding: dp(5)
-        bottomPadding: dp(5)
+        leftPadding: root.dp(5)
+        bottomPadding: root.dp(5)
+        color: white
     }
 
     Text {
         id: titleValue
         text: ""
         anchors.right: back.right
-        bottomPadding: dp(5)
-        color: amareloMassa
+        bottomPadding: root.dp(5)
+        color: contrastColor3
         font.bold: true
+        font.pixelSize: root.sp(12)
     }
 
     Rectangle {
         id: back
         width: barWidth
-        height: dp(15)
+        height: root.dp(15)
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: title1.bottom
-        color: "#d6d6d6"
+        color: grayLight //"#d6d6d6"
     }
 
     Rectangle {
@@ -61,7 +65,7 @@ Item {
         height: back.height
         anchors.left: back.left
         anchors.top: back.top
-        color: amareloMassa
+        color: contrastColor3
     }
 
     Text {
@@ -69,8 +73,8 @@ Item {
         text: min
         anchors.top: back.bottom
         anchors.left: back.left
-        color: verdeMassa
-        font.pointSize: sp(3)
+        color: contrastColor2
+        font.pixelSize: root.sp(8)
     }
 
     Text {
@@ -78,7 +82,7 @@ Item {
         text: max + " kg"
         anchors.top: back.bottom
         anchors.right: back.right
-        color: verdeMassa
-        font.pointSize: sp(3)
+        color: contrastColor2
+        font.pixelSize: root.sp(8)
     }
 }

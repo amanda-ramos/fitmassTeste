@@ -4,14 +4,14 @@ Item {
     height: row.height
     width: parent.width
 
-    property color titleColor: verdeMassa
-    property color subtitleColor: amareloMassa
-    property color textColor: "black"
-    property color detailColor: "#b4b4b4"
+    property color titleColor: contrastColor3
+    property color subtitleColor: contrastColor2
+    property color textColor: grayLight2
+    property color detailColor: grayLight2
 
-    property var titleFontSize: sp(4)
-    property var subtitleFontSize: sp(4)
-    property var textFontSize: sp(4)
+    property var titleFontSize: root.sp(10)
+    property var subtitleFontSize: root.sp(10)
+    property var textFontSize: root.sp(10)
 
     property var horizontalAlignmentText: Text.AlignHCenter
 
@@ -30,7 +30,7 @@ Item {
             text: ""
             color: titleColor
             font.bold: true
-            font.pointSize: titleFontSize
+            font.pixelSize: titleFontSize
             horizontalAlignment: horizontalAlignmentText
             anchors.horizontalCenter: parent.horizontalCenter
         }
@@ -40,7 +40,7 @@ Item {
             text: ""
             color: subtitleColor
             font.bold: true
-            font.pointSize: subtitleFontSize
+            font.pixelSize: subtitleFontSize
             horizontalAlignment: horizontalAlignmentText
             anchors.right: title.right
             anchors.top: title.bottom
@@ -51,7 +51,7 @@ Item {
             text: ""
             color: textColor
             font.bold: true
-            font.pointSize: textFontSize
+            font.pixelSize: textFontSize
             horizontalAlignment: horizontalAlignmentText
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: subtitle.bottom
@@ -61,7 +61,7 @@ Item {
             id: analise
             text: ""
             color: detailColor
-            font.pointSize: textFontSize
+            font.pixelSize: textFontSize
             horizontalAlignment: horizontalAlignmentText
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: valor.bottom

@@ -8,8 +8,9 @@ import "../pages"
 Page {
     id: profilePage
     title: "Perfil"
-    height: 960
-    width: 640
+    height: screenSizeY
+    width: screenSizeX
+    backgroundColor: bgColor
 
     function splitString (str){
         // Função para separar a primeira e última palavra da String
@@ -29,11 +30,14 @@ Page {
         return name;
     } // Função Split String
 
-    property color txtColor: verdeMassa
-    property color userTxtColor: "#4b4b4b"
+    property color txtColor: white
+    property color userTxtColor: greenLight
 
-    property var txtPadding: dp(10)
-    property var userTxtPadding: dp(20)
+    property var txtPadding: root.dp(10)
+    property var userTxtPadding: root.dp(20)
+
+    property var txtTitleSize: root.sp(12)
+    property var txtUserSize: root.sp(12)
 
     property bool inicial: true
 
@@ -43,6 +47,7 @@ Page {
       IconButtonBarItem {
           title: "Editar Perfil"
           icon: IconType.pencil
+          iconSize: root.dp(25)
 
           onClicked: {
             profileStack.push(editProfileView);
@@ -58,7 +63,6 @@ Page {
         MouseArea {
             anchors.fill: parent
             onClicked: {
-                console.log(keyUser)
                 scrollProfile.forceActiveFocus()
             }
         } // Mouse Area
@@ -83,19 +87,28 @@ Page {
                     Rectangle {
                         id: space1
                         width: parent.width
-                        height: dp(25)
+                        height: root.dp(25)
                         color: "transparent"
                         anchors.top: parent.top
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
 
+                    Image {
+                        id: userImageBack
+                        width: root.dp(150)
+                        height: width
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.top: space1.bottom
+                        source: "../../assets/circle.png"
+                        z: -1
+                    }
+
                     UserImage {
                       id: userImage
                       property string iconFontName: Theme.iconFont.name
-                      width: dp(150)
+                      width: userImageBack.width - root.dp(6)
                       height: width
-                      anchors.horizontalCenter: parent.horizontalCenter
-                      anchors.top: space1.bottom
+                      anchors.centerIn: userImageBack
 
                       placeholderImage: "\uf007" // user
                       source: ""
@@ -103,21 +116,23 @@ Page {
 
                     Rectangle {
                         id: backName
-                        width: userName.width + dp(10)
-                        height: userName.height + dp(10)
+                        width: userName.width + root.dp(10)
+                        height: userName.height + root.dp(10)
                         anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.bottom: userImage.bottom
-                        color: verdeMassa
-                        radius: dp(5)
+                        anchors.bottom: userImageBack.bottom
+                        color: grayDark
+                        //radius: root.dp(30)
                     }
 
                     Text {
                         id: userName
                         anchors.horizontalCenter: backName.horizontalCenter
                         anchors.verticalCenter: backName.verticalCenter
-                        color: "white"
+                        color: greenDark
                         font.bold: true
+                        font.pixelSize: root.sp(16)
                     }
+
                 } // Linha User Image
 
                 Spacer {
@@ -129,143 +144,119 @@ Page {
                 Item {
                     id: rowEmail
                     width: parent.width
-                    height: emailTxt.height + emailUserTxt.height
+                    height: root.dp(70)
                     anchors.top: spacer1.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-                    Text {
-                        id: emailTxt
-                        text: "E-mail"
-                        color: txtColor
-                        font.bold: true
-                        anchors.top: parent.top
-                        anchors.left: parent.left
-                        leftPadding: txtPadding
-                    }
-
-                    Text {
+                    CustomTextView {
                         id: emailUserTxt
-                        color: userTxtColor
-                        anchors.left: parent.left
-                        padding: userTxtPadding
-                        anchors.top: emailTxt.bottom
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.horizontalCenter: parent.horizontalCenter
+
+                        txtTitleColor: white
+                        txtTextColor: greenLight
+                        txtColor: grayLight
+                        txtRadius: root.dp(30)
+                        txtTextTitle: "E-mail: "
                     }
-                } // Linha E-mail
+                }
 
                 Item {
                     id: rowIdade
-                    width: parent.width
-                    height: emailTxt.height + emailUserTxt.height
                     anchors.top: rowEmail.bottom
+                    width: parent.width
+                    height: root.dp(70)
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-                    Text {
-                        id: idadeTxt
-                        text: "Idade"
-                        color: txtColor
-                        font.bold: true
-                        anchors.top: parent.top
-                        anchors.left: parent.left
-                        leftPadding: txtPadding
-                    }
-
-                    Text {
+                    CustomTextView {
                         id: idadeUserTxt
-                        color: userTxtColor
-                        anchors.left: parent.left
-                        padding: userTxtPadding
-                        anchors.top: idadeTxt.bottom
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.horizontalCenter: parent.horizontalCenter
+
+                        txtTitleColor: white
+                        txtTextColor: greenLight
+                        txtColor: grayLight
+                        txtRadius: root.dp(30)
+                        txtTextTitle: "Idade: "
                     }
-                } // Linha Idade
+                }
 
                 Item {
                     id: rowGenero
                     width: parent.width
-                    height: emailTxt.height + emailUserTxt.height
+                    height: root.dp(70)
                     anchors.top: rowIdade.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-                    Text {
-                        id: generoTxt
-                        text: "Gênero"
-                        color: txtColor
-                        font.bold: true
-                        anchors.top: parent.top
-                        anchors.left: parent.left
-                        leftPadding: txtPadding
-                    }
-
-                    Text {
+                    CustomTextView {
                         id: generoUserTxt
-                        color: userTxtColor
-                        anchors.left: parent.left
-                        padding: userTxtPadding
-                        anchors.top: generoTxt.bottom
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.horizontalCenter: parent.horizontalCenter
+
+                        txtTitleColor: white
+                        txtTextColor: greenLight
+                        txtColor: grayLight
+                        txtRadius: root.dp(30)
+                        txtTextTitle: "Gênero: "
                     }
-                } // Linha Gênero
+                }
 
                 Item {
                     id: rowAltura
                     width: parent.width
-                    height: emailTxt.height + emailUserTxt.height
+                    height: root.dp(70)
                     anchors.top: rowGenero.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-                    Text {
-                        id: alturaTxt
-                        text: "Altura"
-                        color: txtColor
-                        font.bold: true
-                        anchors.top: parent.top
-                        anchors.left: parent.left
-                        leftPadding: txtPadding
-                    }
-
-                    Text {
+                    CustomTextView {
                         id: alturaUserTxt
-                        color: userTxtColor
-                        anchors.left: parent.left
-                        padding: userTxtPadding
-                        anchors.top: alturaTxt.bottom
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.horizontalCenter: parent.horizontalCenter
+
+                        txtTitleColor: white
+                        txtTextColor: greenLight
+                        txtColor: grayLight
+                        txtRadius: root.dp(30)
+                        txtTextTitle: "Altura: "
                     }
-                } // Linha Altura
+                }
+
 
                 Item {
                     id: rowPesoDesejado
                     width: parent.width
-                    height: emailTxt.height + emailUserTxt.height
+                    height: root.dp(70)
                     anchors.top: rowAltura.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-                    Text {
-                        id: pesoDesejadoTxt
-                        text: "Peso Desejado"
-                        color: txtColor
-                        font.bold: true
-                        anchors.top: parent.top
-                        anchors.left: parent.left
-                        leftPadding: txtPadding
-                    }
-
-                    Text {
+                    CustomTextView {
                         id: pesoDesejadoUserTxt
-                        color: userTxtColor
-                        anchors.left: parent.left
-                        padding: userTxtPadding
-                        anchors.top: pesoDesejadoTxt.bottom
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.horizontalCenter: parent.horizontalCenter
+
+                        txtTitleColor: white
+                        txtTextColor: greenLight
+                        txtColor: grayLight
+                        txtRadius: root.dp(30)
+                        txtTextTitle: "Peso Desejado: "
                     }
-                } // Linha Peso Desejado
+                }
 
                 Item {
                     id: rowMedidas
                     width: parent.width
-                    height: col1.height
+                    height: iconMedidas.height + root.dp(60)
                     anchors.top: rowPesoDesejado.bottom
 
                     Item {
                         id: col1
                         width: parent.width / 3
-                        height: iconMedidas.height + txtPadding
+                        height: parent.height
                         anchors.left: parent.left
 
                         Image {
                             id: iconMedidas
-                            width: dp(50)
+                            width: root.dp(50)
                             height: width
 
                             anchors.horizontalCenter: parent.horizontalCenter
@@ -278,8 +269,9 @@ Page {
                     Item {
                         id: col2
                         width: parent.width * 2 / 3
-                        height: col1.height
+                        height: medidas.height + recMedidas.height
                         anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
 
                         Text {
                             id: medidas
@@ -287,12 +279,14 @@ Page {
                             font.bold: true
                             color: txtColor
                             anchors.horizontalCenter: parent.horizontalCenter
+                            font.pixelSize: txtTitleSize
                         }
 
                         Rectangle {
-                             width: dp(40)
+                            id: recMedidas
+                             width: root.dp(40)
                              height: width
-                             color: amareloMassa
+                             color: contrastColor3
                              border.color: "transparent"
                              radius: width * 0.5
                              anchors.horizontalCenter: parent.horizontalCenter
@@ -303,6 +297,8 @@ Page {
                                   anchors.horizontalCenter: parent.horizontalCenter
                                   anchors.verticalCenter: parent.verticalCenter
                                   color: "white"
+                                  font.bold: true
+                                  font.pixelSize: txtUserSize
                              }
                         }
                     }
@@ -315,11 +311,11 @@ Page {
 
             Component.onCompleted: {
                 userName.text = splitString(user[0])
-                emailUserTxt.text = user[1]
-                idadeUserTxt.text = userAge + " anos"
-                generoUserTxt.text = user[3]
-                alturaUserTxt.text = user[4] + " m"
-                pesoDesejadoUserTxt.text = user[5] + " kg"
+                emailUserTxt.txtText = user[1]
+                idadeUserTxt.txtText = userAge + " anos"
+                generoUserTxt.txtText = user[3]
+                alturaUserTxt.txtText = user[4] + " m"
+                pesoDesejadoUserTxt.txtText = user[5] + " kg"
                 medidasTotal.text = user[7]
                 userImage.source = "../../assets/image_perfil.jpg"
             }

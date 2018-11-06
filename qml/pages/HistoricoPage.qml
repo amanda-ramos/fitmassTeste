@@ -300,7 +300,6 @@ Page {
             onClicked: {
                 closeIcon.visible = false
                 filterIcon.visible = true
-                graphics.visible = true
                 msgFilter.visible = false
                 s2 = ""
                 buscaMedidas()
@@ -327,7 +326,7 @@ Page {
         Item {
             id: tabIcons
             width: parent.width
-            height: root.dp(50)
+            height: root.dp(40)
             anchors.top: parent.top
             anchors.horizontalCenter: parent.horizontalCenter
 
@@ -342,14 +341,21 @@ Page {
                     id: historicoRec
                     anchors.fill: parent
                     color: grayLight
-                }
 
-                Image {
-                    id: historicoIcon
-                    height: root.dp(30)
-                    width: height
-                    anchors.centerIn: parent
-                    source: "../../assets/icon_history.png"
+                    Rectangle {
+                        id: historicoGreenRec
+                        width: parent.width
+                        height: root.dp(4)
+                        color: greenDark
+                        anchors.bottom: historicoRec.bottom
+                    }
+
+                    Text {
+                        anchors.centerIn: parent
+                        color: white
+                        text: "Histórico"
+                        font.pixelSize: root.sp(12)
+                    }
 
                     MouseArea {
                         anchors.fill: parent
@@ -357,6 +363,8 @@ Page {
                             listCards.visible = true
                             graphics.visible = false
                             historicoRec.color = grayLight
+                            historicoGreenRec.visible = true
+                            graficosGreenRec.visible = false
                             graficosRec.color = bgColor
                             filterIcon.visible = true
                         }
@@ -375,14 +383,22 @@ Page {
                     id: graficosRec
                     anchors.fill: parent
                     color: bgColor
-                }
 
-                Image {
-                    id: graficosIcon
-                    height: root.dp(30)
-                    width: height
-                    anchors.centerIn: parent
-                    source: "../../assets/icon_analytics.png"
+                    Rectangle {
+                        id: graficosGreenRec
+                        width: parent.width
+                        height: root.dp(4)
+                        color: greenDark
+                        anchors.bottom: graficosRec.bottom
+                        visible: false
+                    }
+
+                    Text {
+                        anchors.centerIn: parent
+                        color: white
+                        text: "Gráficos"
+                        font.pixelSize: root.sp(12)
+                    }
 
                     MouseArea {
                         anchors.fill: parent
@@ -390,8 +406,10 @@ Page {
                             listCards.visible = false
                             graphics.visible = true
                             historicoRec.color = bgColor
+                            historicoGreenRec.visible = false
+                            graficosGreenRec.visible = true
                             graficosRec.color = grayLight
-                            filterIcon.visible = false
+                            filterIcon.visible = true
                         }
                     }
                 }
@@ -416,8 +434,9 @@ Page {
                     delegate: AppCard {
                         id: cardView
                         width: parent.width
-                        margin: dp(15)
-                        paper.radius: dp(5)
+                        margin: root.dp(15)
+                        paper.radius: root.dp(30)
+                        paper.background.color: "transparent"
 
                         MouseArea {
                             anchors.fill: parent
@@ -436,9 +455,12 @@ Page {
                         media: Rectangle {
                             id: mediaRec
                             width: parent.width
-                            height: width * 4 / 7
-                            color: grayLight
-                            radius: dp(5)
+                            height: width / 2
+                            color: cardColor
+                            radius: dp(30)
+                            anchors.centerIn: cardView
+                            border.color: grayLight
+                            border.width: root.dp(1)
 
                             Item {
                                 height: parent.height
@@ -465,7 +487,7 @@ Page {
 
                                         AppImage {
                                             id: iconWeight
-                                            height: dp(80)
+                                            height: dp(60)
                                             width: height
                                             source: "../../assets/icon_weight.png"
                                             fillMode: Image.PreserveAspectFit
@@ -498,7 +520,7 @@ Page {
 
                                         AppImage {
                                             id: iconMuscle
-                                            height: dp(80)
+                                            height: dp(60)
                                             width: height
                                             source: "../../assets/icon_muscle.png"
                                             fillMode: Image.PreserveAspectFit
@@ -531,7 +553,7 @@ Page {
 
                                         AppImage {
                                             id: iconBodyFat
-                                            height: dp(80)
+                                            height: dp(60)
                                             width: height
                                             source: "../../assets/icon_body_fat.png"
                                             fillMode: Image.PreserveAspectFit
@@ -694,6 +716,7 @@ Page {
             visible: false
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: graphics.verticalCenter
+            color: greenDark
         }
 
         Text {
@@ -702,6 +725,7 @@ Page {
             visible: novato ? true : false
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: graphics.verticalCenter
+            color: greenDark
         }
     }
 

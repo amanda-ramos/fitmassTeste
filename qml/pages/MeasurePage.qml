@@ -9,8 +9,9 @@ import "../pages"
 Page {
     id: measurePage
     title: "Medida"
-    height: 960
-    width: 640
+    height: screenSizeY
+    width: screenSizeX
+    backgroundColor: bgColor
 
     property var weightValor
     property var muscleValor
@@ -19,14 +20,14 @@ Page {
     property alias dateValor: measurePage.title
     property var wantedWeightValor
 
-    property int titleFontSize: 6
+    property int titleFontSize: 14
     property var titleTopPadding: dp(15)
     property var titleBottomPadding: dp(15)
     property var titleHorizontalAlignment: Text.AlignHCenter
     property var textRightPadding: dp(15)
     property var textLeftPadding: dp(15)
-    property color titleColor: verdeMassa
-    property color textColor: "#4b4b4b"
+    property color titleColor: greenDark
+    property color textColor: greenLight
 
     rightBarItem:  NavigationBarRow {
       id: rightNavBarRowMeasure
@@ -34,6 +35,7 @@ Page {
       IconButtonBarItem {
           title: "Compartilhar"
           icon: IconType.sharealt
+          iconSize: root.dp(25)
 
           onClicked: {
             measureItemSource.grabToImage(function(result){
@@ -46,6 +48,7 @@ Page {
       IconButtonBarItem {
           title: "Deletar"
           icon: IconType.trash
+          iconSize: root.dp(25)
 
           onClicked: {
               console.log("DELETAR Dialog - key: " + keyCard)
@@ -98,7 +101,7 @@ Page {
                     text: "Análise da Composição Corporal"
                     color: titleColor
                     font.bold: true
-                    font.pointSize: sp(titleFontSize)
+                    font.pixelSize: root.sp(titleFontSize)
                     horizontalAlignment: titleHorizontalAlignment
                     topPadding: titleTopPadding
                     bottomPadding: titleBottomPadding
@@ -122,7 +125,8 @@ Page {
                             width: parent.width / 4
                             text: "\npeso"
                             horizontalAlignment: Text.AlignHCenter
-                            color: "black"
+                            color: white
+                            font.pixelSize: root.dp(10)
                             topPadding: dp(10)
                             anchors.horizontalCenter: iconPeso.horizontalCenter
                             anchors.bottom: iconPeso.top
@@ -130,7 +134,7 @@ Page {
                         }
                         Image {
                             id: iconPeso
-                            source: "../../assets/icon_weight.png"
+                            source: "../../assets/icon_weight2.png"
                             height: dp(50)
                             width: height
                             anchors.horizontalCenter: parent.horizontalCenter
@@ -140,7 +144,8 @@ Page {
                             id: weightValue
                             width: parent.width / 4
                             text: ""
-                            color: "black"
+                            color: white
+                            font.pixelSize: root.dp(12)
                             font.bold: true
                             horizontalAlignment: Text.AlignHCenter
                             anchors.horizontalCenter: iconPeso.horizontalCenter
@@ -160,7 +165,8 @@ Page {
                             width: parent.width / 4
                             text: "massa\nmagra"
                             horizontalAlignment: Text.AlignHCenter
-                            color: "black"
+                            color: white
+                            font.pixelSize: root.dp(10)
                             topPadding: dp(10)
                             anchors.horizontalCenter: iconMassaMagra.horizontalCenter
                             anchors.bottom: iconMassaMagra.top
@@ -168,7 +174,7 @@ Page {
                         }
                         Image {
                             id: iconMassaMagra
-                            source: "../../assets/icon_muscle.png"
+                            source: "../../assets/icon_muscle2.png"
                             height: dp(50)
                             width: height
                             anchors.horizontalCenter: parent.horizontalCenter
@@ -178,7 +184,8 @@ Page {
                             id: muscleValue
                             width: parent.width / 4
                             text: ""
-                            color: "black"
+                            color: white
+                            font.pixelSize: root.dp(12)
                             font.bold: true
                             horizontalAlignment: Text.AlignHCenter
                             anchors.horizontalCenter: iconMassaMagra.horizontalCenter
@@ -197,7 +204,8 @@ Page {
                             text: "massa de\ngordura"
                             width: parent.width / 4
                             horizontalAlignment: Text.AlignHCenter
-                            color: "black"
+                            color: white
+                            font.pixelSize: root.dp(10)
                             topPadding: dp(10)
                             anchors.horizontalCenter: iconMassaGorda.horizontalCenter
                             anchors.bottom: iconMassaGorda.top
@@ -205,7 +213,7 @@ Page {
                         }
                         Image {
                             id: iconMassaGorda
-                            source: "../../assets/icon_body_fat.png"
+                            source: "../../assets/icon_body_fat2.png"
                             height: dp(50)
                             width: height
                             anchors.horizontalCenter: parent.horizontalCenter
@@ -215,7 +223,8 @@ Page {
                             id: bodyFatValue
                             width: parent.width / 4
                             text: ""
-                            color: "black"
+                            color: white
+                            font.pixelSize: root.dp(12)
                             font.bold: true
                             horizontalAlignment: Text.AlignHCenter
                             anchors.horizontalCenter: iconMassaGorda.horizontalCenter
@@ -234,7 +243,8 @@ Page {
                             text: "água no\ncorpo"
                             width: parent.width / 4
                             horizontalAlignment: Text.AlignHCenter
-                            color: "black"
+                            color: white
+                            font.pixelSize: root.dp(10)
                             topPadding: dp(10)
                             anchors.horizontalCenter: iconAgua.horizontalCenter
                             anchors.bottom: iconAgua.top
@@ -242,7 +252,7 @@ Page {
                         }
                         Image {
                             id: iconAgua
-                            source: "../../assets/icon_water.png"
+                            source: "../../assets/icon_water2.png"
                             height: dp(50)
                             width: height
                             anchors.horizontalCenter: parent.horizontalCenter
@@ -252,7 +262,8 @@ Page {
                             id: waterValue
                             width: parent.width / 4
                             text: ""
-                            color: "black"
+                            color: white
+                            font.pixelSize: root.dp(12)
                             font.bold: true
                             horizontalAlignment: Text.AlignHCenter
                             anchors.horizontalCenter: iconAgua.horizontalCenter
@@ -268,7 +279,7 @@ Page {
                     text: "Análise Músculo - Gordura"
                     color: titleColor
                     font.bold: true
-                    font.pointSize: sp(titleFontSize)
+                    font.pixelSize: root.sp(titleFontSize)
                     horizontalAlignment: titleHorizontalAlignment
                     topPadding: titleTopPadding
                     bottomPadding: titleBottomPadding
@@ -338,7 +349,7 @@ Page {
                     text: "Análise de Obesidade"
                     color: titleColor
                     font.bold: true
-                    font.pointSize: sp(titleFontSize)
+                    font.pixelSize: root.sp(titleFontSize)
                     horizontalAlignment: titleHorizontalAlignment
                     topPadding: titleTopPadding
                     bottomPadding: titleBottomPadding
@@ -439,7 +450,7 @@ Page {
                     text: "Análise Segmentar de Massa Magra"
                     color: titleColor
                     font.bold: true
-                    font.pointSize: sp(titleFontSize)
+                    font.pixelSize: root.sp(titleFontSize)
                     horizontalAlignment: titleHorizontalAlignment
                     topPadding: titleTopPadding
                     bottomPadding: titleBottomPadding
@@ -490,7 +501,7 @@ Page {
                     text: "Análise Segmentar de Massa de Gordura"
                     color: titleColor
                     font.bold: true
-                    font.pointSize: sp(titleFontSize)
+                    font.pixelSize: root.sp(titleFontSize)
                     horizontalAlignment: titleHorizontalAlignment
                     topPadding: titleTopPadding
                     bottomPadding: titleBottomPadding
@@ -541,7 +552,7 @@ Page {
                     text: "Controle de Peso"
                     color: titleColor
                     font.bold: true
-                    font.pointSize: sp(titleFontSize)
+                    font.pixelSize: root.sp(titleFontSize)
                     horizontalAlignment: titleHorizontalAlignment
                     topPadding: titleTopPadding
                     bottomPadding: titleBottomPadding
@@ -556,7 +567,7 @@ Page {
 
                     Rectangle {
                         id: space3
-                        height: dp(15)
+                        height: root.dp(15)
                         width: parent.width
                         color: "transparent"
                         anchors.horizontalCenter: parent.horizontalCenter
@@ -565,7 +576,7 @@ Page {
 
                         Image {
                             id: balanca
-                            height: dp(140)
+                            height: root.dp(140)
                             width: height
                             source: (weightValor >= wantedWeightValor) ? "../../assets/image_comparison_more.png" : "../../assets/im‎age_comparison_less.png"
                             anchors.horizontalCenter: parent.horizontalCenter
@@ -588,19 +599,21 @@ Page {
                             Text {
                                 id: pesoAtual
                                 text: "Peso atual"
-                                color: "#b4b4b4"
+                                color: grayLight2
                                 font.bold: true
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                topPadding: (weightValor >= wantedWeightValor) ? dp(35) : dp(10)
+                                topPadding: (weightValor >= wantedWeightValor) ? root.dp(35) : root.dp(10)
+                                font.pixelSize: root.sp(10)
                             }
 
                             Text {
                                 id: pesoAtualValor
                                 text: ""
-                                color: amareloMassa
+                                color: contrastColor3
                                 font.bold: true
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 anchors.top: pesoAtual.bottom
+                                font.pixelSize: root.sp(12)
                             }
                         }
 
@@ -613,19 +626,21 @@ Page {
                             Text {
                                 id: pesoDesejado
                                 text: "Peso desejado"
-                                color: "#b4b4b4"
+                                color: grayLight2
                                 font.bold: true
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                topPadding: (weightValor >= wantedWeightValor) ? dp(10) : dp(35)
+                                topPadding: (weightValor >= wantedWeightValor) ? root.dp(10) : root.dp(35)
+                                font.pixelSize: root.sp(10)
                             }
 
                             Text {
                                 id: pesoDesejadoValor
                                 text: wantedWeightValor + " kg"
-                                color: amareloMassa
+                                color: contrastColor3
                                 font.bold: true
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 anchors.top: pesoDesejado.bottom
+                                font.pixelSize: root.sp(12)
                             }
                         }
                 } // row Controle de Peso

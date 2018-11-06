@@ -7,22 +7,13 @@ Item {
 
     id: actionsRow
     width: parent.width
-    anchors.top: mediaRec.bottom
-
-    Rectangle {
-        id: roundRect
-        color: cardColor
-        width: parent.width
-        height: dateTxt.height + 15
-        anchors.bottom: parent.top
-        radius: dp(5)
-        opacity: 1
+    anchors.bottom: mediaRec.top
 
         Item {
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            height: roundRect.height //- squareRect.height
+            width: iconCalendar.width + space.width + dateTxt.width
+            height: dateTxt.height + root.dp(15)
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: parent.top
 
             AppImage {
                 id: iconCalendar
@@ -36,7 +27,7 @@ Item {
             Rectangle {
                 id: space
                 color: "transparent"
-                width: dp(6)
+                width: root.dp(6)
                 height: parent.height
                 anchors.right: dateTxt.left
                 anchors.verticalCenter: parent.verticalCenter
@@ -46,10 +37,10 @@ Item {
                 id: dateTxt
                 text: Qt.formatDate(dateCard, "dd/MM/yyyy")
                 color: grayLight2
+                font.pixelSize: root.sp(12)
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                rightPadding: dp(8)
+                rightPadding: root.dp(8)
             }
-        }
     }
 }

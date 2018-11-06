@@ -11,25 +11,28 @@ import "../pages"
 
 Page {
     id: editProfilePage
-    title: "Editar"
-    height: 960
-    width: 640
+    title: "Editar Perfil"
+    height: screenSizeY
+    width: screenSizeX
 
-    property color txtColor: verdeMassa
-    property color userTxtColor: "#4b4b4b"
-    property color backEditField: "#efefef"
+    backgroundColor: bgColor
 
+    property color txtTitleColor: white
+    property color txtUserColor: greenLight
+    property color backEditField: grayLight
+
+    property var radius: root.dp(30)
     property var pathImage: ""
 
-    property var txtPadding: dp(10)
-    property var userTxtPadding: dp(20)
-    property var editTextMargin: dp(20)
+    property var txtPadding: root.dp(10)
+    property var userTxtPadding: root.dp(20)
+    property var editTextMargin: root.dp(20)
 
     property bool inicial: true
     property bool genero: false
     property bool pesoDesejado: false
     property bool altura: false
-
+    property bool foto: false
 
     function vector(min, max, step, decimos){
         var j = 0;
@@ -51,6 +54,10 @@ Page {
         id: rightNavBarRow
 
         IconButtonBarItem {
+            title: "Salvar Perfil"
+            icon: IconType.check
+            id: saveProfileBtn
+            iconSize: root.dp(25)
 
             property var saveBtn: false
 
@@ -63,13 +70,10 @@ Page {
             Connections {
                 target: nativeUtils
                 onAlertDialogFinished: {
-                    if(saveProfileBtn.saveBtn)  profileStack.pop();
+                    if(saveProfileBtn.saveBtn)
+                        profileStack.pop();
                 }
             }
-
-            title: "Salvar Perfil"
-            icon: IconType.check
-            id: saveProfileBtn
         }
     }
 
@@ -103,8 +107,8 @@ Page {
                     Rectangle {
                         id: space1
                         width: parent.width
-                        height: dp(25)
-                        color: "white"
+                        height: root.dp(25)
+                        color: bgColor
                         anchors.top: parent.top
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
@@ -112,22 +116,31 @@ Page {
                     Item {
                         id: userImage1
                         width: parent.width / 2
-                        height: userImage.height
+                        height: userImageBack.height
                         anchors.top: space1.bottom
                         anchors.left: parent.left
+
+                        Image {
+                            id: userImageBack
+                            width: parent.width - root.dp(30)
+                            height: width
+                            anchors.top: parent.top
+                            anchors.right: parent.right
+                            source: "../../assets/circle.png"
+                            z: -1
+                        }
 
                         UserImage {
                             id: userImage
                             property string iconFontName: Theme.iconFont.name
-                            width: dp(150)
+                            width: userImageBack.width - root.dp(10)
                             height: width
-
-                            //anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.top: space1.bottom
-                            anchors.right: parent.right
-
+                            anchors.centerIn: userImageBack
                             placeholderImage: "\uf007" // user
+                            source: ""
                         } // User Image
+
+
                     }
 
                     Item {
@@ -137,83 +150,52 @@ Page {
                         anchors.top: space1.bottom
                         anchors.right: parent.right
 
-                        AppButton {
-                            id: userImageBtn
-                            text: "Alterar foto"
-                            onClicked:
-                            {
-                                shownEditPhotoDialog = true;
-                                nativeUtils.displayAlertSheet("", ["Escolher Foto", "Tirar Foto", "Apagar Foto"], true)
-                            }
-                            verticalMargin: 0
-                            flat: false
+                        Item {
+                            id: rowBtnFoto
+                            width: parent.width
+                            height: root.dp(70)
                             anchors.bottom: parent.bottom
-                            anchors.left: parent.left
+                            anchors.horizontalCenter: parent.horizontalCenter
 
-                            property bool shownEditPhotoDialog: false
+                            Rectangle {
+                                id: spacer
+                                width: parent.width
+                                height: root.dp(20)
+                                color: "transparent"
+                                anchors.left: parent.left
+                                anchors.top: parent.top
+                            }
 
-                            Connections {
-                              target: nativeUtils
+                            CustomButtom {
+                                id: userImageBtn
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.top: spacer.bottom
 
-                              // @disable-check M16
-                              onAlertSheetFinished: {
-                                if (userImageBtn.shownEditPhotoDialog) {
-                                  if (index == 0)
-                                    nativeUtils.displayImagePicker(qsTr("Choose Image")) // Choose image
-                                  else if (index == 1)
-                                    nativeUtils.displayCameraPicker("Take Photo") // Take from Camera
-                                  else if (index == 2){
-                                    userImage.source = "" // Reset
-                                    pathImage = ""
-                                  }
-                                  userImageBtn.shownEditPhotoDialog = false
+                                btnColor: bgColor
+                                btnBorderColor: userImageBtnMouseArea.pressed ? grayLight : greenDark
+                                btnRadius: root.dp(30)
+                                btnText: "Carregar foto"
+
+                                MouseArea {
+                                    id: userImageBtnMouseArea
+                                    anchors.fill: parent
+
+                                    property bool shownEditPhotoDialog: false
+
+                                    onClicked: {
+                                        foto = true
+                                        shownEditPhotoDialog = true
+                                        userImage.forceActiveFocus();
+                                        nativeUtils.displayAlertSheet(
+                                                    "",
+                                                    ["Escolher Foto", "Tirar Foto", "Apagar Foto"],
+                                                    true)
+                                    }
                                 }
-                              }
-
-                              // @disable-check M16
-                              onImagePickerFinished: {
-                                console.debug("Image picker finished with path:", path)
-                                  if(accepted){
-                                    //userImageCadastro.source = Qt.resolvedUrl(path)
-                                    storageFitmass.uploadFile(path, "userPhoto" + Date.now() + ".png", function(progress, finished, success, downloadUrl) {
-                                             if(!finished){
-                                                 console.log("Firebase Storage: progresso " + progress.toFixed(2))
-                                             } else if(success) {
-
-                                                 userImage.source = downloadUrl
-                                                 pathImage = downloadUrl;
-                                                 console.log("Sucesso - Path: " + pathImage)
-                                             } else {
-
-                                               console.log("Falha ao carregar imagem  no Firebase Storage" + message)
-                                             }
-                                    })
-                                  }
-                              }
-
-                              // @disable-check M16
-                              onCameraPickerFinished: {
-                                console.debug("Camera picker finished with path:", path)
-                                  if(accepted){
-                                    //userImageCadastro.source = Qt.resolvedUrl(path)
-                                    storageFitmass.uploadFile(path, "userPhoto.png", function(progress, finished, success, downloadUrl) {
-                                             if(!finished){
-                                                 console.log("Firebase Storage: progresso " + progress.toFixed(2))
-
-                                             } else if(success) {
-                                                 console.log("Sucesso - Path: " + pathImage)
-                                               userImage.source = downloadUrl
-                                               pathImage = downloadUrl;
-                                             } else {
-                                               console.log("Falha ao carregar imagem  no Firebase Storage" + message)
-                                             }
-                                    })
-                                  }
-                              }
                             }
                         }
-                    }
-                }
+                    } // Coluna imagem do usuário
+                } // Linha imagem do usuário
 
                 Spacer {
                     id: spacer1
@@ -223,219 +205,96 @@ Page {
 
                 Item {
                     id: rowNome
-                    width: parent.width
-                    height: nomeTxt.height + nomeUserTxt.height
                     anchors.top: spacer1.bottom
+                    width: parent.width
+                    height: root.dp(70)
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-                    Rectangle {
-                        id: recLine
-                        anchors.centerIn: parent
-                        width: parent.width - dp(40)
-                        height: nomeUserTxt.height
-                        color: "white"
-
-                        CustomBorderRec {
-                            commonBorder: false
-                            lBorderwidth: 0
-                            rBorderwidth: 0
-                            tBorderwidth: 0
-                            bBorderwidth: 3
-                            borderColor: "#4b4b4b"
-                        }
-                    }
-
-                    Text {
-                        id: nomeTxt
-                        text: "Nome"
-                        color: txtColor
-                        font.bold: true
-                        anchors.top: parent.top
-                        anchors.left: parent.left
-                        leftPadding: txtPadding
-                    }
-
-                    TextEdit {
+                    CustomTextField {
                         id: nomeUserTxt
-                        width: parent.width - dp(40)
-                        text: ""
-                        color: userTxtColor
-                        anchors.left: parent.left
-                        padding: userTxtPadding
-                        anchors.top: nomeTxt.bottom
+                        anchors.verticalCenter: parent.verticalCenter
                         anchors.horizontalCenter: parent.horizontalCenter
-                        horizontalAlignment: Text.AlignHCenter
-                        cursorVisible: true
+
+                        tfTitleColor: txtTitleColor
+                        tfTextColor: txtUserColor
+                        tfColor: backEditField
+                        tfRadius: radius
+                        tfTextTitle: "Nome: *"
+                        tfTextText: ""
                     }
                 }
 
                 Item {
                     id: rowEmail
-                    width: parent.width
-                    height: emailTxt.height + emailUserTxt.height
                     anchors.top: rowNome.bottom
+                    width: parent.width
+                    height: root.dp(70)
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-                    Rectangle {
-                        anchors.centerIn: parent
-                        width: parent.width - dp(40)
-                        height: emailUserTxt.height
-                        color: "white"
-
-                        CustomBorderRec {
-                            commonBorder: false
-                            lBorderwidth: 0
-                            rBorderwidth: 0
-                            tBorderwidth: 0
-                            bBorderwidth: 3
-                            borderColor: "#4b4b4b"
-                        }
-                    }
-
-                    Text {
-                        id: emailTxt
-                        text: "E-mail"
-                        color: txtColor
-                        font.bold: true
-                        anchors.top: parent.top
-                        anchors.left: parent.left
-                        leftPadding: txtPadding
-                    }
-
-                    TextEdit {
+                    CustomTextField {
                         id: emailUserTxt
-                        width: parent.width - dp(40)
-                        text: ""
-                        color: userTxtColor
-                        anchors.left: parent.left
-                        padding: userTxtPadding
-                        anchors.top: emailTxt.bottom
-                        // cursorVisible: true
-                        inputMethodHints: Qt.ImhEmailCharactersOnly
+                        anchors.verticalCenter: parent.verticalCenter
                         anchors.horizontalCenter: parent.horizontalCenter
-                        horizontalAlignment: Text.AlignHCenter
+
+                        tfTitleColor: txtTitleColor
+                        tfTextColor: txtUserColor
+                        tfColor: backEditField
+                        tfRadius: radius
+                        tfTextTitle: "E-mail: *"
+                        tfTextType: Qt.ImhEmailCharactersOnly
+                        tfTextText: ""
                     }
                 }
 
                 Item {
                     id: rowIdade
-                    width: parent.width
-                    height: idadeTxt.height + idadeUserTxtRec.height + sp2Idade.height + sp3Idade.height
                     anchors.top: rowEmail.bottom
+                    width: parent.width
+                    height: root.dp(70)
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-                    Text {
-                        id: idadeTxt
-                        text: "Nascimento *"
-                        color: txtColor
-                        font.bold: true
-                        anchors.top: parent.top
-                        anchors.left: parent.left
-                        leftPadding: txtPadding
-                    }
+                    CustomTextField {
+                        id: idadeUserTxt
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.horizontalCenter: parent.horizontalCenter
 
-                    Rectangle {
-                        id: sp1
-                        color: "transparent"
-                        width: userTxtPadding
-                        height: idadeUserTxt.height
-                        anchors.left: parent.left
-                        anchors.top: idadeTxt.bottom
-                    }
-
-                    Rectangle {
-                        id: sp2Idade
-                        color: "transparent"
-                        width: parent.width
-                        height: txtPadding
-                        anchors.left: parent.left
-                        anchors.top: idadeTxt.bottom
-                    }
-
-                    Rectangle {
-                        id: sp3Idade
-                        color: "transparent"
-                        width: parent.width
-                        height: txtPadding
-                        anchors.left: parent.left
-                        anchors.top: idadeUserTxt.bottom
-                    }
-
-                    Rectangle{
-                        id: idadeUserTxtRec
-                        width: dp(100)
-                        height: dp(40)
-                        color: backEditField
-                        anchors.top: sp2Idade.bottom
-                        anchors.left: sp1.right
-
-                                  Text {
-                                      id: idadeUserTxt
-                                      anchors.centerIn: parent
-                                      text: ""
-                                      color: "black"
-                                  }
-
-                                      MouseArea {
-                                          anchors.fill: parent
-
-                                          onClicked: {
-                                              nativeUtils.displayDatePicker(Qt.formatDate(Date.fromLocaleString(Qt.locale(), idadeUserTxt.text, "dd/MM/yyyy"), "yyyy-MM-dd"))
-                                          }
-                                      }
+                        tfTitleColor: txtTitleColor
+                        tfTextColor: txtUserColor
+                        tfColor: backEditField
+                        tfRadius: radius
+                        tfTextTitle: "Nascimento: *"
+                        tfTextType: Qt.ImhDigitsOnly
+                        tfTextMask: "00/00/0000"
+                        tfTextText: ""
                     }
                 }
 
                 Item {
                     id: rowGenero
                     width: parent.width
-                    height: emailTxt.height + emailUserTxt.height
+                    height: root.dp(70)
                     anchors.top: rowIdade.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-                    Text {
-                        id: generoTxt
-                        text: "Gênero *"
-                        color: txtColor
-                        font.bold: true
-                        anchors.top: parent.top
-                        anchors.left: parent.left
-                        leftPadding: txtPadding
-                    }
-
-                    Rectangle {
-                        id: sp2
-                        color: "transparent"
-                        width: userTxtPadding
-                        height: generoUserTxt.height
-                        anchors.left: parent.left
-                        anchors.top: generoTxt.bottom
-                    }
-
-                    Rectangle {
-                        id: sp5
-                        color: "transparent"
-                        width: parent.width
-                        height: txtPadding
-                        anchors.left: parent.left
-                        anchors.top: generoTxt.bottom
-                    }
-
-                    Rectangle{
-                        id: generoUserTxtRec
-                        width: dp(100)
-                        height: dp(40)
-                        color: backEditField
-                        anchors.top: sp5.bottom
-                        anchors.left: sp2.right
-
-                        Text {
-                            id: generoUserTxt
-                            text: ""
-                            anchors.centerIn: parent
-                        }
+                    CustomComboBox {
+                        id: generoUserTxt
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        cbTextTitle: "Gênero: *"
+                        cbTitleColor: txtTitleColor
+                        cbTextColor: txtUserColor
+                        cbColor: backEditField
+                        cbRadius: radius
+                        cbTextSelected: ""
 
                         MouseArea {
                             anchors.fill: parent
                             onClicked: {
-                                genero = true;
-                                nativeUtils.displayAlertSheet("Gênero", ["Feminino", "Masculino"], true)
+                                genero = true
+                                generoUserTxt.forceActiveFocus()
+                                nativeUtils.displayAlertSheet(
+                                            "Gênero",
+                                            ["Feminino", "Masculino"], true)
                             }
                         }
                     }
@@ -444,56 +303,29 @@ Page {
                 Item {
                     id: rowAltura
                     width: parent.width
-                    height: alturaTxt.height + sp5Altura.height + sp5Altura.height + alturaUserTxtRec.height
+                    height: root.dp(70)
                     anchors.top: rowGenero.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-                    Text {
-                        id: alturaTxt
-                        text: "Altura *"
-                        color: txtColor
-                        font.bold: true
-                        anchors.top: parent.top
-                        anchors.left: parent.left
-                        leftPadding: txtPadding
-                    }
-
-                    Rectangle {
-                        id: sp2Altura
-                        color: "transparent"
-                        width: userTxtPadding
-                        height: alturaUserTxtRec.height
-                        anchors.left: parent.left
-                        anchors.top: alturaTxt.bottom
-                    }
-
-                    Rectangle {
-                        id: sp5Altura
-                        color: "transparent"
-                        width: parent.width
-                        height: txtPadding
-                        anchors.left: parent.left
-                        anchors.top: alturaTxt.bottom
-                    }
-
-                    Rectangle{
-                        id: alturaUserTxtRec
-                        width: dp(100)
-                        height: dp(40)
-                        color: backEditField
-                        anchors.top: sp5Altura.bottom
-                        anchors.left: sp2Altura.right
-
-                        Text {
-                            id: alturaUserTxt
-                            text: ""
-                            anchors.centerIn: parent
-                        }
+                    CustomComboBox {
+                        id: alturaUserTxt
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        cbTextTitle: "Altura: *"
+                        cbTitleColor: txtTitleColor
+                        cbTextColor: txtUserColor
+                        cbColor: backEditField
+                        cbRadius: radius
+                        cbTextSelected: ""
 
                         MouseArea {
                             anchors.fill: parent
                             onClicked: {
-                                altura = true;
-                                nativeUtils.displayAlertSheet("Altura", vector(1.50,2.30,0.01,true), true)
+                                altura = true
+                                alturaUserTxt.forceActiveFocus()
+                                nativeUtils.displayAlertSheet(
+                                            "Altura", vector(1.50, 2.30, 0.01,
+                                                             true), true)
                             }
                         }
                     }
@@ -502,57 +334,30 @@ Page {
                 Item {
                     id: rowPesoDesejado
                     width: parent.width
-                    height: pesoDesejadoTxt.height + sp5PesoDesejado.height + sp5PesoDesejado.height + pesoDesejadoUserTxtRec.height
+                    height: root.dp(70)
                     anchors.top: rowAltura.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-                    Text {
-                        id: pesoDesejadoTxt
-                        text: "Peso Desejado *"
-                        color: txtColor
-                        font.bold: true
-                        anchors.top: parent.top
-                        anchors.left: parent.left
-                        leftPadding: txtPadding
-                    }
-
-                    Rectangle {
-                        id: sp2PesoDesejado
-                        color: "transparent"
-                        width: userTxtPadding
-                        height: pesoDesejadoUserTxtRec.height
-                        anchors.left: parent.left
-                        anchors.top: pesoDesejadoTxt.bottom
-                    }
-
-                    Rectangle {
-                        id: sp5PesoDesejado
-                        color: "transparent"
-                        width: parent.width
-                        height: txtPadding
-                        anchors.left: parent.left
-                        anchors.top: pesoDesejadoTxt.bottom
-                    }
-
-
-                    Rectangle{
-                        id: pesoDesejadoUserTxtRec
-                        width: dp(100)
-                        height: dp(40)
-                        color: backEditField
-                        anchors.top: sp5PesoDesejado.bottom
-                        anchors.left: sp2PesoDesejado.right
-
-                        Text {
-                            id: pesoDesejadoUserTxt
-                            text: ""
-                            anchors.centerIn: parent
-                        }
+                    CustomComboBox {
+                        id: pesoDesejadoUserTxt
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        cbTextTitle: "Peso Desejado: *"
+                        cbTitleColor: txtTitleColor
+                        cbTextColor: txtUserColor
+                        cbColor: backEditField
+                        cbRadius: radius
+                        cbTextSelected: ""
 
                         MouseArea {
                             anchors.fill: parent
                             onClicked: {
-                                pesoDesejado = true;
-                                nativeUtils.displayAlertSheet("Peso Desejado", vector(40,120,1,false), true)
+                                pesoDesejado = true
+                                pesoDesejadoUserTxt.forceActiveFocus()
+                                nativeUtils.displayAlertSheet("Peso Desejado",
+                                                              vector(40, 120,
+                                                                     1, false),
+                                                              true)
                             }
                         }
                     }
@@ -564,12 +369,12 @@ Page {
             }
 
             Component.onCompleted: {
-                nomeUserTxt.text = user[0]
-                emailUserTxt.text = user[1]
-                idadeUserTxt.text = user[2]
-                generoUserTxt.text = user[3]
-                alturaUserTxt.text = user[4]
-                pesoDesejadoUserTxt.text = user[5]
+                nomeUserTxt.tfTextText = user[0]
+                emailUserTxt.tfTextText = user[1]
+                idadeUserTxt.tfTextText = user[2]
+                generoUserTxt.cbTextSelected = user[3]
+                alturaUserTxt.cbTextSelected = user[4]
+                pesoDesejadoUserTxt.cbTextSelected = user[5]
                 userImage.source = "../../assets/image_perfil.jpg"
             }
         }
@@ -623,6 +428,62 @@ Page {
                 if(altura){
                     alturaUserTxt.text = (1.50 + (index * 0.01)).toFixed(2);
                     altura = false;
+                }
+                if(foto){
+                    if (userImageBtnMouseArea.shownEditPhotoDialog) {
+                        if (index == 0)
+                            nativeUtils.displayImagePicker(
+                                        qsTr("Choose Image")) // Choose image
+                        else if (index == 1)
+                            nativeUtils.displayCameraPicker(
+                                        "Take Photo") // Take from Camera
+                        else if (index == 2){
+                          userImage.source = "" // Reset
+                          pathImage = ""
+                        }
+                        userImageBtnMouseArea.shownEditPhotoDialog = false
+                    }
+                }
+            }
+
+            // @disable-check M16
+            onImagePickerFinished: {
+              console.debug("Image picker finished with path:", path)
+                if(accepted){
+                  //userImageCadastro.source = Qt.resolvedUrl(path)
+                  storageFitmass.uploadFile(path, "userPhoto" + Date.now() + ".png", function(progress, finished, success, downloadUrl) {
+                           if(!finished){
+                               console.log("Firebase Storage: progresso " + progress.toFixed(2))
+                           } else if(success) {
+
+                               userImage.source = downloadUrl
+                               pathImage = downloadUrl;
+                               console.log("Sucesso - Path: " + pathImage)
+                           } else {
+
+                             console.log("Falha ao carregar imagem  no Firebase Storage" + message)
+                           }
+                  })
+                }
+            }
+
+            // @disable-check M16
+            onCameraPickerFinished: {
+              console.debug("Camera picker finished with path:", path)
+                if(accepted){
+                  //userImageCadastro.source = Qt.resolvedUrl(path)
+                  storageFitmass.uploadFile(path, "userPhoto.png", function(progress, finished, success, downloadUrl) {
+                           if(!finished){
+                               console.log("Firebase Storage: progresso " + progress.toFixed(2))
+
+                           } else if(success) {
+                               console.log("Sucesso - Path: " + pathImage)
+                             userImage.source = downloadUrl
+                             pathImage = downloadUrl;
+                           } else {
+                             console.log("Falha ao carregar imagem  no Firebase Storage" + message)
+                           }
+                  })
                 }
             }
         }

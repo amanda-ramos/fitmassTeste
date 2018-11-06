@@ -8,31 +8,31 @@ import "../pages"
 Page {
     title: "Fitmass"
     id: fitmassInfo
-    height: 960
-    width: 640
+    height: screenSizeY
+    width: screenSizeX
 
-    property int titleFontSize: 6
-    property var titleTopPadding: dp(15)
-    property var titleBottomPadding: dp(15)
-    property var titleLeftPadding: dp(5)
-    property var textRightPadding: dp(15)
-    property var textLeftPadding: dp(15)
-    property color titleColor: verdeMassa
-    property color textColor: "#4b4b4b"
+    backgroundColor: bgColor
+
+    property int titleFontSize: root.sp(16)
+    property var titleTopPadding: root.dp(15)
+    property var titleBottomPadding: root.dp(15)
+    property var titleLeftPadding: root.dp(5)
+    property var textRightPadding: root.dp(15)
+    property var textLeftPadding: root.dp(15)
+    property color titleColor: greenDark
+    property color textColor: white
 
 
     AppFlickable {
         id: scrollFitmass
         anchors.fill: parent
-        contentHeight: content.height
 
-        // remove focus from controls if clicked outside
         MouseArea {
             anchors.fill: parent
             onClicked: scrollFitmass.forceActiveFocus()
         }
 
-        Column {
+        Item {
             id: contentFitmass
             width: parent.width
             height: parent.height
@@ -55,7 +55,7 @@ Page {
                         text: "Fitmass 1.0"
                         color: titleColor
                         font.bold: true
-                        font.pointSize: sp(titleFontSize)
+                        font.pixelSize: titleFontSize
                         horizontalAlignment: Text.AlignHCenter
                         topPadding: titleTopPadding
                         leftPadding: titleLeftPadding
@@ -72,7 +72,7 @@ Page {
 
                         Image {
                             id: imageLogo
-                            width: parent.width - dp(10)
+                            width: parent.width - root.dp(10)
                             source: "../../assets/fitmass_logo.png"
                             anchors.horizontalCenter: parent.horizontalCenter
                             anchors.verticalCenter: parent.verticalCenter
@@ -88,24 +88,26 @@ Page {
                         anchors.right: parent.right
 
                         Text {
-                            id: textRowAnaliseCompCorporal
+                            id: textDetails
                             width: parent.width
                             text: "Versão alfa\n\nAplicativo para acompanhamento de medidas corporais."
                             color: textColor
                             horizontalAlignment: Text.AlignJustify
                             rightPadding: textRightPadding
-                            anchors.top: titleRowAnaliseCompCorporal.bottom
-                            //anchors.verticalCenter: parent.verticalCenter
+                            anchors.verticalCenter: parent.verticalCenter
                             anchors.left: parent.left
                             wrapMode: Text.WordWrap
-                            font.pointSize: sp(4)
+                            font.pixelSize: root.sp(12)
                         }
                     }
                 }
             }
+
             Item{
                 anchors.bottom: parent.bottom
                 width: parent.width
+                height: copyrights.height
+
                 Text {
                     id: copyrights
                     width: parent.width
@@ -113,11 +115,11 @@ Page {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: "Copyright 2018 Massa Pesagem e Automação\nTodos os direitos reservados\n\n"
                     horizontalAlignment: Text.AlignHCenter
-                    color: "#d6d6d6"
-                    font.pointSize: dp(4)
+                    color: grayLight
+                    font.pixelSize: root.sp(8)
                 }
             }
-        } // column - conteúro info
+        } // column - conteúdo info
     } // flickable
 
     ScrollIndicator {

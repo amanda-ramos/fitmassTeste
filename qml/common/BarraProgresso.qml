@@ -27,35 +27,39 @@ Item {
         id: title1
         text: ""
         anchors.left: back.left
-        bottomPadding: dp(5)
+        bottomPadding: root.dp(5)
+        color: white
+        font.pixelSize: root.sp(12)
     }
 
     Text {
         id: title2
         text: ""
-        font.pointSize: sp(3)
+        font.pixelSize: root.sp(8)
         anchors.left: title1.right
         anchors.bottom: title1.bottom
-        leftPadding: dp(5)
-        bottomPadding: dp(5)
+        leftPadding: root.dp(5)
+        bottomPadding: root.dp(5)
+        color: white
     }
 
     Text {
         id: titleValue
         text: ""
         anchors.right: back.right
-        bottomPadding: dp(5)
-        color: amareloMassa
+        bottomPadding: root.dp(5)
+        color: contrastColor3
         font.bold: true
+        font.pixelSize: root.sp(12)
     }
 
     Rectangle {
         id: back
         width: barWidth
-        height: dp(15)
+        height: root.dp(15)
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: title1.bottom
-        color: amareloMassa
+        color: grayLight
     }
 
     Rectangle {
@@ -64,13 +68,13 @@ Item {
         height: back.height
         anchors.left: back.left
         anchors.top: back.top
-        color: amareloMassa
+        color: contrastColor3
     }
 
     Rectangle {
         id: spacing
         color: "transparent"
-        height: dp(5)
+        height: root.dp(5)
         width: parent.width
         anchors.top: back.bottom
     }
@@ -78,21 +82,22 @@ Item {
     Rectangle {
         id: low
         width: lowWidth
-        height: dp(10)
+        height: root.dp(10)
         anchors.left: back.left
         anchors.top: spacing.bottom
-        color: "#e2e2e2"
+        color: grayLight2
+        opacity: 0.5
     }
 
     Text {
         id: lowTitle
         width: low.width
         text: "abaixo"
-        font.pointSize: dp(2)
+        font.pixelSize: root.sp(6)
         anchors.horizontalCenter: low.horizontalCenter
         horizontalAlignment: Text.AlignHCenter
         anchors.verticalCenter: low.verticalCenter
-        topPadding: dp(1)
+        topPadding: root.dp(1)
     }
 
     Rectangle {
@@ -101,19 +106,20 @@ Item {
         height: low.height
         anchors.left: low.right
         anchors.top: low.top
-        color: "#b4b4b4"
+        color: grayLight //"#b4b4b4"
     }
 
     Text {
         id: normaTitle
         width: normal.width
         text: "normal"
-        font.pointSize: dp(2)
+        font.pixelSize: root.sp(6)
         font.bold: true
         anchors.horizontalCenter: normal.horizontalCenter
         horizontalAlignment: Text.AlignHCenter
         anchors.verticalCenter: normal.verticalCenter
-        topPadding: dp(1)
+        topPadding: root.dp(1)
+        color: white
     }
 
     Rectangle {
@@ -122,17 +128,18 @@ Item {
         height: normal.height
         anchors.left: normal.right
         anchors.top: normal.top
-        color: "#e2e2e2"
+        color: grayLight2
+        opacity: 0.5
     }
 
     Text {
         id: highTitle
         width: high.width
         text: "acima"
-        font.pointSize: dp(2)
+        font.pixelSize: root.sp(6)
         anchors.horizontalCenter: high.horizontalCenter
         horizontalAlignment: Text.AlignHCenter
         anchors.verticalCenter: high.verticalCenter
-        topPadding: dp(1)
+        topPadding: root.dp(1)
     }
 }

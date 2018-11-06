@@ -7,14 +7,14 @@ Item {
 
     property alias imgSource: imageWomen.source
 
-    property color titleColor: verdeMassa
-    property color subtitleColor: amareloMassa
-    property color textColor: "black"
-    property color detailColor: "#b4b4b4"
+    property color titleColor: greenDark
+    property color subtitleColor: contrastColor3
+    property color textColor: grayLight2
+    property color detailColor: grayLight2
 
-    property var titleFontSize: sp(4)
-    property var subtitleFontSize: sp(4)
-    property var textFontSize: sp(4)
+    property var titleFontSize: root.sp(4)
+    property var subtitleFontSize: root.sp(4)
+    property var textFontSize: root.sp(4)
 
     property var horizontalAlignmentText: Text.AlignHCenter
 
