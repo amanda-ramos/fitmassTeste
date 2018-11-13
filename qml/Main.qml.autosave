@@ -37,6 +37,8 @@ App {
 
     property int screenSizeX: 640
     property int screenSizeY: 960
+    
+    property var logoFitmassBranca: "../../assets/fitmass_new_logo_branca.png"
 
     //variáveis de teste
     property var user: ["Amanda Ramos", "alc.ramos@yahoo.com.br", "28/12/1992", "Feminino", "1.66", "65", "https://firebasestorage.googleapis.com/v0/b/fitmassapp.appspot.com/o/userPhoto1540304322552.png?alt=media&token=276c9688-2899-4cae-8a5d-d4af25066895", "3"]

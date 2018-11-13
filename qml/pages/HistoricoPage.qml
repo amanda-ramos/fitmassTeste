@@ -14,8 +14,6 @@ Page {
     height: screenSizeY
     width: screenSizeX
 
-    backgroundColor: bgColor
-
     property bool initial: true
     property bool dateFilter: false
     property bool novato: true
@@ -108,11 +106,11 @@ Page {
 
         console.log("busca da Medida " + keyMedida)
 
-        if(keyMedida == 0)
+        if(keyMedida === 0)
             keyMedida = medida0
-        if(keyMedida == 1)
+        if(keyMedida === 1)
             keyMedida = medida1
-        if(keyMedida == 2)
+        if(keyMedida === 2)
             keyMedida = medida2
         console.log("busca da Medida " + keyMedida)
 
@@ -198,20 +196,19 @@ Page {
             icon: IconType.filter
             id: filterIcon
             visible: false
-            iconSize: root.dp(25)
 
             onClicked: {
-                nativeUtils.displayDatePicker()
                 dateFilter = true
+                nativeUtils.displayDatePicker()
             }
 
             Connections {
                 target: nativeUtils
                 onDatePickerFinished: {
+                    if(dateFilter){
                     var pickedDate
-                    if (accepted) {
 
-                        if(dateFilter){
+                    if (accepted) {
 
                         closeIcon.visible = true
                         filterIcon.visible = false
@@ -283,24 +280,24 @@ Page {
                                                          }
                                                      })
                         }
-                        dateFilter = false;
+                    }
+                    dateFilter = false;
                     }
                     }
                 }
             }
-        }
 
         IconButtonBarItem {
             id: closeIcon
             title: "Voltar"
             icon: IconType.close
             visible: false
-            iconSize: root.dp(25)
 
             onClicked: {
                 closeIcon.visible = false
                 filterIcon.visible = true
                 msgFilter.visible = false
+                dateFilter = false
                 s2 = ""
                 buscaMedidas()
             }
@@ -309,9 +306,9 @@ Page {
         IconButtonBarItem {
             title: "Sair"
             icon: IconType.signout
-            iconSize: root.dp(25)
 
             onClicked: {
+                Theme.colors.statusBarStyle = Theme.colors.statusBarStyleHidden
                 stack.pop()
             }
         }
@@ -730,8 +727,8 @@ Page {
     }
 
     Component.onCompleted: {
+        Theme.colors.statusBarStyle = Theme.colors.statusBarStyleWhite
         buscaDadosUser()
-
         buscaMedidas()
     }
 }

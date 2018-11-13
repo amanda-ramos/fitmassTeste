@@ -11,7 +11,7 @@ Item {
 
     property var btnBorderWidth: root.dp(2)
     property var btnRadius: root.dp(30)
-    property var btnText: ""
+    property string btnText: ""
     property var btnTextSize: root.sp(12)
 
     Rectangle {

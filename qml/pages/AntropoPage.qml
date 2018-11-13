@@ -1,4 +1,3 @@
-
 import VPlayApps 1.0
 import QtQuick 2.11
 import QtCharts 2.2
@@ -11,7 +10,6 @@ Page {
     title: "Medidas do Corpo"
     height: screenSizeY
     width: screenSizeX
-    backgroundColor: bgColor
 
     property var line
     property bool dateTo: false
@@ -36,386 +34,132 @@ Page {
 
             onClicked: {
               antropoStack.push(antropoNewView)
-          }
-        }
-    }
-
-    AppFlickable {
-        id: scrollAntropoPage
-        anchors.fill: parent
-        contentHeight: content.height
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                scrollAntropoPage.forceActiveFocus()
             }
         }
+    }
 
     Item {
         id: content
         width: parent.width
-        height: spacer.height + muscleSelect.height + spacer4.height + dates.height + graficoMuscle.height + spacer3.height + footer.height
+        height: parent.height
 
         Item {
             id: spinMuscle
             anchors.fill: parent
 
-            Rectangle {
-                id: spacer
-                height: root.dp(20)
+            Item {
+                id: tabIcons
                 width: parent.width
+                height: root.dp(40)
                 anchors.top: parent.top
-                color: bgColor
-            }
-
-            Item {
-                id: muscleSelect
-                width: parent.width
-                height: root.dp(70)
-                anchors.top: spacer.bottom
-                anchors.horizontalCenter: parent.horizontalCenter
-
-                CustomComboBox {
-                    id: muscleSelectUser
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    cbTextTitle: ""
-                    cbTitleColor: white
-                    cbTextColor: greenLight
-                    cbColor: grayLight
-                    cbRadius: root.dp(30)
-                    cbTextSelected: muscles[0]
-
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            muscleSelectUser.forceActiveFocus()
-                            nativeUtils.displayAlertSheet("Selecione o grupo muscular", muscles, true)
-                        }
-                    }
-                }
-            }
-
-            Item {
-                id: spacer4
-                width: dates.width
-                height: root.dp(35)
-                anchors.top: muscleSelect.bottom
-                anchors.left: muscleSelect.left
-            }
-
-            Item {
-                id: dates
-                width: parent.width - dp(40)
-                height: dateFromSelect.height
-                anchors.top: spacer4.bottom
                 anchors.horizontalCenter: parent.horizontalCenter
 
                 Item {
+                    id: secao
                     width: parent.width / 2
                     height: parent.height
                     anchors.left: parent.left
+                    anchors.top: parent.top
 
-                    Text {
-                        text: "De: "
-                        color: white
-                        anchors.bottom: dateFromSelect.top
-                        anchors.left: dateFromSelect.left
-                    }
+                    Rectangle {
+                        id: secaoRec
+                        anchors.fill: parent
+                        color: grayLight
 
-                    CustomButtom {
-                        id: dateFromSelect
-                        btnColor: grayLight
-                        btnBorderColor: grayLight
-                        btnRadius: root.dp(30)
-                        btnText: diaHoje + "/" + mesPassado + "/" + anoHoje
-                        btnBorderWidth: root.dp(1)
-                        btnTextColor: greenLight
-                        btnTextSize: root.sp(14)
+                        Rectangle {
+                            id: secaoGreenRec
+                            width: parent.width
+                            height: root.dp(4)
+                            color: greenDark
+                            anchors.bottom: secaoRec.bottom
+                        }
 
-                        anchors.horizontalCenter: parent.horizontalCenter
+                        Text {
+                            anchors.centerIn: parent
+                            color: white
+                            text: "Medidas por seção muscular"
+                            font.pixelSize: root.sp(12)
+                        }
 
                         MouseArea {
                             anchors.fill: parent
                             onClicked: {
-                                dateFrom = true;
-                                nativeUtils.displayDatePicker(Qt.formatDate(Date.fromLocaleString(Qt.locale(), dateFromSelect.btnText, "dd/MM/yyyy"), "yyyy-MM-dd"), "2000-01-01", dateMax1)
+                                medidaPorSecao.visible = true
+                                medidaCompleta.visible = false
+                                secaoRec.color = grayLight
+                                secaoGreenRec.visible = true
+                                completaGreenRec.visible = false
+                                completaRec.color = bgColor
                             }
                         }
                     }
                 }
 
                 Item {
+                    id: completa
                     width: parent.width / 2
                     height: parent.height
                     anchors.right: parent.right
+                    anchors.top: parent.top
 
-                    Text {
-                        text: "Até: "
-                        color: white
-                        anchors.bottom: dateToSelect.top
-                        anchors.left: dateToSelect.left
-                    }
+                    Rectangle {
+                        id: completaRec
+                        anchors.fill: parent
+                        color: bgColor
 
-                    CustomButtom {
-                        id: dateToSelect
-                        btnColor: grayLight
-                        btnBorderColor: grayLight
-                        btnRadius: root.dp(30)
-                        btnText: Qt.formatDate(new Date(), "dd/MM/yyyy")
-                        btnBorderWidth: root.dp(1)
-                        btnTextColor: greenLight
-                        btnTextSize: root.sp(14)
+                        Rectangle {
+                            id: completaGreenRec
+                            width: parent.width
+                            height: root.dp(4)
+                            color: greenDark
+                            anchors.bottom: completaRec.bottom
+                            visible: false
+                        }
 
-                        anchors.horizontalCenter: parent.horizontalCenter
+                        Text {
+                            anchors.centerIn: parent
+                            color: white
+                            text: "Medidas completas"
+                            font.pixelSize: root.sp(12)
+                        }
 
                         MouseArea {
                             anchors.fill: parent
                             onClicked: {
-                                dateTo = true;
-                                nativeUtils.displayDatePicker(Qt.formatDate(Date.fromLocaleString(Qt.locale(), dateToSelect.btnText, "dd/MM/yyyy"), "yyyy-MM-dd"), "2000-01-01", dateMax2)
+                                medidaPorSecao.visible = false
+                                medidaCompleta.visible = true
+                                secaoRec.color = bgColor
+                                secaoGreenRec.visible = false
+                                completaGreenRec.visible = true
+                                completaRec.color = grayLight
                             }
                         }
                     }
-                }
             }
-
-            Rectangle {
-                id: spacer3
-                height: dp(3)
-                width: parent.width
-                anchors.top: dates.bottom
-                anchors.left: parent.left
-                color: "transparent"
-            }
+        }
 
             Item {
-                id: graficoMuscle
+                id: medidaPorSecao
+                height: parent.height - tabIcons.height
                 width: parent.width
-                height: grafico.height
-                anchors.top: spacer3.bottom
+                anchors.top: tabIcons.bottom
 
-                Item {
-                    id: grafico
-                    width: parent.width - dp(40)
-                    height: width * 2 / 3
-                    anchors.horizontalCenter: parent.horizontalCenter
-
-                    ChartView {
-                        id: muscleChart
-                        title: ""
-                        width: parent.width
-                        height: parent.height
-                        antialiasing: true
-                        backgroundColor: bgColor
-
-                        ValueAxis {
-                            id: axisY1
-                            min: 25
-                            max: 31
-                            labelsVisible: false
-                            gridVisible: false
-                            lineVisible: false
-                        }
-
-                        ValueAxis {
-                            id: axisX1
-                            min: 0
-                            max: 3
-                            labelsVisible: false
-                            gridVisible: false
-                            lineVisible: false
-                        }
-
-                        SplineSeries{
-                            name: "esquerdo     "
-                            width: dp(3)
-                            color: greenDark
-                            axisX: axisX1
-                            axisY: axisY1
-
-                            XYPoint { x: 0; y: 26 }
-                            XYPoint { x: 1; y: 28 }
-                            XYPoint { x: 2; y: 30 }
-                            XYPoint { x: 3; y: 27 }
-                        }
-
-                        SplineSeries{
-                            name: "direito"
-                            width: dp(3)
-                            color: contrastColor3
-                            axisX: axisX1
-                            axisY: axisY1
-
-                            XYPoint { x: 0; y: 27 }
-                            XYPoint { x: 1; y: 30 }
-                            XYPoint { x: 2; y: 28 }
-                            XYPoint { x: 3; y: 26 }
-                        }
-                    }
+                MeasureAntropoGraphic {
+                    measureHeight: parent.height
+                    measureWidth: parent.width
                 }
             }
 
             Item {
-                id: footer
-                width: muscleSelect.width
-                height: txtItem.height + valueNowItem.height + valueMaxItem.height + valueMinItem.height + valueMedItem.height
+                id: medidaCompleta
+                height: parent.height - tabIcons.height
+                width: parent.width
+                anchors.top: tabIcons.bottom
+                visible: false
 
-                anchors.top: graficoMuscle.bottom
-                anchors.left: muscleSelect.left
-
-                Item {
-                    id: txtItem
-                    height: root.dp(20)
-                    width: parent.width
-                    anchors.top: parent.top
-                    anchors.left: parent.left
-
-                    Text {
-                        id: txt1
-                        width: parent.width / 2
-                        anchors.left: parent.left
-                        horizontalAlignment: Text.AlignHCenter
-
-                        text: "esquerdo"
-                        color: greenDark
-                        font.bold: true
-                        topPadding: root.dp(2)
-                        font.pixelSize: root.sp(16)
-                    }
-
-                    Text {
-                        id: txt2
-                        width: parent.width / 2
-                        anchors.right: parent.right
-                        horizontalAlignment: Text.AlignHCenter
-
-                        text: "direito"
-                        color: contrastColor3
-                        font.bold: true
-                        font.pixelSize: root.sp(16)
-                    }
-                }
-
-                Item {
-                    id: valueNowItem
-                    height: root.dp(20)
-                    width: parent.width
-                    anchors.top: txtItem.bottom
-                    anchors.left: parent.left
-
-                    Text {
-                        id: valueNowLeft
-                        width: parent.width / 2
-                        anchors.left: parent.left
-                        horizontalAlignment: Text.AlignHCenter
-
-                        text: "Atual: 27 cm"
-                        color: greenDark
-                        font.pixelSize: root.sp(14)
-                    }
-
-                    Text {
-                        id: valueNowRight
-                        width: parent.width / 2
-                        anchors.right: parent.right
-                        horizontalAlignment: Text.AlignHCenter
-
-                        text: "Atual: 29 cm"
-                        color: contrastColor3
-                        font.pixelSize: root.sp(14)
-                    }
-                }
-
-                Item {
-                    id: valueMaxItem
-                    height: root.dp(20)
-                    width: parent.width
-                    anchors.top: valueNowItem.bottom
-                    anchors.left: parent.left
-
-                    Text {
-                        id: valueMaxLeft
-                        width: parent.width / 2
-                        anchors.left: parent.left
-                        horizontalAlignment: Text.AlignHCenter
-
-                        text: "máx: 30 cm"
-                        font.pixelSize: root.sp(12)
-                        color: white
-                    }
-
-                    Text {
-                        id: valueMaxRight
-                        width: parent.width / 2
-                        anchors.right: parent.right
-                        horizontalAlignment: Text.AlignHCenter
-
-                        text: "máx: 29 cm"
-                        font.pixelSize: root.sp(12)
-                        color: white
-                    }
-                }
-
-                Item {
-                    id: valueMinItem
-                    height: root.dp(20)
-                    width: parent.width
-                    anchors.top: valueMaxItem.bottom
-                    anchors.left: parent.left
-
-                    Text {
-                        id: valueMinLeft
-                        width: parent.width / 2
-                        anchors.left: parent.left
-                        horizontalAlignment: Text.AlignHCenter
-
-                        text: "min: 26 cm"
-                        font.pixelSize: root.sp(12)
-                        color: white
-                    }
-
-                    Text {
-                        id: valueMinRight
-                        width: parent.width / 2
-                        anchors.right: parent.right
-                        horizontalAlignment: Text.AlignHCenter
-
-                        text: "min: 24 cm"
-                        font.pixelSize: root.sp(12)
-                        color: white
-                    }
-                }
-
-                Item {
-                    id: valueMedItem
-                    height: root.dp(20)
-                    width: parent.width
-                    anchors.top: valueMinItem.bottom
-                    anchors.left: parent.left
-
-                    Text {
-                        id: valueMedLeft
-                        width: parent.width / 2
-                        anchors.left: parent.left
-                        horizontalAlignment: Text.AlignHCenter
-
-                        text: "méd: 28.7 cm"
-                        font.pixelSize: root.sp(12)
-                        color: white
-                    }
-
-                    Text {
-                        id: valueMedRight
-                        width: parent.width / 2
-                        anchors.right: parent.right
-                        horizontalAlignment: Text.AlignHCenter
-
-                        text: "méd: 26.3 cm"
-                        font.pixelSize: root.sp(12)
-                        color: white
-                    }
+                MeasureAntropo {
+                    measureHeight: parent.height
+                    measureWidth: parent.width
                 }
             }
         }
@@ -423,11 +167,6 @@ Page {
 
     Connections {
         target: nativeUtils
-
-        onAlertSheetFinished: {
-            if(index>=0)
-                muscleSelectUser.cbTextSelected = muscles[index]
-        }
 
         onDatePickerFinished: {
             var pickedDate
@@ -463,10 +202,4 @@ Page {
             }
         }
     }
-
-    }
-
-    ScrollIndicator {
-        flickable: scrollAntropoPage
-    } // scroll indicator
 }

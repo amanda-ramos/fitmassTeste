@@ -14,11 +14,7 @@ Page {
     height: screenSizeY
     width: screenSizeX
 
-    backgroundColor: bgColor
-
     property color txtColor: greenDark
-    property color userTxtColor: "#4b4b4b"
-    property color backEditField: "#efefef"
 
     property var pathImage: ""
 
@@ -216,6 +212,7 @@ Page {
                         tfRadius: root.dp(30)
                         tfTextTitle: "Nome: *"
                         tfTextText: ""
+                        tfTextType:  Qt.ImhNoPredictiveText
                     }
                 }
 
@@ -236,7 +233,7 @@ Page {
                         tfColor: grayLight
                         tfRadius: root.dp(30)
                         tfTextTitle: "E-mail: *"
-                        tfTextType: Qt.ImhEmailCharactersOnly
+                        tfTextType: Qt.ImhNoAutoUppercase | Qt.ImhNoPredictiveText | Qt.ImhPreferLowercase | Qt.ImhEmailCharactersOnly
                         tfTextText: ""
                     }
                 }
@@ -375,7 +372,7 @@ Page {
                         tfColor: grayLight
                         tfRadius: root.dp(30)
                         tfTextTitle: "Senha: *"
-                        tfTextType: Qt.ImhHiddenText
+                        tfTextType: Qt.ImhNoAutoUppercase | Qt.ImhNoPredictiveText | Qt.ImhPreferLowercase | Qt.ImhHiddenText
                         tfEchoMode: TextInput.Password
                         tfTextText: ""
                     }

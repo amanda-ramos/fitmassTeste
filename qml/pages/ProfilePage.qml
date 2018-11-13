@@ -10,7 +10,6 @@ Page {
     title: "Perfil"
     height: screenSizeY
     width: screenSizeX
-    backgroundColor: bgColor
 
     function splitString (str){
         // Função para separar a primeira e última palavra da String
@@ -47,7 +46,6 @@ Page {
       IconButtonBarItem {
           title: "Editar Perfil"
           icon: IconType.pencil
-          iconSize: root.dp(25)
 
           onClicked: {
             profileStack.push(editProfileView);

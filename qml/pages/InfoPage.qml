@@ -8,18 +8,18 @@ import "../pages"
 Page {
     title: "Informações"
     id: infoPage
-    height: 960
-    width: 640
+    height: screenSizeY
+    width: screenSizeX
 
-    property int titleFontSize: 6
-    property var titleTopPadding: dp(15)
-    property var titleBottomPadding: dp(15)
-    property var titleLeftPadding: dp(5)
-    property var textRightPadding: dp(15)
-    property var textLeftPadding: dp(15)
-    property color titleColor: verdeMassa
-    property color textColor: "#4b4b4b"
-
+    property int titleFontSize: root.sp(14)
+    property int textFontSize: root.sp(12)
+    property var titleTopPadding: root.dp(15)
+    property var titleBottomPadding: root.dp(15)
+    property var titleLeftPadding: root.dp(5)
+    property var textRightPadding: root.dp(15)
+    property var textLeftPadding: root.dp(15)
+    property color titleColor: greenDark
+    property color textColor: grayLight2
 
     AppFlickable {
         id: scrollInfo
@@ -39,7 +39,7 @@ Page {
 
             Item {
                 width: parent.width
-                height: row1.height + row2.height + row3.height + row4.height + row5.height + 100
+                height: row1.height + row2.height + row3.height + row4.height + row5.height + root.dp(50)
 
                 Row {
                     id: row1
@@ -54,7 +54,7 @@ Page {
                         text: "Análise da Composição Corporal"
                         color: titleColor
                         font.bold: true
-                        font.pointSize: sp(titleFontSize)
+                        font.pixelSize: titleFontSize
                         horizontalAlignment: Text.AlignJustify
                         topPadding: titleTopPadding
                         leftPadding: titleLeftPadding
@@ -67,6 +67,7 @@ Page {
                         width: parent.width
                         text: "O peso do corpo é a soma da Água Corporal Total, Proteínas, Minerais e Massa de Gordura. Mantenha uma composição corporal equilibrada para se manter saudável."
                         color: textColor
+                        font.pixelSize: textFontSize
                         horizontalAlignment: Text.AlignJustify
                         leftPadding: textLeftPadding
                         rightPadding: textRightPadding
@@ -89,7 +90,7 @@ Page {
                         text: "Análise Músculo - Gordura"
                         color: titleColor
                         font.bold: true
-                        font.pointSize: sp(titleFontSize)
+                        font.pixelSize: titleFontSize
                         horizontalAlignment: Text.AlignJustify
                         anchors.top: parent.top
                         topPadding: titleTopPadding
@@ -102,6 +103,7 @@ Page {
                         width: parent.width
                         text: "Compare os comprimentos das barras da massa muscular esquelética e massa de gordura. Quanto maior a barra da massa muscular esquelética comparada com a barra de massa de gordura corporal, mais forte o corpo está. Massa muscular esquelética é a quantidade de músculo ligado aos ossos. A Massa de gordura corporal é a soma de gordura subcutânea, gordura visceral, gordura em volta dos músculos. A gordura subcutânea é encontrada sob a pele, enquanto a gordura visceral encontra-se em torno dos órgãos internos do abdômen."
                         color: textColor
+                        font.pixelSize: textFontSize
                         horizontalAlignment: Text.AlignJustify
                         leftPadding: textLeftPadding
                         rightPadding: textRightPadding
@@ -124,7 +126,7 @@ Page {
                         text: "Análise de Obesidade"
                         color: titleColor
                         font.bold: true
-                        font.pointSize: sp(titleFontSize)
+                        font.pixelSize: titleFontSize
                         horizontalAlignment: Text.AlignJustify
                         anchors.top: parent.top
                         topPadding: titleTopPadding
@@ -137,6 +139,7 @@ Page {
                         width: parent.width
                         text: "O IMC é um índice utilizado para determinar a obesidade, através da altura e peso.\n\nIMC = peso/altura² (kg/m²).\n\nO PGC é a porcentual de gordura corporal em relação ao peso corporal."
                         color: textColor
+                        font.pixelSize: textFontSize
                         horizontalAlignment: Text.AlignJustify
                         leftPadding: textLeftPadding
                         rightPadding: textRightPadding
@@ -159,7 +162,7 @@ Page {
                         text: "Análise Segmentar da Massa Magra"
                         color: titleColor
                         font.bold: true
-                        font.pointSize: sp(titleFontSize)
+                        font.pixelSize: titleFontSize
                         horizontalAlignment: Text.AlignJustify
                         anchors.top: parent.top
                         topPadding: titleTopPadding
@@ -172,6 +175,7 @@ Page {
                         width: parent.width
                         text: "Avalia se a quantidade de músculos está distribuída de maneira adequada em todas as partes do corpo. Compara a massa muscular atual em relação à ideal."
                         color: textColor
+                        font.pixelSize: textFontSize
                         horizontalAlignment: Text.AlignJustify
                         leftPadding: textLeftPadding
                         rightPadding: textRightPadding
@@ -194,7 +198,7 @@ Page {
                         text: "Análise Segmentar da Massa de Gordura"
                         color: titleColor
                         font.bold: true
-                        font.pointSize: sp(titleFontSize)
+                        font.pixelSize: titleFontSize
                         horizontalAlignment: Text.AlignJustify
                         anchors.top: parent.top
                         topPadding: titleTopPadding
@@ -207,6 +211,7 @@ Page {
                         width: parent.width
                         text: "Avalia se a quantidade de gordura é distribuída de maneira adequada em todas as partes do corpo. Compara a massa gorda ao ideal."
                         color: textColor
+                        font.pixelSize: textFontSize
                         horizontalAlignment: Text.AlignJustify
                         leftPadding: textLeftPadding
                         rightPadding: textRightPadding

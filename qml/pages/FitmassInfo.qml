@@ -11,8 +11,6 @@ Page {
     height: screenSizeY
     width: screenSizeX
 
-    backgroundColor: bgColor
-
     property int titleFontSize: root.sp(16)
     property var titleTopPadding: root.dp(15)
     property var titleBottomPadding: root.dp(15)

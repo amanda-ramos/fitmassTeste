@@ -49,5 +49,9 @@
     <string>App would like to access the camera.</string>
     <key>NSContactsUsageDescription</key>
     <string>App would like to read contacts from the Addressbook.</string>
+    <key>UIStatusBarStyle</key>
+    <string>UIStatusBarStyleLightContent</string>
+    <key>UIViewControllerBasedStatusBarAppearance</key>
+    <false/>
 </dict>
 </plist>

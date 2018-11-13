@@ -53,4 +53,7 @@ macx {
 DISTFILES += \
     qml/common/CustomButtom.qml \
     qml/common/CustomTextField.qml \
-    qml/common/CustomTextView.qml
+    qml/common/CustomTextView.qml \
+    qml/common/CustomTextFieldInterativo.qml \
+    qml/common/MeasureAntropo.qml \
+    qml/common/MeasureAntropoGraphic.qml

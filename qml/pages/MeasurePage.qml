@@ -11,7 +11,8 @@ Page {
     title: "Medida"
     height: screenSizeY
     width: screenSizeX
-    backgroundColor: bgColor
+
+    property var teste2
 
     property var weightValor
     property var muscleValor
@@ -35,20 +36,30 @@ Page {
       IconButtonBarItem {
           title: "Compartilhar"
           icon: IconType.sharealt
-          iconSize: root.dp(25)
 
           onClicked: {
-            measureItemSource.grabToImage(function(result){
-                result.saveToFile("medida.png")
-                nativeUtils.share("Link da imagem: " + result.url, "")
+
+            var teste = contentMeasure.grabToImage(function(result){
+
+                if(isPlatform(System.Android)){
+                teste2 = result.saveToFile("medida2.jpg")
+                iconPeso.source = result.url
+                //nativeUtils.share("Link da imagem: " + result.url, "")
+                console.log("SAVE IMAGE: " + teste2)
+                }else{
+                    teste2 = result.saveToFile("medida2.jpg")
+                    iconPeso.source = result.url
+                    //nativeUtils.share("Link da imagem: " + result.url, "")
+                    console.log("SAVE IMAGE: " + teste2)
+                }
             })
+             console.log("GRAB IMAGE: " + teste)
         }
       }
 
       IconButtonBarItem {
           title: "Deletar"
           icon: IconType.trash
-          iconSize: root.dp(25)
 
           onClicked: {
               console.log("DELETAR Dialog - key: " + keyCard)

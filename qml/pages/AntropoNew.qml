@@ -7,8 +7,10 @@ import "../pages"
 Page {
     id: antropoNewPage
     title: "Nova medida"
-    height: 960
-    width: 640
+    height: screenSizeY
+    width: screenSizeX
+
+    property color txtTitle: greenDark
 
     rightBarItem: NavigationBarRow {
         id: rightNavBarRowMeasureCorp
@@ -18,11 +20,11 @@ Page {
             icon: IconType.check
 
             onClicked: {
-                if (txtRightArmBicepsUser.text == "" || txtRightArmAntebracoUser.text
-                        == "" || txtLeftArmBicepsUser.text == "" || txtLeftArmAntebracoUser.text
-                        == "" || txtChest.text == "" || txtWaist.text == "" || txtHip
-                        == "" || txtRightLegThighUser == "" || txtRightLegCalfUser
-                        == "" || txtLeftLegThighUser.text == "" || txtLeftLegCalfUser.text == "") {
+                if (rightBiceps.tfTextText === "" || rightAntebraco.tfTextText
+                        === "" || leftBiceps.tfTextText === "" || leftAntebraco.tfTextText
+                        === "" || chestItem.tfTextText === "" || waistItem.tfTextText === "" || hipItem.tfTextText
+                        === "" || rightThigh.tfTextText === "" || rightCalf.tfTextText
+                        === "" || leftThigh.tfTextText === "" || leftCalf.tfTextText === "") {
 
                     nativeUtils.displayAlertDialog(
                                 "Atenção",
@@ -57,7 +59,7 @@ Page {
         AppImage {
             id: personRef
             source: "../../assets/Wantropo.png"
-            height: parent.height - dp(30)
+            width: parent.width - root.dp(40)
             fillMode: Image.PreserveAspectFit
             anchors.centerIn: parent
         }
@@ -94,27 +96,27 @@ Page {
                 Text {
                     id: txtDatePicker
                     text: "Data"
-                    color: amareloMassa
+                    color: txtTitle
                     font.bold: true
                     anchors.left: parent.left
                     anchors.top: parent.top
-                    width: parent.width
-                    topPadding: dp(10)
+                    width: parent.width - root.dp(10)
+                    topPadding: root.dp(10)
                     horizontalAlignment: Text.AlignHCenter
                 }
 
                 Item {
                     id: datePickerUser
-                    height: txtDatePickerUser.height
+                    height: dateBackground.height
                     width: parent.width
                     anchors.right: parent.right
                     anchors.top: txtDatePicker.bottom
 
                     Rectangle {
                         id: spacer2
-                        width: dp(20)
+                        width: root.dp(15)
                         height: parent.height
-                        anchors.right: parent.right
+                        anchors.right: dateBackground.right
                         anchors.top: parent.top
                         color: "transparent"
                     }
@@ -122,19 +124,30 @@ Page {
                     Image {
                         id: seta
                         source: "../../assets/seta.png"
-                        width: dp(15)
+                        width: root.dp(15)
                         fillMode: Image.PreserveAspectFit
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.right: spacer2.left
                     }
 
+                    Rectangle {
+                        id: dateBackground
+                        width: parent.width - root.dp(10)
+                        height: root.dp(40)
+                        anchors.top: parent.top
+                        anchors.left: parent.left
+
+                        color: tfColor
+                        radius: root.dp(30)
+                        z: -1
+                    }
+
                     Text {
                         id: txtDatePickerUser
-                        anchors.top: parent.top
-                        width: parent.width - dp(10)
-                        anchors.horizontalCenter: parent.horizontalCenter
+                        width: parent.width - root. dp(10)
+                        anchors.verticalCenter: dateBackground.verticalCenter
+                        anchors.horizontalCenter: dateBackground.horizontalCenter
                         horizontalAlignment: Text.AlignHCenter
-                        topPadding: dp(5)
 
                         text: Qt.formatDate(new Date(), "dd MMM yyyy")
                         color: "#b4b4b4"
@@ -170,7 +183,6 @@ Page {
                                         if (hour === 00) {
                                             txtDatePickerUser.text = Qt.formatDate(
                                                         date, "dd MMM yyyy")
-                                            txtDatePickerUser.color = "black"
                                         } else {
                                             Date.prototype.addHours = function (h) {
                                                 this.setTime(
@@ -182,8 +194,8 @@ Page {
                                                         date.addHours(
                                                             24 - hour),
                                                         "dd MMM yyyy")
-                                            txtDatePickerUser.color = "black"
                                         }
+                                        txtDatePickerUser.color = greenLight
                                     }
                                 }
                             }
@@ -202,99 +214,53 @@ Page {
                 Text {
                     id: txtRightArm
                     text: "Braço direito"
-                    color: amareloMassa
+                    color: txtTitle
                     font.bold: true
                     anchors.left: parent.left
                     anchors.top: parent.top
-                    width: parent.width
+                    width: parent.width - root.dp(10)
                     topPadding: dp(10)
                     horizontalAlignment: Text.AlignHCenter
                 }
 
-                Item {
+                CustomTextFieldInterativo {
                     id: rightBiceps
-                    height: rightBicepsUser.height
-                    width: parent.width / 2
-                    anchors.left: parent.left
+                    height: root.dp(70)
                     anchors.top: txtRightArm.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-                    Text {
-                        id: txtRightArmBiceps
-                        width: parent.width
-                        height: parent.height
-                        text: "Bíceps: "
-                        color: verdeMassa
-                        anchors.left: parent.left
-                        verticalAlignment: Text.AlignBottom
-                    }
+                    tfTitleColor: white
+                    tfTextColor: greenLight
+                    tfColor: grayLight
+                    tfRadius: root.dp(30)
+                    tfTextTitle: "Bíceps: "
+                    tfTextText: ""
+                    tfWidth: parent.width
+                    tfHeight: root.dp(40)
+                    tfTextType: Qt.ImhFormattedNumbersOnly
+
+                    sourceImage: "../../assets/Wbicepsdireito.png"
                 }
 
-                Item {
-                    id: rightBicepsUser
-                    height: txtRightArmBicepsUser.height
-                    width: parent.width / 2
-                    anchors.right: parent.right
-                    anchors.top: txtRightArm.bottom
-
-                    AppTextField {
-                        id: txtRightArmBicepsUser
-                        anchors.top: parent.top
-                        width: parent.width - dp(10)
-                        rightPadding: dp(3)
-                        inputMethodHints: Qt.ImhFormattedNumbersOnly
-
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: {
-                                personRef.source = "../../assets/Wbicepsdireito.png"
-                                txtRightArmBicepsUser.forceActiveFocus()
-                            }
-                        }
-                    }
-                }
-
-                Item {
+                CustomTextFieldInterativo {
                     id: rightAntebraco
-                    height: rightBicepsUser.height
-                    width: parent.width / 2
-                    anchors.left: parent.left
+                    height: root.dp(70)
                     anchors.top: rightBiceps.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-                    Text {
-                        id: txtRightArmAntebraco
-                        width: parent.width
-                        height: parent.height
-                        text: "Antebraço: "
-                        color: verdeMassa
-                        anchors.left: parent.left
-                        verticalAlignment: Text.AlignBottom
-                    }
+                    tfTitleColor: white
+                    tfTextColor: greenLight
+                    tfColor: grayLight
+                    tfRadius: root.dp(30)
+                    tfTextTitle: "Antebraço: "
+                    tfTextText: ""
+                    tfWidth: parent.width
+                    tfHeight: root.dp(40)
+                    tfTextType: Qt.ImhFormattedNumbersOnly
+
+                    sourceImage: "../../assets/Wantebraçodireito.png"
                 }
-
-                Item {
-                    id: rightAntebracoUser
-                    height: txtRightArmAntebracoUser.height
-                    width: parent.width / 2
-                    anchors.right: parent.right
-                    anchors.top: rightBiceps.bottom
-
-                    AppTextField {
-                        id: txtRightArmAntebracoUser
-                        anchors.top: parent.top
-                        width: parent.width - dp(10)
-                        rightPadding: dp(3)
-                        inputMethodHints: Qt.ImhFormattedNumbersOnly
-
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: {
-                                personRef.source = "../../assets/Wantebraçodireito.png"
-                                txtRightArmAntebracoUser.forceActiveFocus()
-                            }
-                        }
-                    }
-                }
-            }
+          }
 
             Item {
                 id: leftArm
@@ -306,97 +272,51 @@ Page {
                 Text {
                     id: txtLeftArm
                     text: "Braço esquerdo"
-                    color: amareloMassa
+                    color: txtTitle
                     font.bold: true
                     anchors.left: parent.left
                     anchors.top: parent.top
-                    width: parent.width
+                    width: parent.width - root.dp(10)
                     topPadding: dp(10)
                     horizontalAlignment: Text.AlignHCenter
                 }
 
-                Item {
+                CustomTextFieldInterativo {
                     id: leftBiceps
-                    height: leftBicepsUser.height
-                    width: parent.width / 2
-                    anchors.left: parent.left
+                    height: root.dp(70)
                     anchors.top: txtLeftArm.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-                    Text {
-                        id: txtLeftArmBiceps
-                        width: parent.width
-                        height: parent.height
-                        text: "Bíceps: "
-                        color: verdeMassa
-                        anchors.left: parent.left
-                        verticalAlignment: Text.AlignBottom
-                    }
+                    tfTitleColor: white
+                    tfTextColor: greenLight
+                    tfColor: grayLight
+                    tfRadius: root.dp(30)
+                    tfTextTitle: "Bíceps: "
+                    tfTextText: ""
+                    tfWidth: parent.width
+                    tfHeight: root.dp(40)
+                    tfTextType: Qt.ImhFormattedNumbersOnly
+
+                    sourceImage: "../../assets/Wbicepsesquerdo.png"
                 }
 
-                Item {
-                    id: leftBicepsUser
-                    height: txtLeftArmBicepsUser.height
-                    width: parent.width / 2
-                    anchors.right: parent.right
-                    anchors.top: txtLeftArm.bottom
-
-                    AppTextField {
-                        id: txtLeftArmBicepsUser
-                        anchors.top: parent.top
-                        width: parent.width - dp(10)
-                        rightPadding: dp(3)
-                        inputMethodHints: Qt.ImhFormattedNumbersOnly
-
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: {
-                                personRef.source = "../../assets/Wbicepsesquerdo.png"
-                                txtLeftArmBicepsUser.forceActiveFocus()
-                            }
-                        }
-                    }
-                }
-
-                Item {
+                CustomTextFieldInterativo {
                     id: leftAntebraco
-                    height: leftBicepsUser.height
-                    width: parent.width / 2
-                    anchors.left: parent.left
+                    height: root.dp(70)
                     anchors.top: leftBiceps.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-                    Text {
-                        id: txtLeftArmAntebraco
-                        width: parent.width
-                        height: parent.height
-                        text: "Antebraço: "
-                        color: verdeMassa
-                        anchors.left: parent.left
-                        verticalAlignment: Text.AlignBottom
-                    }
-                }
+                    tfTitleColor: white
+                    tfTextColor: greenLight
+                    tfColor: grayLight
+                    tfRadius: root.dp(30)
+                    tfTextTitle: "Antebraço: "
+                    tfTextText: ""
+                    tfWidth: parent.width
+                    tfHeight: root.dp(40)
+                    tfTextType: Qt.ImhFormattedNumbersOnly
 
-                Item {
-                    id: leftAntebracoUser
-                    height: txtLeftArmAntebracoUser.height
-                    width: parent.width / 2
-                    anchors.right: parent.right
-                    anchors.top: leftBiceps.bottom
-
-                    AppTextField {
-                        id: txtLeftArmAntebracoUser
-                        anchors.top: parent.top
-                        width: parent.width - dp(10)
-                        rightPadding: dp(3)
-                        inputMethodHints: Qt.ImhFormattedNumbersOnly
-
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: {
-                                personRef.source = "../../assets/Wantebraçoesquerdo.png"
-                                txtLeftArmAntebracoUser.forceActiveFocus()
-                            }
-                        }
-                    }
+                    sourceImage: "../../assets/Wantebraçoesquerdo.png"
                 }
             }
 
@@ -410,55 +330,32 @@ Page {
                 Text {
                     id: txtChest
                     text: "Peitoral"
-                    color: amareloMassa
+                    color: txtTitle
                     font.bold: true
                     anchors.left: parent.left
                     anchors.top: parent.top
-                    width: parent.width
+                    width: parent.width - root.dp(10)
                     topPadding: dp(10)
                     horizontalAlignment: Text.AlignHCenter
                 }
 
-                Item {
+                CustomTextFieldInterativo {
                     id: chestItem
-                    height: chestUser.height
-                    width: parent.width / 2
-                    anchors.left: parent.left
+                    height: root.dp(50)
                     anchors.top: txtChest.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-                    Text {
-                        id: txtChestItem
-                        width: parent.width
-                        height: parent.height
-                        text: "Peitoral: "
-                        color: verdeMassa
-                        anchors.left: parent.left
-                        verticalAlignment: Text.AlignBottom
-                    }
-                }
+                    tfTitleColor: white
+                    tfTextColor: greenLight
+                    tfColor: grayLight
+                    tfRadius: root.dp(30)
+                    tfTextTitle: ""
+                    tfTextText: ""
+                    tfWidth: parent.width
+                    tfHeight: root.dp(20)
+                    tfTextType: Qt.ImhFormattedNumbersOnly
 
-                Item {
-                    id: chestUser
-                    height: txtChestUser.height
-                    width: parent.width / 2
-                    anchors.right: parent.right
-                    anchors.top: txtChest.bottom
-
-                    AppTextField {
-                        id: txtChestUser
-                        anchors.top: parent.top
-                        width: parent.width - dp(10)
-                        rightPadding: dp(3)
-                        inputMethodHints: Qt.ImhFormattedNumbersOnly
-
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: {
-                                personRef.source = "../../assets/Wpeitoral.png"
-                                txtChestUser.forceActiveFocus()
-                            }
-                        }
-                    }
+                    sourceImage: "../../assets/Wpeitoral.png"
                 }
             }
 
@@ -472,55 +369,32 @@ Page {
                 Text {
                     id: txtWaist
                     text: "Cintura"
-                    color: amareloMassa
+                    color: txtTitle
                     font.bold: true
                     anchors.left: parent.left
                     anchors.top: parent.top
-                    width: parent.width
+                    width: parent.width - root.dp(10)
                     topPadding: dp(10)
                     horizontalAlignment: Text.AlignHCenter
                 }
 
-                Item {
+                CustomTextFieldInterativo {
                     id: waistItem
-                    height: waistUser.height
-                    width: parent.width / 2
-                    anchors.left: parent.left
+                    height: root.dp(50)
                     anchors.top: txtWaist.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-                    Text {
-                        id: txtWaistItem
-                        width: parent.width
-                        height: parent.height
-                        text: "Cintura: "
-                        color: verdeMassa
-                        anchors.left: parent.left
-                        verticalAlignment: Text.AlignBottom
-                    }
-                }
+                    tfTitleColor: white
+                    tfTextColor: greenLight
+                    tfColor: grayLight
+                    tfRadius: root.dp(30)
+                    tfTextTitle: ""
+                    tfTextText: ""
+                    tfWidth: parent.width
+                    tfHeight: root.dp(20)
+                    tfTextType: Qt.ImhFormattedNumbersOnly
 
-                Item {
-                    id: waistUser
-                    height: txtWaistUser.height
-                    width: parent.width / 2
-                    anchors.right: parent.right
-                    anchors.top: txtWaist.bottom
-
-                    AppTextField {
-                        id: txtWaistUser
-                        anchors.top: parent.top
-                        width: parent.width - dp(10)
-                        rightPadding: dp(3)
-                        inputMethodHints: Qt.ImhFormattedNumbersOnly
-
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: {
-                                personRef.source = "../../assets/Wcintura.png"
-                                txtWaistUser.forceActiveFocus()
-                            }
-                        }
-                    }
+                    sourceImage: "../../assets/Wcintura.png"
                 }
             }
 
@@ -534,55 +408,32 @@ Page {
                 Text {
                     id: txtHip
                     text: "Quadril"
-                    color: amareloMassa
+                    color: txtTitle
                     font.bold: true
                     anchors.left: parent.left
                     anchors.top: parent.top
-                    width: parent.width
+                    width: parent.width - root.dp(10)
                     topPadding: dp(10)
                     horizontalAlignment: Text.AlignHCenter
                 }
 
-                Item {
+                CustomTextFieldInterativo {
                     id: hipItem
-                    height: waistUser.height
-                    width: parent.width / 2
-                    anchors.left: parent.left
+                    height: root.dp(50)
                     anchors.top: txtHip.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-                    Text {
-                        id: txtHipItem
-                        width: parent.width
-                        height: parent.height
-                        text: "Quadril: "
-                        color: verdeMassa
-                        anchors.left: parent.left
-                        verticalAlignment: Text.AlignBottom
-                    }
-                }
+                    tfTitleColor: white
+                    tfTextColor: greenLight
+                    tfColor: grayLight
+                    tfRadius: root.dp(30)
+                    tfTextTitle: ""
+                    tfTextText: ""
+                    tfWidth: parent.width
+                    tfHeight: root.dp(20)
+                    tfTextType: Qt.ImhFormattedNumbersOnly
 
-                Item {
-                    id: hipUser
-                    height: txtWaistUser.height
-                    width: parent.width / 2
-                    anchors.right: parent.right
-                    anchors.top: txtHip.bottom
-
-                    AppTextField {
-                        id: txtHipUser
-                        anchors.top: parent.top
-                        width: parent.width - dp(10)
-                        rightPadding: dp(3)
-                        inputMethodHints: Qt.ImhFormattedNumbersOnly
-
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: {
-                                personRef.source = "../../assets/Wquadril.png"
-                                txtHipUser.forceActiveFocus()
-                            }
-                        }
-                    }
+                    sourceImage: "../../assets/Wquadril.png"
                 }
             }
 
@@ -596,98 +447,53 @@ Page {
                 Text {
                     id: txtRightLeg
                     text: "Perna direita"
-                    color: amareloMassa
+                    color: txtTitle
                     font.bold: true
                     anchors.left: parent.left
                     anchors.top: parent.top
-                    width: parent.width
+                    width: parent.width - root.dp(10)
                     topPadding: dp(10)
                     horizontalAlignment: Text.AlignHCenter
                 }
 
-                Item {
+                CustomTextFieldInterativo {
                     id: rightThigh
-                    height: rightThighUser.height
-                    width: parent.width / 2
-                    anchors.left: parent.left
+                    height: root.dp(70)
                     anchors.top: txtRightLeg.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-                    Text {
-                        id: txtRightLegThigh
-                        width: parent.width
-                        height: parent.height
-                        text: "Coxa: "
-                        color: verdeMassa
-                        anchors.left: parent.left
-                        verticalAlignment: Text.AlignBottom
-                    }
+                    tfTitleColor: white
+                    tfTextColor: greenLight
+                    tfColor: grayLight
+                    tfRadius: root.dp(30)
+                    tfTextTitle: "Coxa: "
+                    tfTextText: ""
+                    tfWidth: parent.width
+                    tfHeight: root.dp(40)
+                    tfTextType: Qt.ImhFormattedNumbersOnly
+
+                    sourceImage: "../../assets/Wcoxadireita.png"
                 }
 
-                Item {
-                    id: rightThighUser
-                    height: txtRightLegThighUser.height
-                    width: parent.width / 2
-                    anchors.right: parent.right
-                    anchors.top: txtRightLeg.bottom
-
-                    AppTextField {
-                        id: txtRightLegThighUser
-                        anchors.top: parent.top
-                        width: parent.width - dp(10)
-                        rightPadding: dp(3)
-                        inputMethodHints: Qt.ImhFormattedNumbersOnly
-
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: {
-                                personRef.source = "../../assets/Wcoxadireita.png"
-                                txtRightLegThighUser.forceActiveFocus()
-                            }
-                        }
-                    }
-                }
-
-                Item {
+                CustomTextFieldInterativo {
                     id: rightCalf
-                    height: rightCalfUser.height
-                    width: parent.width / 2
-                    anchors.left: parent.left
+                    height: root.dp(70)
                     anchors.top: rightThigh.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-                    Text {
-                        id: txtRightLegCalf
-                        width: parent.width
-                        height: parent.height
-                        text: "Panturrilha: "
-                        color: verdeMassa
-                        anchors.left: parent.left
-                        verticalAlignment: Text.AlignBottom
-                    }
+                    tfTitleColor: white
+                    tfTextColor: greenLight
+                    tfColor: grayLight
+                    tfRadius: root.dp(30)
+                    tfTextTitle: "Panturrilha: "
+                    tfTextText: ""
+                    tfWidth: parent.width
+                    tfHeight: root.dp(40)
+                    tfTextType: Qt.ImhFormattedNumbersOnly
+
+                    sourceImage: "../../assets/Wpanturrilhadireita.png"
                 }
 
-                Item {
-                    id: rightCalfUser
-                    height: txtRightLegCalfUser.height
-                    width: parent.width / 2
-                    anchors.right: parent.right
-                    anchors.top: rightThigh.bottom
-
-                    AppTextField {
-                        id: txtRightLegCalfUser
-                        anchors.top: parent.top
-                        width: parent.width - dp(10)
-                        rightPadding: dp(3)
-                        inputMethodHints: Qt.ImhFormattedNumbersOnly
-
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: {
-                                personRef.source = "../../assets/Wpanturrilhadireita.png"
-                                txtRightLegCalfUser.forceActiveFocus()
-                            }
-                        }
-                    }
-                }
             }
 
             Item {
@@ -700,97 +506,51 @@ Page {
                 Text {
                     id: txtLeftLeg
                     text: "Perna esquerda"
-                    color: amareloMassa
+                    color: txtTitle
                     font.bold: true
                     anchors.left: parent.left
                     anchors.top: parent.top
-                    width: parent.width
+                    width: parent.width - root.dp(10)
                     topPadding: dp(10)
                     horizontalAlignment: Text.AlignHCenter
                 }
 
-                Item {
+                CustomTextFieldInterativo {
                     id: leftThigh
-                    height: leftThighUser.height
-                    width: parent.width / 2
-                    anchors.left: parent.left
+                    height: root.dp(70)
                     anchors.top: txtLeftLeg.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-                    Text {
-                        id: txtLeftLegThigh
-                        width: parent.width
-                        height: parent.height
-                        text: "Coxa: "
-                        color: verdeMassa
-                        anchors.left: parent.left
-                        verticalAlignment: Text.AlignBottom
-                    }
+                    tfTitleColor: white
+                    tfTextColor: greenLight
+                    tfColor: grayLight
+                    tfRadius: root.dp(30)
+                    tfTextTitle: "Coxa: "
+                    tfTextText: ""
+                    tfWidth: parent.width
+                    tfHeight: root.dp(40)
+                    tfTextType: Qt.ImhFormattedNumbersOnly
+
+                    sourceImage: "../../assets/Wcoxaesquerda.png"
                 }
 
-                Item {
-                    id: leftThighUser
-                    height: txtLeftLegThighUser.height
-                    width: parent.width / 2
-                    anchors.right: parent.right
-                    anchors.top: txtLeftLeg.bottom
-
-                    AppTextField {
-                        id: txtLeftLegThighUser
-                        anchors.top: parent.top
-                        width: parent.width - dp(10)
-                        rightPadding: dp(3)
-                        inputMethodHints: Qt.ImhFormattedNumbersOnly
-
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: {
-                                personRef.source = "../../assets/Wcoxaesquerda.png"
-                                txtLeftLegThighUser.forceActiveFocus()
-                            }
-                        }
-                    }
-                }
-
-                Item {
+                CustomTextFieldInterativo {
                     id: leftCalf
-                    height: leftThighUser.height
-                    width: parent.width / 2
-                    anchors.left: parent.left
+                    height: root.dp(70)
                     anchors.top: leftThigh.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-                    Text {
-                        id: txtLeftLegCalf
-                        width: parent.width
-                        height: parent.height
-                        text: "Panturrilha: "
-                        color: verdeMassa
-                        anchors.left: parent.left
-                        verticalAlignment: Text.AlignBottom
-                    }
-                }
+                    tfTitleColor: white
+                    tfTextColor: greenLight
+                    tfColor: grayLight
+                    tfRadius: root.dp(30)
+                    tfTextTitle: "Panturrilha: "
+                    tfTextText: ""
+                    tfWidth: parent.width
+                    tfHeight: root.dp(40)
+                    tfTextType: Qt.ImhFormattedNumbersOnly
 
-                Item {
-                    id: leftCalfUser
-                    height: txtLeftLegCalfUser.height
-                    width: parent.width / 2
-                    anchors.right: parent.right
-                    anchors.top: leftThigh.bottom
-
-                    AppTextField {
-                        id: txtLeftLegCalfUser
-                        anchors.top: parent.top
-                        width: parent.width - dp(10)
-                        rightPadding: dp(3)
-                        inputMethodHints: Qt.ImhFormattedNumbersOnly
-
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: {
-                                personRef.source = "../../assets/Wpanturrilhaesquerda.png"
-                                txtLeftLegCalfUser.forceActiveFocus()
-                            }
-                        }
-                    }
+                    sourceImage: "../../assets/Wpanturrilhaesquerda.png"
                 }
             }
         }

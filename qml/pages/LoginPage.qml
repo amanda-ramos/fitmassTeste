@@ -11,10 +11,9 @@ Page {
     height: screenSizeY
     width: screenSizeX
 
-    backgroundColor: bgColor
-
     Component.onCompleted: {
         content.forceActiveFocus()
+    //    Theme.colors.statusBarStyle = Theme.colors.statusBarStyleHidden
     }
 
     property var txtPadding: dp(10)
@@ -90,11 +89,11 @@ Page {
                         showClearButton: true
                         borderWidth: 0
                         placeholderColor: grayLight
-                        inputMethodHints: Qt.ImhEmailCharactersOnly
                         text: userEmail
                         textColor: greenDark
                         font.pixelSize: root.sp(14)
                         backgroundColor: bgColor
+                        inputMethodHints: Qt.ImhNoAutoUppercase | Qt.ImhNoPredictiveText | Qt.ImhPreferLowercase | Qt.ImhEmailCharactersOnly
 
                         CustomBorderRec {
                                 commonBorder: false
@@ -139,6 +138,7 @@ Page {
                         borderWidth: 0
                         placeholderColor: grayLight
                         echoMode: TextInput.Password
+                        inputMethodHints: Qt.ImhNoAutoUppercase | Qt.ImhNoPredictiveText | Qt.ImhPreferLowercase | Qt.ImhHiddenText
                         text: userSenha
                         textColor: greenDark
                         font.pixelSize: root.sp(14)

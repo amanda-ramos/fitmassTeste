@@ -2,7 +2,7 @@ import VPlayApps 1.0
 import QtQuick 2.11
 
 Item {
-    id: customButtom
+    id: customTextFieldInterativo
     height: tfHeight
     width: tfWidth
 
@@ -18,12 +18,10 @@ Item {
     property string tfTextHint: ""
     property real tfTextType: Qt.ImhNone
     property string tfTextMask: ""
-    property int tfEchoMode: TextInput.Normal
+    property real tfEchoMode: TextInput.Normal
     property string sourceImage: ""
-
-    property bool antropoNew: false
-
     property alias tfTextText: tfTextEdit.text
+
 
     Rectangle {
         id: spacer
@@ -36,20 +34,21 @@ Item {
 
     Text {
         id: tfTitle
-        width: parent.width
-        height: root.dp(20)
+        width: parent.width - root.dp(10)
+        height: tfHeight - root.dp(20)
         text: tfTextTitle
         font.bold: true
         font.pixelSize: root.sp(14)
-        anchors.left: parent.left
+        anchors.horizontalCenter: tfBackground.horizontalCenter
         anchors.top: spacer.bottom
         color: tfTitleColor
+        visible: (text === "") ? false : true
     }
 
     TextInput {
         id: tfTextEdit
-        width: parent.width
-        height: tfBackground.height
+        width: parent.width  - root.dp(10)
+        height: tfHeight
         anchors.verticalCenter: tfBackground.verticalCenter
         anchors.left: parent.left
 
@@ -62,21 +61,26 @@ Item {
         inputMethodHints: tfTextType
         inputMask: tfTextMask
         echoMode: tfEchoMode
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                tfTextEdit.forceActiveFocus()
+                personRef.source = sourceImage
+            }
+        }
+
     }
 
     Rectangle {
-
-
         id: tfBackground
-        width: parent.width
+        width: parent.width  - root.dp(10)
         height: root.dp(40)
-        anchors.top: tfTitle.bottom
+        anchors.top: tfTitle.visible ? tfTitle.bottom : spacer.bottom
         anchors.left: parent.left
 
         color: tfColor
         radius: tfRadius
         z: -1
-
-
     }
 }

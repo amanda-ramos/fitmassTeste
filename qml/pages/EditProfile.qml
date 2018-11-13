@@ -15,8 +15,6 @@ Page {
     height: screenSizeY
     width: screenSizeX
 
-    backgroundColor: bgColor
-
     property color txtTitleColor: white
     property color txtUserColor: greenLight
     property color backEditField: grayLight
@@ -57,9 +55,8 @@ Page {
             title: "Salvar Perfil"
             icon: IconType.check
             id: saveProfileBtn
-            iconSize: root.dp(25)
 
-            property var saveBtn: false
+            property bool saveBtn: false
 
             onClicked: {
                 editProfile = true;
@@ -221,6 +218,7 @@ Page {
                         tfRadius: radius
                         tfTextTitle: "Nome: *"
                         tfTextText: ""
+                        tfTextType:  Qt.ImhNoPredictiveText
                     }
                 }
 
@@ -241,7 +239,7 @@ Page {
                         tfColor: backEditField
                         tfRadius: radius
                         tfTextTitle: "E-mail: *"
-                        tfTextType: Qt.ImhEmailCharactersOnly
+                        tfTextType: Qt.ImhNoAutoUppercase | Qt.ImhNoPredictiveText | Qt.ImhPreferLowercase | Qt.ImhEmailCharactersOnly
                         tfTextText: ""
                     }
                 }
@@ -263,9 +261,9 @@ Page {
                         tfColor: backEditField
                         tfRadius: radius
                         tfTextTitle: "Nascimento: *"
-                        tfTextType: Qt.ImhDigitsOnly
                         tfTextMask: "00/00/0000"
                         tfTextText: ""
+                        tfTextType: Qt.ImhDigitsOnly
                     }
                 }
 
@@ -381,52 +379,27 @@ Page {
 
         Connections {
             target: nativeUtils
-            onDatePickerFinished: {
-
-                if(accepted){
-                    var hour = "";
-                    var dateStr = "";
-                    var timeShift = "";
-
-                    dateStr = date.toLocaleTimeString(Qt.locale("pt_BR"));
-                    hour = parseInt(dateStr.split(":")[0]);
-                    timeShift = Qt.formatDateTime(date, "t")
-
-                    if(hour === 00){
-                        idadeUserTxt.text = Qt.formatDate(date, "dd/MM/yyyy");
-                        idadeUserTxt.color = "black"
-                    }
-                    else {
-                        Date.prototype.addHours = function(h) {
-                           this.setTime(this.getTime() + (h*60*60*1000));
-                           return this;
-                        }
-                        idadeUserTxt.text = Qt.formatDate(date.addHours(24-hour), "dd/MM/yyyy");
-                        idadeUserTxt.color = "black"
-                    }
-                }
-            }
 
             onAlertSheetFinished: {
                 if(pesoDesejado){
-                    pesoDesejadoUserTxt.text = (40 + (index * 1)).toFixed(0);
+                    pesoDesejadoUserTxt.cbTextSelected = (40 + (index * 1)).toFixed(0);
                     pesoDesejado = false;
                 }
                 if(genero){
                     switch (index) {
                         case 0: {
-                            generoUserTxt.text = "Feminino"
+                            generoUserTxt.cbTextSelected = "Feminino"
                             break;
                         }
                         case 1: {
-                            generoUserTxt.text = "Masculino"
+                            generoUserTxt.cbTextSelected = "Masculino"
                             break;
                         }
                     }
                     genero = false;
                 }
                 if(altura){
-                    alturaUserTxt.text = (1.50 + (index * 0.01)).toFixed(2);
+                    alturaUserTxt.cbTextSelected = (1.50 + (index * 0.01)).toFixed(2);
                     altura = false;
                 }
                 if(foto){
