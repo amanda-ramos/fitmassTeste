@@ -20,7 +20,7 @@ Page {
 
         AppImage{
             id:logoFitmass
-            source: "../../assets/fitmass_new_logo_branca.png"
+            source: logoFitmassBrancaSource
             fillMode: Image.PreserveAspectFit
             height: dp(30)
             anchors.centerIn: parent
@@ -36,9 +36,14 @@ Page {
     }
 
     Timer {
-        interval: 4000; //4000;
+        interval: 4000;
         running: true; repeat: false
         onTriggered: {
+            // Código para direcionar para página principal caso já esteja logado
+            //
+            //
+
+            // Temporário: direciona para página de login
             stack.push(entrarView)
         }
     }

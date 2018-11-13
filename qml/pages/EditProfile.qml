@@ -19,11 +19,8 @@ Page {
     property color txtUserColor: greenLight
     property color backEditField: grayLight
 
-    property var radius: root.dp(30)
     property var pathImage: ""
 
-    property var txtPadding: root.dp(10)
-    property var userTxtPadding: root.dp(20)
     property var editTextMargin: root.dp(20)
 
     property bool inicial: true
@@ -32,6 +29,7 @@ Page {
     property bool altura: false
     property bool foto: false
 
+    // Função para criar vetores de altura e peso
     function vector(min, max, step, decimos){
         var j = 0;
         var i = 0;
@@ -48,9 +46,11 @@ Page {
         return valores;
     }
 
+    // Ícones na barra de navegação superior
     rightBarItem: NavigationBarRow {
         id: rightNavBarRow
 
+       // Ícone para salvar as alterações de perfil
         IconButtonBarItem {
             title: "Salvar Perfil"
             icon: IconType.check
@@ -59,6 +59,11 @@ Page {
             property bool saveBtn: false
 
             onClicked: {
+                // Código para salvar os dados no banco de dados
+                //
+                //
+
+                // Temporário: aparece uma msg de sucesso
                 editProfile = true;
                 saveBtn = true;
                 nativeUtils.displayAlertDialog("Sucesso!", "Os dados foram alterados.", "OK")
@@ -170,7 +175,7 @@ Page {
 
                                 btnColor: bgColor
                                 btnBorderColor: userImageBtnMouseArea.pressed ? grayLight : greenDark
-                                btnRadius: root.dp(30)
+                                btnRadius: radiusText
                                 btnText: "Carregar foto"
 
                                 MouseArea {
@@ -215,12 +220,12 @@ Page {
                         tfTitleColor: txtTitleColor
                         tfTextColor: txtUserColor
                         tfColor: backEditField
-                        tfRadius: radius
+                        tfRadius: radiusText
                         tfTextTitle: "Nome: *"
                         tfTextText: ""
                         tfTextType:  Qt.ImhNoPredictiveText
                     }
-                }
+                } // Campo de Nome
 
                 Item {
                     id: rowEmail
@@ -237,12 +242,12 @@ Page {
                         tfTitleColor: txtTitleColor
                         tfTextColor: txtUserColor
                         tfColor: backEditField
-                        tfRadius: radius
+                        tfRadius: radiusText
                         tfTextTitle: "E-mail: *"
                         tfTextType: Qt.ImhNoAutoUppercase | Qt.ImhNoPredictiveText | Qt.ImhPreferLowercase | Qt.ImhEmailCharactersOnly
                         tfTextText: ""
                     }
-                }
+                } // Campo de E-mail
 
                 Item {
                     id: rowIdade
@@ -259,13 +264,13 @@ Page {
                         tfTitleColor: txtTitleColor
                         tfTextColor: txtUserColor
                         tfColor: backEditField
-                        tfRadius: radius
+                        tfRadius: radiusText
                         tfTextTitle: "Nascimento: *"
                         tfTextMask: "00/00/0000"
                         tfTextText: ""
                         tfTextType: Qt.ImhDigitsOnly
                     }
-                }
+                } // Campo de Aniversário / Idade
 
                 Item {
                     id: rowGenero
@@ -282,7 +287,7 @@ Page {
                         cbTitleColor: txtTitleColor
                         cbTextColor: txtUserColor
                         cbColor: backEditField
-                        cbRadius: radius
+                        cbRadius: radiusText
                         cbTextSelected: ""
 
                         MouseArea {
@@ -296,7 +301,7 @@ Page {
                             }
                         }
                     }
-                }
+                } // Campo de Gênero
 
                 Item {
                     id: rowAltura
@@ -313,7 +318,7 @@ Page {
                         cbTitleColor: txtTitleColor
                         cbTextColor: txtUserColor
                         cbColor: backEditField
-                        cbRadius: radius
+                        cbRadius: radiusText
                         cbTextSelected: ""
 
                         MouseArea {
@@ -327,7 +332,7 @@ Page {
                             }
                         }
                     }
-                }
+                } // Campo de Altura
 
                 Item {
                     id: rowPesoDesejado
@@ -344,7 +349,7 @@ Page {
                         cbTitleColor: txtTitleColor
                         cbTextColor: txtUserColor
                         cbColor: backEditField
-                        cbRadius: radius
+                        cbRadius: radiusText
                         cbTextSelected: ""
 
                         MouseArea {
@@ -359,7 +364,7 @@ Page {
                             }
                         }
                     }
-                }
+                } // Campo de Peso Desejado
 
                 Spacer {
                     id: spacer2
@@ -367,13 +372,18 @@ Page {
             }
 
             Component.onCompleted: {
+                // Código para recuperar dados do banco de dados
+                //
+                //
+
+                // Temporário: pega os valores de um vetor fixo no Main.qml
                 nomeUserTxt.tfTextText = user[0]
                 emailUserTxt.tfTextText = user[1]
                 idadeUserTxt.tfTextText = user[2]
                 generoUserTxt.cbTextSelected = user[3]
                 alturaUserTxt.cbTextSelected = user[4]
                 pesoDesejadoUserTxt.cbTextSelected = user[5]
-                userImage.source = "../../assets/image_perfil.jpg"
+                userImage.source = user[6]
             }
         }
 
@@ -385,6 +395,7 @@ Page {
                     pesoDesejadoUserTxt.cbTextSelected = (40 + (index * 1)).toFixed(0);
                     pesoDesejado = false;
                 }
+
                 if(genero){
                     switch (index) {
                         case 0: {
@@ -398,10 +409,12 @@ Page {
                     }
                     genero = false;
                 }
+
                 if(altura){
                     alturaUserTxt.cbTextSelected = (1.50 + (index * 0.01)).toFixed(2);
                     altura = false;
                 }
+
                 if(foto){
                     if (userImageBtnMouseArea.shownEditPhotoDialog) {
                         if (index == 0)
@@ -421,10 +434,11 @@ Page {
 
             // @disable-check M16
             onImagePickerFinished: {
-              console.debug("Image picker finished with path:", path)
+                console.debug("Image picker finished with path:", path)
+
                 if(accepted){
-                  //userImageCadastro.source = Qt.resolvedUrl(path)
-                  storageFitmass.uploadFile(path, "userPhoto" + Date.now() + ".png", function(progress, finished, success, downloadUrl) {
+                    //userImageCadastro.source = Qt.resolvedUrl(path)
+                    storageFitmass.uploadFile(path, "userPhoto" + Date.now() + ".png", function(progress, finished, success, downloadUrl) {
                            if(!finished){
                                console.log("Firebase Storage: progresso " + progress.toFixed(2))
                            } else if(success) {
@@ -442,10 +456,11 @@ Page {
 
             // @disable-check M16
             onCameraPickerFinished: {
-              console.debug("Camera picker finished with path:", path)
+                console.debug("Camera picker finished with path:", path)
+
                 if(accepted){
-                  //userImageCadastro.source = Qt.resolvedUrl(path)
-                  storageFitmass.uploadFile(path, "userPhoto.png", function(progress, finished, success, downloadUrl) {
+                    //userImageCadastro.source = Qt.resolvedUrl(path)
+                    storageFitmass.uploadFile(path, "userPhoto.png", function(progress, finished, success, downloadUrl) {
                            if(!finished){
                                console.log("Firebase Storage: progresso " + progress.toFixed(2))
 

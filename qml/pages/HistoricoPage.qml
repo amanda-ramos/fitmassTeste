@@ -33,6 +33,8 @@ Page {
     property var line3
     property var line4
 
+
+    // modelo de dados para ListView
     function cardModel(parent) {
 
         var s = 'import QtQuick 2.0; ListModel {\n'
@@ -43,6 +45,7 @@ Page {
         return Qt.createQmlObject(s, parent, "mainModel")
     }
 
+    // calcula a idade do usuário
     function calculateAge(birthday) {
         var yearUser = Qt.formatDateTime(birthday, "yyyy")
         var monthUser = Qt.formatDateTime(birthday, "MM")
@@ -64,6 +67,7 @@ Page {
         return age
     }
 
+    // Busca os dados do usuário no banco de dados
     function buscaDadosUser() {
 
         qtdeMedida = user[7];
@@ -92,6 +96,7 @@ Page {
         }
     }
 
+    // Busca as medidas deste usuário no banco de dados
     function buscaMedidas() {
         for(var i=0; i<qtdeMedida; i++){
             keyMeasure = i
@@ -152,17 +157,19 @@ Page {
                 + " kg" + "\"; date: \"" + keyMedida[7] + "\" }\n"
     }
 
+    // Configurações dos gráficos
     function graficosConfig() {
         line = weightChart.createSeries(ChartView.SeriesTypeSpline,
                                         "Histórico de Peso", axisX1, axisY1)
+
         line2 = weightChart.createSeries(ChartView.SeriesTypeSpline,
                                          "Peso Desejado", axisX1, axisY1)
+
         line3 = leanMassChart.createSeries(ChartView.SeriesTypeSpline,
-                                           "Histórico de Massa Magra",
-                                           axisX2, axisY2)
+                                           "Histórico de Massa Magra", axisX2, axisY2)
+
         line4 = bodyFatChart.createSeries(ChartView.SeriesTypeSpline,
-                                          "Histórico de Massa de Gordura",
-                                          axisX3, axisY3)
+                                          "Histórico de Massa de Gordura", axisX3, axisY3)
 
         line.pointsVisible = true
         line.width = root.dp(3)
@@ -188,9 +195,11 @@ Page {
         axisY3.tickCount = 4
     }
 
+    // Ícones na barra de navegação superior
     rightBarItem: NavigationBarRow {
         id: rightNavBarRowHostorico
 
+        // Ícone de filtro
         IconButtonBarItem {
             title: "Filtro por data"
             icon: IconType.filter
@@ -199,50 +208,52 @@ Page {
 
             onClicked: {
                 dateFilter = true
+                // Apresenta o datePicker padrão do OS
                 nativeUtils.displayDatePicker()
             }
 
             Connections {
                 target: nativeUtils
+
                 onDatePickerFinished: {
                     if(dateFilter){
-                    var pickedDate
+                        var pickedDate
 
-                    if (accepted) {
+                        if (accepted) {
 
-                        closeIcon.visible = true
-                        filterIcon.visible = false
+                            closeIcon.visible = true
+                            filterIcon.visible = false
+                            msgFilter.visible = false
 
-                        msgFilter.visible = false
+                            var hour = ""
+                            var dateStr = ""
+                            var timeShift = ""
 
-                        var hour = ""
-                        var dateStr = ""
-                        var timeShift = ""
+                            dateStr = date.toLocaleTimeString(Qt.locale("pt_BR"))
+                            hour = parseInt(dateStr.split(":")[0])
+                            timeShift = Qt.formatDateTime(date, "t")
 
-                        dateStr = date.toLocaleTimeString(Qt.locale("pt_BR"))
-                        hour = parseInt(dateStr.split(":")[0])
-                        timeShift = Qt.formatDateTime(date, "t")
+                            if (hour === 00) {
+                                nativeUtils.displayAlertDialog(
+                                            "Data escolhida",
+                                            "Data: " + Qt.formatDate(date,
+                                                                     "dd/MM"), "ok")
+                            } else {
+                                Date.prototype.addDays = function (days) {
+                                    var date = new Date(this.valueOf())
+                                    date.setDate(date.getDate() + days)
+                                    return date
+                                }
 
-                        if (hour === 00) {
-                            nativeUtils.displayAlertDialog(
-                                        "Data escolhida",
-                                        "Data: " + Qt.formatDate(date,
-                                                                 "dd/MM"), "ok")
-                        } else {
-                            Date.prototype.addDays = function (days) {
-                                var date = new Date(this.valueOf())
-                                date.setDate(date.getDate() + days)
-                                return date
+                                Date.prototype.addHours = function (h) {
+                                    this.setTime(this.getTime(
+                                                     ) + (h * 60 * 60 * 1000))
+                                    return this
+                                }
+                                pickedDate = Qt.formatDate(date.addHours(
+                                                               24 - hour),
+                                                           "dd/MM/yyyy")
                             }
-
-                            Date.prototype.addHours = function (h) {
-                                this.setTime(this.getTime(
-                                                 ) + (h * 60 * 60 * 1000))
-                                return this
-                            }
-                            pickedDate = Qt.formatDate(date.addHours(
-                                                           24 - hour),
-                                                       "dd/MM/yyyy")
 
                             s2 = ""
                             databaseFitmass.getValue("medidas", {
@@ -256,8 +267,7 @@ Page {
                                                                  keyCardFilter = prop5
 
                                                                  databaseFitmass.getValue(
-                                                                             "medidas/" + keyCardFilter,
-                                                                             {
+                                                                             "medidas/" + keyCardFilter, {
                                                                                  orderByValue: true
                                                                              },
                                                                              function (success4, key4, value4) {
@@ -265,7 +275,10 @@ Page {
                                                                                      console.debug("HISTORICO FILTRO - Read value " + value4 + " for key " + key4)
 
                                                                                      console.log("Data card: " + Qt.formatDate(value4.dateMedida, "dd/MM/yyyy") + " Data escolhida: " + pickedDate)
-                                                                                     s2 += "ListElement {measureIdDB: \"" + value4.measureID + "\"; weight: \"" + value4.weight + "\"; leanMass: \"" + value4.leanMass + "\"; bodyFat: \"" + value4.bodyFat + "\"; date: \"" + value4.dateMedida + "\" }\n"
+                                                                                         s2 += "ListElement {measureIdDB: \"" + value4.measureID + "\"; weight: \"" + value4.weight +
+                                                                                         "\"; leanMass: \"" + value4.leanMass + "\"; bodyFat: \"" + value4.bodyFat + "\"; date: \"" +
+                                                                                         value4.dateMedida + "\" }\n"
+
                                                                                      console.log("s2: " + s2)
                                                                                  } else {
                                                                                      console.debug("HISTORICO FILTRO - Error with message: " + value4)
@@ -280,13 +293,13 @@ Page {
                                                          }
                                                      })
                         }
-                    }
-                    dateFilter = false;
-                    }
+                        dateFilter = false;
                     }
                 }
             }
+        }
 
+        // Ícone para voltar da seleção de cards filtrados para todos os cards
         IconButtonBarItem {
             id: closeIcon
             title: "Voltar"
@@ -303,6 +316,7 @@ Page {
             }
         }
 
+        // Ícone para realizar logout
         IconButtonBarItem {
             title: "Sair"
             icon: IconType.signout
@@ -320,6 +334,7 @@ Page {
         anchors.horizontalCenter: parent.horizontalCenter
         height: listCards.height + graphics.height + tabIcons.height
 
+        // Menu de Tab para alternar entre o histórico e os gráficos
         Item {
             id: tabIcons
             width: parent.width
@@ -406,13 +421,14 @@ Page {
                             historicoGreenRec.visible = false
                             graficosGreenRec.visible = true
                             graficosRec.color = grayLight
-                            filterIcon.visible = true
+                            filterIcon.visible = false
                         }
                     }
                 }
             }
-        }
+        } // tab Menu
 
+        // Lista de cards com as medidas já realizadas pelo usuário
         Item {
             id: cardsHistorico
             width: parent.width
@@ -420,8 +436,8 @@ Page {
             anchors.top: tabIcons.bottom
             z: -1
 
-        ListView {
-                    id: listCards
+            ListView {
+                id: listCards
                     width: parent.width
                     height: root.dp(450)
                     anchors.top: parent.top
@@ -484,7 +500,7 @@ Page {
 
                                         AppImage {
                                             id: iconWeight
-                                            height: dp(60)
+                                            height: root.dp(60)
                                             width: height
                                             source: "../../assets/icon_weight.png"
                                             fillMode: Image.PreserveAspectFit
@@ -498,7 +514,7 @@ Page {
                                             text: weight
                                             anchors.top: iconWeight.bottom
                                             anchors.horizontalCenter: parent.horizontalCenter
-                                            topPadding: dp(5)
+                                            topPadding: root.dp(5)
                                             font.bold: true
                                         }
                                     }
@@ -517,7 +533,7 @@ Page {
 
                                         AppImage {
                                             id: iconMuscle
-                                            height: dp(60)
+                                            height: root.dp(60)
                                             width: height
                                             source: "../../assets/icon_muscle.png"
                                             fillMode: Image.PreserveAspectFit
@@ -531,7 +547,7 @@ Page {
                                             text: leanMass
                                             anchors.top: iconMuscle.bottom
                                             anchors.horizontalCenter: parent.horizontalCenter
-                                            topPadding: dp(5)
+                                            topPadding: root.dp(5)
                                             font.bold: true
                                         }
                                     }
@@ -550,7 +566,7 @@ Page {
 
                                         AppImage {
                                             id: iconBodyFat
-                                            height: dp(60)
+                                            height: root.dp(60)
                                             width: height
                                             source: "../../assets/icon_body_fat.png"
                                             fillMode: Image.PreserveAspectFit
@@ -564,7 +580,7 @@ Page {
                                             text: bodyFat
                                             anchors.top: iconBodyFat.bottom
                                             anchors.horizontalCenter: parent.horizontalCenter
-                                            topPadding: dp(5)
+                                            topPadding: root.dp(5)
                                             font.bold: true
                                         }
                                     }
@@ -578,8 +594,9 @@ Page {
                         }
                     }
                 }
-        }
+        } // cards histórico
 
+        // Gráficos para apresentação visual de resultados
         Item {
             id: graphics
             width: parent.width
@@ -707,6 +724,7 @@ Page {
             }
         } // gráficos histórico
 
+        // Mensagem para o filtro de cards por data
         Text {
             id: msgFilter
             text: qsTr("Não há medidas nessa data.")
@@ -716,6 +734,7 @@ Page {
             color: greenDark
         }
 
+        // Mensagem caso não possua medidas
         Text {
             id: msgMedidas
             text: qsTr("Você ainda não possui medidas.")

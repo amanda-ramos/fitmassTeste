@@ -6,7 +6,7 @@ import "../common"
 import "../pages"
 
 Page {
-    title: "Fitmass"
+    title: "Informações"
     id: fitmassInfo
     height: screenSizeY
     width: screenSizeX

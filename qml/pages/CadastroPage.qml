@@ -18,15 +18,12 @@ Page {
 
     property var pathImage: ""
 
-    property var txtPadding: root.dp(10)
-    property var userTxtPadding: root.dp(20)
-    property var editTextMargin: root.dp(20)
-
     property bool genero: false
     property bool pesoDesejado: false
     property bool altura: false
     property bool foto: false
 
+    // Função para criar vetores de altura e peso
     function vector(min, max, step, decimos) {
         var j = 0
         var i = 0
@@ -43,6 +40,7 @@ Page {
         return valores
     }
 
+    // Função para calcular idade
     function calculateAge(birthday) {
         var yearUser = Qt.formatDateTime(birthday, "yyyy")
         var monthUser = Qt.formatDateTime(birthday, "MM")
@@ -128,10 +126,8 @@ Page {
                             anchors.centerIn: userImageBack
                             placeholderImage: "\uf007" // user
                             source: ""
-                        } // User Image
-
-
-                    }
+                        }
+                    } // Photo View
 
                     Item {
                         id: userImage2Cadastro
@@ -163,7 +159,7 @@ Page {
 
                                 btnColor: bgColor
                                 btnBorderColor: userImageCadastroBtnMouseArea.pressed ? grayLight : greenDark
-                                btnRadius: root.dp(30)
+                                btnRadius: radiusText
                                 btnText: "Carregar foto"
 
                                 MouseArea {
@@ -184,8 +180,8 @@ Page {
                                 }
                             }
                         }
-                    } // Coluna imagem do usuário
-                } // Linha imagem do usuário
+                    } // Botão para foto
+                } // Imagem do Usuário
 
                 Spacer {
                     id: spacer1Cadastro
@@ -209,12 +205,12 @@ Page {
                         tfTitleColor: white
                         tfTextColor: greenLight
                         tfColor: grayLight
-                        tfRadius: root.dp(30)
+                        tfRadius: radiusText
                         tfTextTitle: "Nome: *"
                         tfTextText: ""
                         tfTextType:  Qt.ImhNoPredictiveText
                     }
-                }
+                } // Campo de Nome
 
                 Item {
                     id: rowEmailCadastro
@@ -231,12 +227,12 @@ Page {
                         tfTitleColor: white
                         tfTextColor: greenLight
                         tfColor: grayLight
-                        tfRadius: root.dp(30)
+                        tfRadius: radiusText
                         tfTextTitle: "E-mail: *"
                         tfTextType: Qt.ImhNoAutoUppercase | Qt.ImhNoPredictiveText | Qt.ImhPreferLowercase | Qt.ImhEmailCharactersOnly
                         tfTextText: ""
                     }
-                }
+                } // Campo de E-mail
 
                 Item {
                     id: rowIdadeCadastro
@@ -253,13 +249,13 @@ Page {
                         tfTitleColor: white
                         tfTextColor: greenLight
                         tfColor: grayLight
-                        tfRadius: root.dp(30)
+                        tfRadius: radiusText
                         tfTextTitle: "Nascimento: *"
                         tfTextType: Qt.ImhDigitsOnly
                         tfTextMask: "00/00/0000"
                         tfTextText: ""
                     }
-                }
+                } // Campo de Aniversário / Idade
 
                 Item {
                     id: rowGeneroCadastro
@@ -276,7 +272,7 @@ Page {
                         cbTitleColor: white
                         cbTextColor: greenLight
                         cbColor: grayLight
-                        cbRadius: root.dp(30)
+                        cbRadius: radiusText
                         cbTextSelected: "Selecione"
 
                         MouseArea {
@@ -290,7 +286,7 @@ Page {
                             }
                         }
                     }
-                }
+                } // Campo de Gênero
 
                 Item {
                     id: rowAlturaCadastro
@@ -307,7 +303,7 @@ Page {
                         cbTitleColor: white
                         cbTextColor: greenLight
                         cbColor: grayLight
-                        cbRadius: root.dp(30)
+                        cbRadius: radiusText
                         cbTextSelected: "Selecione"
 
                         MouseArea {
@@ -321,7 +317,7 @@ Page {
                             }
                         }
                     }
-                }
+                }  // Campo de Altura
 
                 Item {
                     id: rowPesoDesejadoCadastro
@@ -338,7 +334,7 @@ Page {
                         cbTitleColor: white
                         cbTextColor: greenLight
                         cbColor: grayLight
-                        cbRadius: root.dp(30)
+                        cbRadius: radiusText
                         cbTextSelected: "Selecione"
 
                         MouseArea {
@@ -353,7 +349,7 @@ Page {
                             }
                         }
                     }
-                }
+                } // Campo de Peso Desejado
 
                 Item {
                     id: rowSenhaCadastro
@@ -370,13 +366,13 @@ Page {
                         tfTitleColor: white
                         tfTextColor: greenLight
                         tfColor: grayLight
-                        tfRadius: root.dp(30)
+                        tfRadius: radiusText
                         tfTextTitle: "Senha: *"
                         tfTextType: Qt.ImhNoAutoUppercase | Qt.ImhNoPredictiveText | Qt.ImhPreferLowercase | Qt.ImhHiddenText
                         tfEchoMode: TextInput.Password
                         tfTextText: ""
                     }
-                }
+                } // Campo de Senha
 
                 Item {
                     id: rowBtnCadastrar
@@ -401,7 +397,7 @@ Page {
 
                         btnColor: bgColor
                         btnBorderColor: btCadastroMouseArea.pressed ? grayLight : greenDark
-                        btnRadius: root.dp(30)
+                        btnRadius: radiusText
                         btnText: "Cadastrar"
 
                         MouseArea {
@@ -433,38 +429,13 @@ Page {
                             }
                         }
                     }
-                }
+                } // Botão para salvar o cadastro
 
                 Spacer {
                     id: spacer2Cadastro
                     anchors.top: rowBtnCadastrar.bottom
                     colorRec: bgColor
                 }
-            }
-        }
-
-        Dialog {
-            id: cadastroDialog
-            title: ""
-            positiveActionLabel: "OK"
-            z: 1 // make sure the dialog is on top
-            negativeAction: false
-
-            property alias text: dialogText.text
-
-            onAccepted: {
-                close()
-                if (btCadastro.registro && btCadastro.cadastro) {
-                    stack.pop()
-                    stack.push(mainView)
-                    btCadastro.registro = false
-                    btCadastro.cadastro = false
-                }
-            }
-
-            AppText {
-                id: dialogText
-                anchors.fill: parent
             }
         }
 
@@ -475,58 +446,56 @@ Page {
             onAlertSheetFinished: {
                 var value
                 if(index>-1){
-                if (pesoDesejado) {
-                    value = (40 + (index * 1)).toFixed(0)
-                    pesoDesejadoUserTxtCadastro.cbTextSelected = value + " kg"
-                    pesoDesejado = false
-                }
-                if (genero) {
-                    switch (index) {
-                    case 0: {
-                        generoUserTxtCadastro.cbTextSelected = "Feminino"
-                        break
+                    if (pesoDesejado) {
+                        value = (40 + (index * 1)).toFixed(0)
+                        pesoDesejadoUserTxtCadastro.cbTextSelected = value + " kg"
+                        pesoDesejado = false
                     }
-                    case 1: {
-                        generoUserTxtCadastro.cbTextSelected = "Masculino"
-                        break
+                    if (genero) {
+                        switch (index) {
+                            case 0: {
+                                generoUserTxtCadastro.cbTextSelected = "Feminino"
+                                break
+                            }
+                            case 1: {
+                                generoUserTxtCadastro.cbTextSelected = "Masculino"
+                                break
+                            }
+                        }
+                        genero = false
                     }
+                    if (altura) {
+                        value = (1.50 + (index * 0.01)).toFixed(2)
+                        alturaUserTxtCadastro.cbTextSelected = value + " m"
+                        altura = false
                     }
-                    genero = false
-                }
-                if (altura) {
-                    value = (1.50 + (index * 0.01)).toFixed(2)
-                    alturaUserTxtCadastro.cbTextSelected = value + " m"
-                    altura = false
-                }
-                if(foto){
-                    if (userImageCadastroBtnMouseArea.shownEditPhotoDialog) {
-                        if (index == 0)
-                            nativeUtils.displayImagePicker(
-                                        qsTr("Choose Image")) // Choose image
-                        else if (index == 1)
-                            nativeUtils.displayCameraPicker(
-                                        "Take Photo") // Take from Camera
-                        userImageCadastroBtnMouseArea.shownEditPhotoDialog = false
+                    if(foto){
+                        if (userImageCadastroBtnMouseArea.shownEditPhotoDialog) {
+                            if (index == 0)
+                                nativeUtils.displayImagePicker("Choose Image") // Choose image
+                            else if (index == 1)
+                                nativeUtils.displayCameraPicker("Take Photo") // Take from Camera
+                            userImageCadastroBtnMouseArea.shownEditPhotoDialog = false
+                        }
                     }
-                }
                 }
             }
 
             // @disable-check M16
             onCameraPickerFinished: {
-                console.debug(
-                            "Camera picker finished with path:",
-                            path)
+                console.debug("Camera picker finished with path:",path)
+
                 if (accepted) {
                     //userImageCadastro.source = Qt.resolvedUrl(path)
+
+                    // Salva a imagem no Storage do Firebase
                     storageFitmass.uploadFile(
                                 path, "userPhoto.png",
                                 function (progress, finished, success, downloadUrl) {
                                     if (!finished) {
                                         console.log("Firebase Storage: progresso " + progress.toFixed(
                                                         2))                                                       } else if (success) {
-                                        console.log("Sucesso - Path: "
-                                                    + pathImage)
+                                        console.log("Sucesso - Path: " + pathImage)
                                         userImageCadastro.source = downloadUrl
                                         pathImage = downloadUrl
                                     } else {
@@ -538,24 +507,20 @@ Page {
 
             // @disable-check M16
             onImagePickerFinished: {
-                console.debug(
-                            "Image picker finished with path:",
-                            path)
+                console.debug("Image picker finished with path:", path)
+
                 if (accepted) {
                     //userImageCadastro.source = Qt.resolvedUrl(path)
-                    storageFitmass.uploadFile(
-                                path,
-                                "userPhoto" + Date.now(
-                                    ) + ".png",
+
+                    // Salva a imagem no Storage do Firebase
+                    storageFitmass.uploadFile(path, "userPhoto" + Date.now() + ".png",
                                 function (progress, finished, success, downloadUrl) {
                                     if (!finished) {
-                                        console.log("Firebase Storage: progresso " + progress.toFixed(
-                                                        2))
+                                        console.log("Firebase Storage: progresso " + progress.toFixed(2))
                                     } else if (success) {
                                         userImageCadastro.source = downloadUrl
                                         pathImage = downloadUrl
-                                        console.log("Sucesso - Path: "
-                                                    + pathImage)
+                                        console.log("Sucesso - Path: " + pathImage)
                                     } else {
                                         console.log("Falha ao carregar imagem  no Firebase Storage" + message)
                                     }

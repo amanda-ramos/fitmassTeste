@@ -11,6 +11,15 @@ Page {
     height: screenSizeY
     width: screenSizeX
 
+    property color txtColor: white
+    property color userTxtColor: greenLight
+
+    property var txtTitleSize: root.sp(12)
+    property var txtUserSize: root.sp(12)
+
+    property bool inicial: true
+
+    // Função para pegar o primeiro e último nome do usuário
     function splitString (str){
         // Função para separar a primeira e última palavra da String
 
@@ -27,22 +36,13 @@ Page {
         name = firstWord + " " + lastWord;
 
         return name;
-    } // Função Split String
+    }
 
-    property color txtColor: white
-    property color userTxtColor: greenLight
-
-    property var txtPadding: root.dp(10)
-    property var userTxtPadding: root.dp(20)
-
-    property var txtTitleSize: root.sp(12)
-    property var txtUserSize: root.sp(12)
-
-    property bool inicial: true
-
+    // Ícones na barra de navegação superior
     rightBarItem:  NavigationBarRow {
       id: rightNavBarRow
 
+      // Ícone para editar o perfil
       IconButtonBarItem {
           title: "Editar Perfil"
           icon: IconType.pencil
@@ -51,7 +51,7 @@ Page {
             profileStack.push(editProfileView);
         }
       } // Editar Perfil
-    } // Menu superior direito
+    }
 
     AppFlickable {
         id: scrollProfile
@@ -114,12 +114,11 @@ Page {
 
                     Rectangle {
                         id: backName
-                        width: userName.width + root.dp(10)
+                        width: userImageBack.width + root.dp(10)
                         height: userName.height + root.dp(10)
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.bottom: userImageBack.bottom
                         color: grayDark
-                        //radius: root.dp(30)
                     }
 
                     Text {
@@ -130,8 +129,7 @@ Page {
                         font.bold: true
                         font.pixelSize: root.sp(16)
                     }
-
-                } // Linha User Image
+                } // Imagem do Usuário
 
                 Spacer {
                     id: spacer1
@@ -154,10 +152,10 @@ Page {
                         txtTitleColor: white
                         txtTextColor: greenLight
                         txtColor: grayLight
-                        txtRadius: root.dp(30)
+                        txtRadius: radiusText
                         txtTextTitle: "E-mail: "
                     }
-                }
+                } // Campo de E-mail
 
                 Item {
                     id: rowIdade
@@ -174,10 +172,10 @@ Page {
                         txtTitleColor: white
                         txtTextColor: greenLight
                         txtColor: grayLight
-                        txtRadius: root.dp(30)
+                        txtRadius: radiusText
                         txtTextTitle: "Idade: "
                     }
-                }
+                } // Campo de Aniversário / Idade
 
                 Item {
                     id: rowGenero
@@ -194,10 +192,10 @@ Page {
                         txtTitleColor: white
                         txtTextColor: greenLight
                         txtColor: grayLight
-                        txtRadius: root.dp(30)
+                        txtRadius: radiusText
                         txtTextTitle: "Gênero: "
                     }
-                }
+                } // Campo de Gênero
 
                 Item {
                     id: rowAltura
@@ -214,11 +212,10 @@ Page {
                         txtTitleColor: white
                         txtTextColor: greenLight
                         txtColor: grayLight
-                        txtRadius: root.dp(30)
+                        txtRadius: radiusText
                         txtTextTitle: "Altura: "
                     }
-                }
-
+                } // Campo de Altura
 
                 Item {
                     id: rowPesoDesejado
@@ -235,7 +232,7 @@ Page {
                         txtTitleColor: white
                         txtTextColor: greenLight
                         txtColor: grayLight
-                        txtRadius: root.dp(30)
+                        txtRadius: radiusText
                         txtTextTitle: "Peso Desejado: "
                     }
                 }
@@ -257,7 +254,7 @@ Page {
                             width: root.dp(50)
                             height: width
 
-                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.right: parent.right
                             anchors.verticalCenter: parent.verticalCenter
 
                             source: "../../assets/icon_medidas.png"
@@ -278,6 +275,7 @@ Page {
                             color: txtColor
                             anchors.horizontalCenter: parent.horizontalCenter
                             font.pixelSize: txtTitleSize
+                            bottomPadding: root.dp(10)
                         }
 
                         Rectangle {
@@ -308,6 +306,11 @@ Page {
             }
 
             Component.onCompleted: {
+                // Código para recuperar dados do banco de dados
+                //
+                //
+
+                // Temporário: pega os valores de um vetor fixo no Main.qml
                 userName.text = splitString(user[0])
                 emailUserTxt.txtText = user[1]
                 idadeUserTxt.txtText = userAge + " anos"
@@ -315,7 +318,7 @@ Page {
                 alturaUserTxt.txtText = user[4] + " m"
                 pesoDesejadoUserTxt.txtText = user[5] + " kg"
                 medidasTotal.text = user[7]
-                userImage.source = "../../assets/image_perfil.jpg"
+                userImage.source = user[6]
             }
         } // Coluna Conteúdo
     } // Flickable

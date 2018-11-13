@@ -21,42 +21,36 @@ Page {
     property alias dateValor: measurePage.title
     property var wantedWeightValor
 
-    property int titleFontSize: 14
-    property var titleTopPadding: dp(15)
-    property var titleBottomPadding: dp(15)
-    property var titleHorizontalAlignment: Text.AlignHCenter
-    property var textRightPadding: dp(15)
-    property var textLeftPadding: dp(15)
+    property var titleFontSize: root.sp(14)
+    property var titleTopPadding: root.dp(15)
+    property var titleBottomPadding: root.dp(15)
+    property real titleHorizontalAlignment: Text.AlignHCenter
+    property var textRightPadding: root.dp(15)
+    property var textLeftPadding: root.dp(15)
+
     property color titleColor: greenDark
     property color textColor: greenLight
 
+    // Ícones na barra de navegação superior
     rightBarItem:  NavigationBarRow {
       id: rightNavBarRowMeasure
 
+      // Ícone para compartilhar resultados
       IconButtonBarItem {
           title: "Compartilhar"
           icon: IconType.sharealt
 
           onClicked: {
-
             var teste = contentMeasure.grabToImage(function(result){
-
-                if(isPlatform(System.Android)){
-                teste2 = result.saveToFile("medida2.jpg")
-                iconPeso.source = result.url
-                //nativeUtils.share("Link da imagem: " + result.url, "")
-                console.log("SAVE IMAGE: " + teste2)
-                }else{
                     teste2 = result.saveToFile("medida2.jpg")
-                    iconPeso.source = result.url
-                    //nativeUtils.share("Link da imagem: " + result.url, "")
+                    nativeUtils.share("Link da imagem: " + result.url, "")
                     console.log("SAVE IMAGE: " + teste2)
-                }
             })
              console.log("GRAB IMAGE: " + teste)
         }
       }
 
+      // Ícone para deletar a medida
       IconButtonBarItem {
           title: "Deletar"
           icon: IconType.trash
@@ -71,7 +65,9 @@ Page {
 
               onAlertDialogFinished: {
                   if(accepted){
-                      console.log("DELETAR aceito - key: " + keyCard)
+                      // Código para deletar medida
+                      //
+                      //
                   }
               }
           }
@@ -112,11 +108,11 @@ Page {
                     text: "Análise da Composição Corporal"
                     color: titleColor
                     font.bold: true
-                    font.pixelSize: root.sp(titleFontSize)
+                    font.pixelSize: titleFontSize
                     horizontalAlignment: titleHorizontalAlignment
                     topPadding: titleTopPadding
                     bottomPadding: titleBottomPadding
-                }
+                } // Análise da Composição Corporal - Título
 
                 Item {
                     id: analiseCompCorporal
@@ -127,7 +123,7 @@ Page {
 
                     Item {
                         id: peso
-                        height: iconPeso.height + txtPeso1.height + weightValue.height + dp(20)
+                        height: iconPeso.height + txtPeso1.height + weightValue.height + root.dp(20)
                         width: parent.width / 4
                         anchors.left: parent.left
 
@@ -138,15 +134,15 @@ Page {
                             horizontalAlignment: Text.AlignHCenter
                             color: white
                             font.pixelSize: root.dp(10)
-                            topPadding: dp(10)
+                            topPadding: root.dp(10)
                             anchors.horizontalCenter: iconPeso.horizontalCenter
                             anchors.bottom: iconPeso.top
-                            bottomPadding: dp(5)
+                            bottomPadding: root.dp(5)
                         }
                         Image {
                             id: iconPeso
                             source: "../../assets/icon_weight2.png"
-                            height: dp(50)
+                            height: root.dp(50)
                             width: height
                             anchors.horizontalCenter: parent.horizontalCenter
                             anchors.verticalCenter: parent.verticalCenter
@@ -161,9 +157,9 @@ Page {
                             horizontalAlignment: Text.AlignHCenter
                             anchors.horizontalCenter: iconPeso.horizontalCenter
                             anchors.top: iconPeso.bottom
-                            topPadding: dp(10)
+                            topPadding: root.dp(10)
                         }
-                    }
+                    } // Peso
 
                     Item {
                         id: massaMagra
@@ -178,15 +174,15 @@ Page {
                             horizontalAlignment: Text.AlignHCenter
                             color: white
                             font.pixelSize: root.dp(10)
-                            topPadding: dp(10)
+                            topPadding: root.dp(10)
                             anchors.horizontalCenter: iconMassaMagra.horizontalCenter
                             anchors.bottom: iconMassaMagra.top
-                            bottomPadding: dp(5)
+                            bottomPadding: root.dp(5)
                         }
                         Image {
                             id: iconMassaMagra
                             source: "../../assets/icon_muscle2.png"
-                            height: dp(50)
+                            height: root.dp(50)
                             width: height
                             anchors.horizontalCenter: parent.horizontalCenter
                             anchors.verticalCenter: parent.verticalCenter
@@ -201,9 +197,9 @@ Page {
                             horizontalAlignment: Text.AlignHCenter
                             anchors.horizontalCenter: iconMassaMagra.horizontalCenter
                             anchors.top: iconMassaMagra.bottom
-                            topPadding: dp(10)
+                            topPadding: root.dp(10)
                         }
-                    }
+                    } // Massa Magra
 
                     Item {
                         id: massaGorda
@@ -217,15 +213,15 @@ Page {
                             horizontalAlignment: Text.AlignHCenter
                             color: white
                             font.pixelSize: root.dp(10)
-                            topPadding: dp(10)
+                            topPadding: root.dp(10)
                             anchors.horizontalCenter: iconMassaGorda.horizontalCenter
                             anchors.bottom: iconMassaGorda.top
-                            bottomPadding: dp(5)
+                            bottomPadding: root.dp(5)
                         }
                         Image {
                             id: iconMassaGorda
                             source: "../../assets/icon_body_fat2.png"
-                            height: dp(50)
+                            height: root.dp(50)
                             width: height
                             anchors.horizontalCenter: parent.horizontalCenter
                             anchors.verticalCenter: parent.verticalCenter
@@ -240,9 +236,9 @@ Page {
                             horizontalAlignment: Text.AlignHCenter
                             anchors.horizontalCenter: iconMassaGorda.horizontalCenter
                             anchors.top: iconMassaGorda.bottom
-                            topPadding: dp(10)
+                            topPadding: root.dp(10)
                         }
-                    }
+                    } // Massa de Gordura
 
                     Item {
                         id: agua
@@ -256,15 +252,15 @@ Page {
                             horizontalAlignment: Text.AlignHCenter
                             color: white
                             font.pixelSize: root.dp(10)
-                            topPadding: dp(10)
+                            topPadding: root.dp(10)
                             anchors.horizontalCenter: iconAgua.horizontalCenter
                             anchors.bottom: iconAgua.top
-                            bottomPadding: dp(5)
+                            bottomPadding: root.dp(5)
                         }
                         Image {
                             id: iconAgua
                             source: "../../assets/icon_water2.png"
-                            height: dp(50)
+                            height: root.dp(50)
                             width: height
                             anchors.horizontalCenter: parent.horizontalCenter
                             anchors.verticalCenter: parent.verticalCenter
@@ -279,10 +275,10 @@ Page {
                             horizontalAlignment: Text.AlignHCenter
                             anchors.horizontalCenter: iconAgua.horizontalCenter
                             anchors.top: iconAgua.bottom
-                            topPadding: dp(10)
+                            topPadding: root.dp(10)
                         }
-                    }
-                }
+                    } // Água no Corpo
+                } // Análise da Composição Corporal - Conteúdo
 
                 Text {
                     id: titleRowAnaliseMusculoGordura
@@ -290,12 +286,12 @@ Page {
                     text: "Análise Músculo - Gordura"
                     color: titleColor
                     font.bold: true
-                    font.pixelSize: root.sp(titleFontSize)
+                    font.pixelSize: titleFontSize
                     horizontalAlignment: titleHorizontalAlignment
                     topPadding: titleTopPadding
                     bottomPadding: titleBottomPadding
                     anchors.top: analiseCompCorporal.bottom
-                }
+                } // Análise Músculo - Gordura - Título
 
                 Item {
                     id: analiseMusculoGordura_peso
@@ -305,7 +301,7 @@ Page {
 
                     BarraProgressoSimples {
                         id: weightBar
-                        height: dp(60)
+                        height: root.dp(60)
                         title: "Peso"
                         subtitle: ""
                         titleValue: value + " kg"
@@ -314,7 +310,7 @@ Page {
                         max: 180
                         value: 0
                     }
-                }
+                } // Análise Músculo - Gordura - Peso
 
                 Item {
                     id: analiseMusculoGordura_Magra
@@ -324,7 +320,7 @@ Page {
 
                     BarraProgressoSimples {
                         id: muscleBar
-                        height: dp(60)
+                        height: root.dp(60)
                         title: "Massa Magra"
                         subtitle: ""
                         titleValue: value + " kg"
@@ -333,7 +329,7 @@ Page {
                         max: 80
                         value: 0
                     }
-                }
+                } // Análise Músculo - Gordura - Massa Magra
 
                 Item {
                     id: analiseMusculoGordura_Gorda
@@ -343,7 +339,7 @@ Page {
 
                     BarraProgressoSimples {
                         id: bodyFatBar
-                        height: dp(60)
+                        height: root.dp(60)
                         title: "Massa de Gordura"
                         subtitle: ""
                         titleValue: value + " kg"
@@ -352,7 +348,7 @@ Page {
                         max: 80
                         value: 0
                     }
-                }
+                } // Análise Músculo - Gordura - Massa de Gordura
 
                 Text {
                     id: titleRowAnaliseObesidade
@@ -360,12 +356,12 @@ Page {
                     text: "Análise de Obesidade"
                     color: titleColor
                     font.bold: true
-                    font.pixelSize: root.sp(titleFontSize)
+                    font.pixelSize: titleFontSize
                     horizontalAlignment: titleHorizontalAlignment
                     topPadding: titleTopPadding
                     bottomPadding: titleBottomPadding
                     anchors.top: analiseMusculoGordura_Gorda.bottom
-                }
+                } // Análise de Obesidade - Título
 
                 Item {
                     id: analiseObesidade1
@@ -375,7 +371,7 @@ Page {
 
                     BarraProgresso {
                         id: imcBar
-                        height: dp(80)
+                        height: root.dp(80)
                         title: "IMC"
                         subtitle: "(índice de massa corporal)"
                         titleValue: value + " km/m²"
@@ -386,7 +382,7 @@ Page {
                         lowValue: 18.5
                         highValue: 25
                     }
-                }
+                } // Análise de Obesidade - IMC
 
                 Item {
                     id: analiseObesidade2
@@ -396,7 +392,7 @@ Page {
 
                     BarraProgresso {
                         id: pgcBar
-                        height: dp(80)
+                        height: root.dp(80)
                         title: "PGC"
                         subtitle: "(porcentual de gordura corporal)"
                         titleValue: value + " %"
@@ -453,7 +449,7 @@ Page {
                             }
                         }
                     }
-                }
+                } // Análise de Obesidade - PGC
 
                 Text {
                     id: titleRowAnaliseSegmentarMagra
@@ -461,12 +457,12 @@ Page {
                     text: "Análise Segmentar de Massa Magra"
                     color: titleColor
                     font.bold: true
-                    font.pixelSize: root.sp(titleFontSize)
+                    font.pixelSize: titleFontSize
                     horizontalAlignment: titleHorizontalAlignment
                     topPadding: titleTopPadding
                     bottomPadding: titleBottomPadding
                     anchors.top: analiseObesidade2.bottom
-                }
+                } // Análise Segmentar de Massa Magra - Título
 
                 Item {
                     id: analiseSegmentarMagra
@@ -504,7 +500,7 @@ Page {
                         membInfDirValor: "7.31 kg | 95.1 %"
                         membInfDirAnalise: "Normal"
                     }
-                }
+                } // Análise Segmentar de Massa Magra - Conteúdo
 
                 Text {
                     id: titleRowAnaliseSegmentarGorda
@@ -512,12 +508,12 @@ Page {
                     text: "Análise Segmentar de Massa de Gordura"
                     color: titleColor
                     font.bold: true
-                    font.pixelSize: root.sp(titleFontSize)
+                    font.pixelSize: titleFontSize
                     horizontalAlignment: titleHorizontalAlignment
                     topPadding: titleTopPadding
                     bottomPadding: titleBottomPadding
                     anchors.top: analiseSegmentarMagra.bottom
-                }
+                } // Análise Segmentar de Massa de Gordura - Título
 
                 Item {
                     id: analiseSegmentarGorda
@@ -555,7 +551,7 @@ Page {
                         membInfDirValor: "3.7 kg | 145.4 %"
                         membInfDirAnalise: "Normal"
                     }
-                }
+                } // Análise Segmentar de Massa de Gordura - Conteúdo
 
                 Text {
                     id: titleRowControlePeso
@@ -563,12 +559,12 @@ Page {
                     text: "Controle de Peso"
                     color: titleColor
                     font.bold: true
-                    font.pixelSize: root.sp(titleFontSize)
+                    font.pixelSize: titleFontSize
                     horizontalAlignment: titleHorizontalAlignment
                     topPadding: titleTopPadding
                     bottomPadding: titleBottomPadding
                     anchors.top: analiseSegmentarGorda.bottom
-                }
+                } // Controle de Peso - Título
 
                 Item {
                     id: controlePeso
@@ -654,7 +650,7 @@ Page {
                                 font.pixelSize: root.sp(12)
                             }
                         }
-                } // row Controle de Peso
+                } // Controle de Peso - Conteúdo
 
                 Item {
                     id: info
@@ -699,12 +695,18 @@ Page {
                         width: iconInfo.height
                         color: "transparent"
                     }
-                } // row Info icon
-            } // item
-        } // column - medidas
+                } // Informações - Conteúdo
+            }
+        }
 
         Component.onCompleted: {
             console.log(keyCard)
+
+            // Código para recuperar dados do banco de dados
+            //
+            //
+
+            // Temporário: pega os valores de um vetor fixo no Main.qml
 
             if(keyCard == 0){
                 keyCard = medida0

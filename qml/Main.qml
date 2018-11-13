@@ -38,8 +38,16 @@ App {
     property int screenSizeX: 640
     property int screenSizeY: 960
 
+    property var logoFitmassBrancaSource: "../../assets/fitmass_new_logo_branca.png"
+    property var logoFitmassSource: "../../assets/fitmass_new_logo.png"
+
+    property var txtPadding: dp(10)
+    property var userTxtPadding: dp(20)
+    property var editTextMargin: root.dp(20)
+    property var radiusText: root.dp(30)
+
     //variáveis de teste
-    property var user: ["Amanda Ramos", "alc.ramos@yahoo.com.br", "28/12/1992", "Feminino", "1.66", "65", "https://firebasestorage.googleapis.com/v0/b/fitmassapp.appspot.com/o/userPhoto1540304322552.png?alt=media&token=276c9688-2899-4cae-8a5d-d4af25066895", "3"]
+    property var user: ["Maria da Silva", "teste@teste.com.br", "16/04/1990", "Feminino", "1.66", "65", "../../assets/image_perfil.jpeg", "3"]
     //                      nome                    peso    magra   gorda   agua    imc      pgc      data da medida
     property var medida0: ["fitmass20180912083026", "74.0", "27.2", "24.6", "36.2", "26.9", "33.2", "2018-09-12T00:00:00.000"]
     //                           SE      SD       ABD      IE      ID

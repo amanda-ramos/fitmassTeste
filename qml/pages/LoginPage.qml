@@ -13,11 +13,7 @@ Page {
 
     Component.onCompleted: {
         content.forceActiveFocus()
-    //    Theme.colors.statusBarStyle = Theme.colors.statusBarStyleHidden
     }
-
-    property var txtPadding: dp(10)
-    property var userTxtPadding: dp(20)
 
     property alias textoEmail: emailUserTxtLogin.text
     property alias textoSenha: senhalUserTxtLogin.text
@@ -40,7 +36,7 @@ Page {
             Item {
                 id: content
                 width: parent.width
-                height: 100
+                height: root.dp(100)
                 focus: true
 
                 Item {
@@ -53,9 +49,9 @@ Page {
                         color: "transparent"
 
                         AppImage {
-                            source: "../../assets/fitmass_new_logo.png"
+                            source: logoFitmassSource
                             fillMode: Image.PreserveAspectFit
-                            height: dp(60)
+                            height: root.dp(60)
                             anchors.centerIn: parent
                         }
                     }
@@ -64,8 +60,7 @@ Page {
                 Item {
                     id: emailLogin
                     width: parent.width
-                    height: emailTxtLogin.height + emailUserTxtLogin.height + dp(
-                                20)
+                    height: emailTxtLogin.height + emailUserTxtLogin.height + root.dp(20)
                     anchors.top: imageLogoFitmass.bottom
 
                     Text {
@@ -89,7 +84,7 @@ Page {
                         showClearButton: true
                         borderWidth: 0
                         placeholderColor: grayLight
-                        text: userEmail
+                        text: ""//userEmail
                         textColor: greenDark
                         font.pixelSize: root.sp(14)
                         backgroundColor: bgColor
@@ -104,10 +99,7 @@ Page {
                                 borderColor: grayLight
                         }
                     }
-
-
-
-                }
+                } // Campo de E-mail
 
                 Item {
                     id: senhaLogin
@@ -139,7 +131,7 @@ Page {
                         placeholderColor: grayLight
                         echoMode: TextInput.Password
                         inputMethodHints: Qt.ImhNoAutoUppercase | Qt.ImhNoPredictiveText | Qt.ImhPreferLowercase | Qt.ImhHiddenText
-                        text: userSenha
+                        text: ""//userSenha
                         textColor: greenDark
                         font.pixelSize: root.sp(14)
                         backgroundColor: bgColor
@@ -152,11 +144,8 @@ Page {
                                 bBorderwidth: 2
                                 borderColor: grayLight
                         }
-
                     }
-
-
-                }
+                } // Campo de Senha
 
                 Item {
                     id: botaoLogin
@@ -180,11 +169,16 @@ Page {
                             anchors.fill: parent
                             onClicked: {
                                  loginPage.forceActiveFocus()
+
+                                // Validar os dados de email e senha antes de entrar
+                                // Congigurar msgs de erro
+
+                                // Temporário: Redireciona para página principal
                                  stack.push(mainView)
                             }
                         }
                     }
-                }
+                } // Botão para realizar login
 
 
                 Item {
@@ -212,7 +206,7 @@ Page {
                             }
                         }
                     }
-                }
+                } // Botão para realizar cadastro
 
                 Item {
                     id: botaoEsqueceuSenha
@@ -245,32 +239,13 @@ Page {
                             id: btnSenhaMouseArea
                             anchors.fill: parent
                             onClicked: {
-                                firebaseAuth.sendPasswordResetEmail(
-                                            emailUserTxtLogin.text)
+                                // Utilizar código fonte do FirebaseAuth
+
+                                //firebaseAuth.sendPasswordResetEmail(emailUserTxtLogin.text)
                             }
                         }
                     }
-                }
-            }
-        }
-
-        Dialog {
-            id: loginDialog
-            title: ""
-            positiveActionLabel: "OK"
-            z: 1
-            negativeAction: false
-
-            property alias text: dialogText.text
-
-            onAccepted: {
-                close()
-                    stack.push(mainView)
-            }
-
-            AppText {
-                id: dialogText
-                anchors.fill: parent
+                } // Botão para recuperação de senha (não funcional)
             }
         }
     }
