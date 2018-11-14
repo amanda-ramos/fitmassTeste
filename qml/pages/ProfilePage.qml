@@ -1,6 +1,7 @@
 import VPlayApps 1.0
 import VPlay 2.0
 import QtQuick 2.9
+import VPlayPlugins 1.0
 
 import "../common"
 import "../pages"
@@ -306,19 +307,9 @@ Page {
             }
 
             Component.onCompleted: {
-                // Código para recuperar dados do banco de dados
-                //
-                //
-
-                // Temporário: pega os valores de um vetor fixo no Main.qml
-                userName.text = splitString(user[0])
-                emailUserTxt.txtText = user[1]
-                idadeUserTxt.txtText = userAge + " anos"
-                generoUserTxt.txtText = user[3]
-                alturaUserTxt.txtText = user[4] + " m"
-                pesoDesejadoUserTxt.txtText = user[5] + " kg"
-                medidasTotal.text = user[7]
-                userImage.source = user[6]
+                indicator.visible = true
+                indicator.startAnimating()
+                dbFitmass.getValue(keyUser)
             }
         } // Coluna Conteúdo
     } // Flickable
@@ -326,4 +317,90 @@ Page {
     ScrollIndicator {
         flickable: scrollProfile
     } // ScrollIndicator
+
+    FirebaseDatabase {
+        id: dbFitmass
+
+        config: FirebaseConfig {
+             //get these values from the firebase console
+             projectId: "fitmass-2018"
+             databaseUrl: "https://fitmassapp.firebaseio.com/"
+
+             //platform dependent - get these values from the google-services.json / GoogleService-info.plist
+             apiKey:        Qt.platform.os === "android" ? "AIzaSyBh6Kb12xUnOsQDTP2XEbSKtuGsBfmCyic" : "AIzaSyBh6Kb12xUnOsQDTP2XEbSKtuGsBfmCyic"
+             applicationId: Qt.platform.os === "android" ? "1:519505351771:android:28365556727f1ea3" : "1:519505351771:ios:28365556727f1ea3"
+           }
+
+        realtimeValueKeys: [keyUser + "/nome", keyUser + "/email",
+            keyUser + "/age", keyUser + "/gender", keyUser + "/height",
+            keyUser + "/desiredWeight", keyUser + "/totalMeasure", keyUser + "/photo"]
+
+        onRealtimeValueChanged: {
+            if(!inicial){
+                if(success){
+                    dbFitmass.getValue(keyUser);
+
+                    switch (key) {
+                        case "nome": {
+                            userName.text = splitString(value);
+                            break;
+                        }
+                        case "email": {
+                            emailUserTxt.txtText = value;
+                            break;
+                        }
+                        case "age": {
+                            idadeUserTxt.txtText = value + " anos";
+                            break;
+                        }
+                        case "gender": {
+                            generoUserTxt.txtText = value;
+                            break;
+                        }
+                        case "height": {
+                            alturaUserTxt.txtText = value + " m";
+                            break;
+                        }
+                        case "desiredWeight": {
+                            pesoDesejadoUserTxt.txtText = value + " kg";
+                            break;
+                        }
+                        case "totalMeasure": {
+                            medidasTotal.text = value;
+                            break;
+                        }
+                        case "photo": {
+                            userImage.source = value;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        onReadCompleted: {
+
+            if(inicial){
+                if(success) {
+                    console.debug("PERFIL - Read value " +  value + " for key " + key)
+                    indicator.stopAnimating()
+                    indicator.visible = false
+
+                    userName.text = splitString(value.nome)
+                    emailUserTxt.txtText = value.email
+                    idadeUserTxt.txtText = value.age + " anos"
+                    generoUserTxt.txtText = value.gender
+                    alturaUserTxt.txtText = value.height + " m"
+                    pesoDesejadoUserTxt.txtText = value.desiredWeight + " kg"
+                    medidasTotal.text = value.totalMeasure
+                    userImage.source = value.photo
+
+                } else {
+                    console.debug("PERFIL - Error with message: "  + value)
+                    nativeUtils.displayAlertDialog("Error!", value, "OK")
+                }
+                inicial = false;
+            }
+        }
+    }
 } // Page

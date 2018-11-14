@@ -83,16 +83,11 @@ Page {
 
         pesoDesejado = user[5];
 
-        console.log("HISTORICO 1 - idade: " + userAge)
-        console.log("HISTORICO 1 - qtde de medidas: " + qtdeMedida)
-
         if (qtdeMedida == 0) {
             novato = true
-            console.log("NOVATO")
         } else {
             novato = false
             filterIcon.visible = true
-            console.log("NÃO NOVATO")
         }
     }
 
@@ -109,18 +104,13 @@ Page {
         var indiceX
         measureIdDB = keyMedida
 
-        console.log("busca da Medida " + keyMedida)
-
         if(keyMedida === 0)
             keyMedida = medida0
         if(keyMedida === 1)
             keyMedida = medida1
         if(keyMedida === 2)
             keyMedida = medida2
-        console.log("busca da Medida " + keyMedida)
 
-
-        console.log("medida ID: " + keyMedida)
         if (initial) {
             indiceX = k + 1
             line.append(indiceX, keyMedida[1])
@@ -323,6 +313,7 @@ Page {
 
             onClicked: {
                 Theme.colors.statusBarStyle = Theme.colors.statusBarStyleHidden
+                firebaseAuth.logoutUser()
                 stack.pop()
             }
         }
@@ -629,7 +620,7 @@ Page {
                             min: 0
                             max: 1
                             labelsColor: white
-                            labelsFont: Qt.font({ pixelSize: root.sp(8)})
+                            labelsFont.pixelSize: root.sp(8)
                         }
 
                         ValueAxis {
@@ -639,7 +630,7 @@ Page {
                             gridVisible: true
                             tickCount: 5
                             labelsColor: white
-                            labelsFont: Qt.font({ pixelSize: root.sp(8)})
+                            labelsFont.pixelSize: root.sp(8)
                         }
                     }
                 }
@@ -662,7 +653,7 @@ Page {
                             min: 0
                             max: 1
                             labelsColor: white
-                            labelsFont: Qt.font({ pixelSize: root.sp(10)})
+                            labelsFont.pixelSize: root.sp(10)
                         }
 
                         ValueAxis {
@@ -672,7 +663,7 @@ Page {
                             gridVisible: true
                             tickCount: 0
                             labelsColor: white
-                            labelsFont: Qt.font({ pixelSize: root.sp(10)})
+                            labelsFont.pixelSize: root.sp(10)
                         }
                     }
                 }
@@ -695,7 +686,7 @@ Page {
                             min: 0
                             max: 1
                             labelsColor: white
-                            labelsFont: Qt.font({ pixelSize: root.sp(10)})
+                            labelsFont.pixelSize: root.sp(10)
                         }
 
                         ValueAxis {
@@ -705,7 +696,7 @@ Page {
                             gridVisible: true
                             tickCount: 0
                             labelsColor: white
-                            labelsFont: Qt.font({ pixelSize: root.sp(10)})
+                            labelsFont.pixelSize: root.sp(10)
                         }
                     }
                 }

@@ -2,6 +2,7 @@ import VPlayApps 1.0
 import VPlay 2.0
 import QtQuick 2.9
 import QtQuick.Controls 2.0 as Quick2
+import VPlayPlugins 1.0
 
 import "../common"
 import "../pages"
@@ -84,7 +85,7 @@ Page {
                         showClearButton: true
                         borderWidth: 0
                         placeholderColor: grayLight
-                        text: ""//userEmail
+                        text: userEmail
                         textColor: greenDark
                         font.pixelSize: root.sp(14)
                         backgroundColor: bgColor
@@ -131,7 +132,7 @@ Page {
                         placeholderColor: grayLight
                         echoMode: TextInput.Password
                         inputMethodHints: Qt.ImhNoAutoUppercase | Qt.ImhNoPredictiveText | Qt.ImhPreferLowercase | Qt.ImhHiddenText
-                        text: ""//userSenha
+                        text: userSenha
                         textColor: greenDark
                         font.pixelSize: root.sp(14)
                         backgroundColor: bgColor
@@ -168,13 +169,12 @@ Page {
                             id: btnLoginMouseArea
                             anchors.fill: parent
                             onClicked: {
-                                 loginPage.forceActiveFocus()
+                                loginPage.forceActiveFocus()
 
-                                // Validar os dados de email e senha antes de entrar
-                                // Congigurar msgs de erro
+                                indicator.visible = true
+                                indicator.startAnimating()
 
-                                // Temporário: Redireciona para página principal
-                                 stack.push(mainView)
+                                firebaseAuth.loginUser(emailUserTxtLogin.text, senhalUserTxtLogin.text)
                             }
                         }
                     }
@@ -241,7 +241,7 @@ Page {
                             onClicked: {
                                 // Utilizar código fonte do FirebaseAuth
 
-                                //firebaseAuth.sendPasswordResetEmail(emailUserTxtLogin.text)
+                                firebaseAuth.sendPasswordResetEmail(emailUserTxtLogin.text)
                             }
                         }
                     }

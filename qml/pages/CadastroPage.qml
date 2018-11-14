@@ -165,12 +165,8 @@ Page {
                                 MouseArea {
                                     id: userImageCadastroBtnMouseArea
                                     anchors.fill: parent
-
-                                    property bool shownEditPhotoDialog: false
-
                                     onClicked: {
                                         foto = true
-                                        shownEditPhotoDialog = true
                                         userImageCadastro.forceActiveFocus();
                                         nativeUtils.displayAlertSheet(
                                                     "",
@@ -416,13 +412,12 @@ Page {
                                                 "OK")
                                 } else {
                                     userID = "ufhxlzxh4XchMt0kfUVBqDajXuQ2"
-                                    console.log("email: " + emailUserTxtCadastro.tfTextText)
-                                    console.log("senha: " + senhaUserTxtCadastro.tfTextText)
-                                    console.log("nome: " + nomeUserTxtCadastro.tfTextText)
-                                    console.log("nascimento: " + idadeUserTxtCadastro.tfTextText)
-                                    console.log("genero: " + generoUserTxtCadastro.cbTextSelected)
-                                    console.log("altura: " + alturaUserTxtCadastro.cbTextSelected)
-                                    console.log("peso: " + pesoDesejadoUserTxtCadastro.cbTextSelected)
+
+                                    // Salvar dados no banco de dados
+                                    //
+                                    //
+
+                                    // Temporário: Entra direto na página principal
                                     entrarStack.pop()
                                     stack.push(mainView)
                                 }
@@ -445,7 +440,7 @@ Page {
             // @disable-check M16
             onAlertSheetFinished: {
                 var value
-                if(index>-1){
+                if(index>-1) {
                     if (pesoDesejado) {
                         value = (40 + (index * 1)).toFixed(0)
                         pesoDesejadoUserTxtCadastro.cbTextSelected = value + " kg"
@@ -470,15 +465,17 @@ Page {
                         altura = false
                     }
                     if(foto){
-                        if (userImageCadastroBtnMouseArea.shownEditPhotoDialog) {
-                            if (index == 0)
-                                nativeUtils.displayImagePicker("Choose Image") // Choose image
-                            else if (index == 1)
-                                nativeUtils.displayCameraPicker("Take Photo") // Take from Camera
-                            userImageCadastroBtnMouseArea.shownEditPhotoDialog = false
-                        }
+                        if (index == 0)
+                            nativeUtils.displayImagePicker("Choose Image") // Choose image
+                        else if (index == 1)
+                            nativeUtils.displayCameraPicker("Take Photo") // Take from Camera
+                        foto = false
                     }
                 }
+                foto = false
+                altura = false
+                genero = false
+                pesoDesejado = false
             }
 
             // @disable-check M16
@@ -493,8 +490,8 @@ Page {
                                 path, "userPhoto.png",
                                 function (progress, finished, success, downloadUrl) {
                                     if (!finished) {
-                                        console.log("Firebase Storage: progresso " + progress.toFixed(
-                                                        2))                                                       } else if (success) {
+                                        console.log("Firebase Storage: progresso " + progress.toFixed(2))
+                                    } else if (success) {
                                         console.log("Sucesso - Path: " + pathImage)
                                         userImageCadastro.source = downloadUrl
                                         pathImage = downloadUrl

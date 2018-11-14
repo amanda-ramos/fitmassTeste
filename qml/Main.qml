@@ -5,6 +5,7 @@ import Qt.labs.settings 1.0 as QtLabs
 import QtQuick.Controls.Material 2.0
 import QtCharts 2.2
 import QtQuick.Controls 2.0
+import VPlayPlugins 1.0
 
 import "common"
 import "pages"
@@ -308,4 +309,60 @@ App {
             }
         }
     }
+
+    AppActivityIndicator {
+        id: indicator
+        z: 1
+        animating: false
+        visible: false
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        hidesWhenStopped: true
+        color: greenDark
+    }
+
+    // Banco de dados para autenticação
+    FirebaseAuth {
+        id: firebaseAuth
+
+        config: FirebaseConfig {
+             //get these values from the firebase console
+             projectId: "fitmass-2018"
+             databaseUrl: "https://fitmassapp.firebaseio.com/"
+
+             //platform dependent - get these values from the google-services.json / GoogleService-info.plist
+             apiKey:        Qt.platform.os === "android" ? "AIzaSyBh6Kb12xUnOsQDTP2XEbSKtuGsBfmCyic" : "AIzaSyBh6Kb12xUnOsQDTP2XEbSKtuGsBfmCyic"
+             applicationId: Qt.platform.os === "android" ? "1:519505351771:android:28365556727f1ea3" : "1:519505351771:ios:28365556727f1ea3"
+           }
+
+        onLoggedIn: {
+            indicator.stopAnimating()
+            indicator.visible = false
+
+            if(success){
+                    console.log("LOGIN - Sucesso ao fazer o login!");
+                    root.userID = firebaseAuth.userId;
+                    console.log("LOGIN - UserID: " + root.userID)
+                    userEmail = ""
+                    userSenha = ""
+
+                    stack.push(mainView)
+            } else {
+                console.log("LOGIN - Error: " + message);
+                nativeUtils.displayAlertDialog("Erro no login", "Erro ao realizar o login.\n\nErro: " + message, "OK")
+            }
+        }
+
+        onPasswordResetEmailSent: {
+            indicator.stopAnimating()
+
+            if(success){
+                console.log("LOGIN - Link para recuperação de senha enviado ao seu e-mail.");
+            } else {
+                console.log("LOGIN - Error: " + message);
+            }
+        }
+    }
+
+
 }

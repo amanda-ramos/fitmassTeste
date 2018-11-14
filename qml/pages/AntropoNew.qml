@@ -77,7 +77,7 @@ Page {
         AppImage {
             id: personRef
             source: "../../assets/Wantropo.png"
-            width: parent.width - root.dp(40)
+            width: parent.width - root.dp(80)
             fillMode: Image.PreserveAspectFit
             anchors.centerIn: parent
         }
