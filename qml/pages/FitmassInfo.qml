@@ -40,7 +40,7 @@ Page {
                 width: parent.width
                 height: row1Fitmass.height
 
-                Row {
+                Item {
                     id: row1Fitmass
                     width: parent.width
                     height: titleRowVersao.height + colVersao1.height
@@ -61,7 +61,7 @@ Page {
                         anchors.left: parent.left
                     }
 
-                    Column{
+                    Item {
                         id: colVersao1
                         width: parent.width / 3
                         height: width / 2
@@ -78,7 +78,7 @@ Page {
                         }
                     }
 
-                    Column {
+                    Item {
                         id: colVersao2
                         width: parent.width * 2 / 3
                         height: colVersao1.height
@@ -101,7 +101,7 @@ Page {
                 }
             }
 
-            Item{
+            Item {
                 anchors.bottom: parent.bottom
                 width: parent.width
                 height: copyrights.height

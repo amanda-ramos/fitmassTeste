@@ -25,9 +25,11 @@ Page {
     property var dateMax1: new Date()
     property var dateMax2: new Date()
 
+    // Ícones na barra de navegação superior
     rightBarItem: NavigationBarRow {
         id: rightNavBarRowMeasure
 
+        // Ícone para Cadastrar nova medida
         IconButtonBarItem {
             title: "Nova medida"
             icon: IconType.plus
@@ -47,6 +49,7 @@ Page {
             id: spinMuscle
             anchors.fill: parent
 
+            // Menu de Tab para alternar entre os gráficos e as medidas completas
             Item {
                 id: tabIcons
                 width: parent.width
@@ -136,20 +139,23 @@ Page {
                         }
                     }
             }
-        }
+            } // tab Menu
 
+            // Gráfico da evolução por grupo muscular
             Item {
                 id: medidaPorSecao
                 height: parent.height - tabIcons.height
                 width: parent.width
                 anchors.top: tabIcons.bottom
 
+                // Componente do gráfico
                 MeasureAntropoGraphic {
                     measureHeight: parent.height
                     measureWidth: parent.width
                 }
-            }
+            } // gráfico
 
+            // Dados da medida completa por data
             Item {
                 id: medidaCompleta
                 height: parent.height - tabIcons.height
@@ -157,11 +163,12 @@ Page {
                 anchors.top: tabIcons.bottom
                 visible: false
 
+                // Componente da medida completa
                 MeasureAntropo {
                     measureHeight: parent.height
                     measureWidth: parent.width
                 }
-            }
+            } // medida completa
         }
     }
 

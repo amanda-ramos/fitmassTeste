@@ -315,7 +315,7 @@ Page {
                 Item {
                     id: analiseMusculoGordura_Magra
                     width: parent.width
-                    height: weightBar.height
+                    height: muscleBar.height
                     anchors.top: analiseMusculoGordura_peso.bottom
 
                     BarraProgressoSimples {
@@ -324,7 +324,7 @@ Page {
                         title: "Massa Magra"
                         subtitle: ""
                         titleValue: value + " kg"
-                        anchors.top: weightBar.bottom
+                        anchors.top: parent.top
                         min: 0
                         max: 80
                         value: 0
@@ -334,7 +334,7 @@ Page {
                 Item {
                     id: analiseMusculoGordura_Gorda
                     width: parent.width
-                    height: muscleBar.height
+                    height: bodyFatBar.height
                     anchors.top: analiseMusculoGordura_Magra.bottom
 
                     BarraProgressoSimples {
@@ -343,7 +343,7 @@ Page {
                         title: "Massa de Gordura"
                         subtitle: ""
                         titleValue: value + " kg"
-                        anchors.top: muscleBar.bottom
+                        anchors.top: parent.top
                         min: 0
                         max: 80
                         value: 0
@@ -396,7 +396,7 @@ Page {
                         title: "PGC"
                         subtitle: "(porcentual de gordura corporal)"
                         titleValue: value + " %"
-                        anchors.top: imcBar.bottom
+                        anchors.top: parent.top
                         min: 0
                         max: 100
                         value: 0
@@ -686,15 +686,17 @@ Page {
                             color: "transparent"
                             anchors.right: parent.right
                         }
+
+                        Rectangle {
+                            id: space2
+                            anchors.bottom: parent.bottom
+                            height: dp(20)
+                            width: iconInfo.height
+                            color: "transparent"
+                        }
                     }
 
-                    Rectangle {
-                        id: space2
-                        anchors.bottom: parent.bottom
-                        height: dp(20)
-                        width: iconInfo.height
-                        color: "transparent"
-                    }
+
                 } // Informações - Conteúdo
             }
         }

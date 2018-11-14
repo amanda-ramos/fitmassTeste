@@ -32,16 +32,17 @@ Page {
             onClicked: scrollInfo.forceActiveFocus()
         }
 
-        Column {
+        Item {
             id: content
             width: parent.width
+            height: row1.height + row2.height + row3.height + row4.height + row5.height + root.dp(50)
             anchors.horizontalCenter: parent.horizontalCenter
 
             Item {
                 width: parent.width
                 height: row1.height + row2.height + row3.height + row4.height + row5.height + root.dp(50)
 
-                Row {
+                Item {
                     id: row1
                     width: parent.width
                     height: titleRowAnaliseCompCorporal.height + textRowAnaliseCompCorporal.height
@@ -60,7 +61,7 @@ Page {
                         leftPadding: titleLeftPadding
                         bottomPadding: titleBottomPadding
                         anchors.left: parent.left
-                    }
+                    } // Análise da Composição Corporal - Título
 
                     Text {
                         id: textRowAnaliseCompCorporal
@@ -74,10 +75,10 @@ Page {
                         anchors.top: titleRowAnaliseCompCorporal.bottom
                         anchors.left: parent.left
                         wrapMode: Text.WordWrap
-                    }
-                } // row 1 - Análise da Composição Corporal
+                    } // Análise da Composição Corporal - Descrição
+                } // Row 1
 
-                Row {
+                Item {
                     id: row2
                     width: parent.width
                     height: titleRowAnaliseMuscGord.height + textRowAnaliseMuscGord.height
@@ -96,7 +97,7 @@ Page {
                         topPadding: titleTopPadding
                         leftPadding: titleLeftPadding
                         bottomPadding: titleBottomPadding
-                    }
+                    } // Análise Músculo - Gordura - Título
 
                     Text {
                         id: textRowAnaliseMuscGord
@@ -110,10 +111,10 @@ Page {
                         anchors.top: titleRowAnaliseMuscGord.bottom
                         anchors.left: parent.left
                         wrapMode: Text.WordWrap
-                    }
-                } // row 2 - Análise Músculo - Gordura
+                    } // Análise Músculo - Gordura - Descrição
+                } // Row 2
 
-                Row {
+                Item {
                     id: row3
                     width: parent.width
                     height: titleRowAnaliseObes.height + textRowAnaliseObes.height
@@ -132,7 +133,7 @@ Page {
                         topPadding: titleTopPadding
                         leftPadding: titleLeftPadding
                         bottomPadding: titleBottomPadding
-                    }
+                    } // Análise de Obesidade - Título
 
                     Text {
                         id: textRowAnaliseObes
@@ -146,10 +147,10 @@ Page {
                         anchors.top: titleRowAnaliseObes.bottom
                         anchors.left: parent.left
                         wrapMode: Text.WordWrap
-                    }
-                } // row 3 - Análise Obesidade
+                    } // Análise de Obesidade - Descrição
+                } // Row 3
 
-                Row {
+                Item {
                     id: row4
                     width: parent.width
                     height: titleRowAnaliseSegMagra.height + textRowAnaliseSegMagra.height
@@ -168,7 +169,7 @@ Page {
                         topPadding: titleTopPadding
                         leftPadding: titleLeftPadding
                         bottomPadding: titleBottomPadding
-                    }
+                    } // Análise Segmentar da Massa Magra - Título
 
                     Text {
                         id: textRowAnaliseSegMagra
@@ -182,10 +183,10 @@ Page {
                         anchors.top: titleRowAnaliseSegMagra.bottom
                         anchors.left: parent.left
                         wrapMode: Text.WordWrap
-                    }
-                } // row 4 - Análise Segmentar da Massa Magra
+                    } // Análise Segmentar da Massa Magra - Descrição
+                } // Row 4
 
-                Row {
+                Item {
                     id: row5
                     width: parent.width
                     height: titleRowAnaliseSegGorda.height + titleRowAnaliseSegMagra.height
@@ -204,7 +205,7 @@ Page {
                         topPadding: titleTopPadding
                         leftPadding: titleLeftPadding
                         bottomPadding: titleBottomPadding
-                    }
+                    } // Análise Segmentar da Massa de Gordura - Título
 
                     Text {
                         id: textRowAnaliseSegGorda
@@ -218,11 +219,11 @@ Page {
                         anchors.top: titleRowAnaliseSegGorda.bottom
                         anchors.left: parent.left
                         wrapMode: Text.WordWrap
-                    }
-                } // row 5 - Análise Segmentar da Massa de Gordura
-            } // item
-        } // column - conteúro info
-    } // flickable
+                    } // Análise Segmentar da Massa de Gordura - Descrição
+                } // Row 5
+            }
+        }
+    }
 
     ScrollIndicator {
         flickable: scrollInfo

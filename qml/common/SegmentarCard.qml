@@ -46,18 +46,18 @@ Item {
     Image {
         id: imageWomen
         source: ""
-        height: dp(250)
+        height: root.dp(250)
         fillMode: Image.PreserveAspectFit
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
-    Row {
+    Item {
         width: parent.width
         height: columnEsq.height
         anchors.top: imageWomen.top
         anchors.left: segmentarCard.left
 
-        Column {
+        Item {
             id: columnEsq
             width: parent.width / 2
             height: imageWomen.height
@@ -100,7 +100,7 @@ Item {
             }
         }
 
-        Column {
+        Item {
             id: columnDir
             width: parent.width / 2
             height: imageWomen.height

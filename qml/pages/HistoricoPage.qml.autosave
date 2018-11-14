@@ -82,17 +82,12 @@ Page {
                         "dd/MM/yyyy"));
 
         pesoDesejado = user[5];
-
-        console.log("HISTORICO 1 - idade: " + userAge)
-        console.log("HISTORICO 1 - qtde de medidas: " + qtdeMedida)
-
+        
         if (qtdeMedida == 0) {
             novato = true
-            console.log("NOVATO")
         } else {
             novato = false
             filterIcon.visible = true
-            console.log("NÃO NOVATO")
         }
     }
 
@@ -109,18 +104,13 @@ Page {
         var indiceX
         measureIdDB = keyMedida
 
-        console.log("busca da Medida " + keyMedida)
-
         if(keyMedida === 0)
             keyMedida = medida0
         if(keyMedida === 1)
             keyMedida = medida1
         if(keyMedida === 2)
             keyMedida = medida2
-        console.log("busca da Medida " + keyMedida)
-
-
-        console.log("medida ID: " + keyMedida)
+        
         if (initial) {
             indiceX = k + 1
             line.append(indiceX, keyMedida[1])

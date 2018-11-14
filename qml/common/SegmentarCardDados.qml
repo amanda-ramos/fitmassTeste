@@ -20,7 +20,7 @@ Item {
     property alias valor: valor.text
     property alias analise: analise.text
 
-    Row {
+    Item {
         id: row
         width: parent.width
         height: title.height + subtitle.height + valor.height + analise.height

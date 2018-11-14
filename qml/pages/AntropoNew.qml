@@ -11,24 +11,35 @@ Page {
     width: screenSizeX
 
     property color txtTitle: greenDark
+    property var txtTitleSize: root.sp(16)
 
+    // Ícones na barra de navegação superior
     rightBarItem: NavigationBarRow {
         id: rightNavBarRowMeasureCorp
 
+        // Ícone para salvar a nova medida no banco de dados
         IconButtonBarItem {
             title: "Salvar"
             icon: IconType.check
 
             onClicked: {
+                // Verifica se não há campos vazios
                 if (rightBiceps.tfTextText === "" || rightAntebraco.tfTextText
                         === "" || leftBiceps.tfTextText === "" || leftAntebraco.tfTextText
                         === "" || chestItem.tfTextText === "" || waistItem.tfTextText === "" || hipItem.tfTextText
                         === "" || rightThigh.tfTextText === "" || rightCalf.tfTextText
                         === "" || leftThigh.tfTextText === "" || leftCalf.tfTextText === "") {
 
+                    // Confirma o salvar mesmo com campos vazios
                     nativeUtils.displayAlertDialog(
                                 "Atenção",
                                 "Tem certeza que deseja salvar essa medida? \nNem todos os campos estão preenchidos",
+                                "Sim", "Não")
+                } else {
+                    // Confirma o salvar
+                    nativeUtils.displayAlertDialog(
+                                "Atenção",
+                                "Tem certeza que deseja salvar essa medida? ",
                                 "Sim", "Não")
                 }
             }
@@ -38,11 +49,17 @@ Page {
 
                 onAlertDialogFinished: {
                     if (accepted) {
+                        // Ao aceitar, salvar os dados no banco de dados
+                        //
+                        //
+
+                        // Temporário: cria key da medida e aparece no log
                         var corpKey = "corporal_" + userID + "_" + Qt.formatDate(
                                     Date.fromLocaleString(
                                         Qt.locale(), txtDatePickerUser.text,
                                         "dd MMM yyyy"), "yyyyMMdd")
                         console.log("SALVAR medida corporal aceita - key: " + corpKey)
+                        // volta a tela
                         antropoStack.pop()
                     }
                 }
@@ -50,6 +67,7 @@ Page {
         }
     }
 
+    // Imagem do perfil de uma pessoa
     Item {
         id: imageAntropo
         width: parent.width / 2
@@ -86,6 +104,7 @@ Page {
                     + hip.height + rightLeg.height + leftLeg.height + datePicker.height
             anchors.right: parent.right
 
+            // Selecionar a data da medida a ser salva
             Item {
                 id: datePicker
                 width: parent.width
@@ -204,6 +223,7 @@ Page {
                 }
             }
 
+            // Braço Direito
             Item {
                 id: rightArm
                 width: parent.width
@@ -219,10 +239,12 @@ Page {
                     anchors.left: parent.left
                     anchors.top: parent.top
                     width: parent.width - root.dp(10)
-                    topPadding: dp(10)
+                    topPadding: root.dp(10)
                     horizontalAlignment: Text.AlignHCenter
+                    font.pixelSize: txtTitleSize
                 }
 
+                // Bíceps Direito
                 CustomTextFieldInterativo {
                     id: rightBiceps
                     height: root.dp(70)
@@ -232,7 +254,7 @@ Page {
                     tfTitleColor: white
                     tfTextColor: greenLight
                     tfColor: grayLight
-                    tfRadius: root.dp(30)
+                    tfRadius: radiusText
                     tfTextTitle: "Bíceps: "
                     tfTextText: ""
                     tfWidth: parent.width
@@ -242,6 +264,7 @@ Page {
                     sourceImage: "../../assets/Wbicepsdireito.png"
                 }
 
+                // Antebraço Direito
                 CustomTextFieldInterativo {
                     id: rightAntebraco
                     height: root.dp(70)
@@ -251,7 +274,7 @@ Page {
                     tfTitleColor: white
                     tfTextColor: greenLight
                     tfColor: grayLight
-                    tfRadius: root.dp(30)
+                    tfRadius: radiusText
                     tfTextTitle: "Antebraço: "
                     tfTextText: ""
                     tfWidth: parent.width
@@ -262,6 +285,7 @@ Page {
                 }
           }
 
+            // Braço Esquerdo
             Item {
                 id: leftArm
                 width: parent.width
@@ -277,10 +301,12 @@ Page {
                     anchors.left: parent.left
                     anchors.top: parent.top
                     width: parent.width - root.dp(10)
-                    topPadding: dp(10)
+                    topPadding: root.dp(10)
                     horizontalAlignment: Text.AlignHCenter
+                    font.pixelSize: txtTitleSize
                 }
 
+                // Bíceps Esquerdo
                 CustomTextFieldInterativo {
                     id: leftBiceps
                     height: root.dp(70)
@@ -290,7 +316,7 @@ Page {
                     tfTitleColor: white
                     tfTextColor: greenLight
                     tfColor: grayLight
-                    tfRadius: root.dp(30)
+                    tfRadius: radiusText
                     tfTextTitle: "Bíceps: "
                     tfTextText: ""
                     tfWidth: parent.width
@@ -300,6 +326,7 @@ Page {
                     sourceImage: "../../assets/Wbicepsesquerdo.png"
                 }
 
+                // Antebraço Esquerdo
                 CustomTextFieldInterativo {
                     id: leftAntebraco
                     height: root.dp(70)
@@ -309,7 +336,7 @@ Page {
                     tfTitleColor: white
                     tfTextColor: greenLight
                     tfColor: grayLight
-                    tfRadius: root.dp(30)
+                    tfRadius: radiusText
                     tfTextTitle: "Antebraço: "
                     tfTextText: ""
                     tfWidth: parent.width
@@ -320,6 +347,7 @@ Page {
                 }
             }
 
+            // Peitoral
             Item {
                 id: chest
                 width: parent.width
@@ -335,8 +363,9 @@ Page {
                     anchors.left: parent.left
                     anchors.top: parent.top
                     width: parent.width - root.dp(10)
-                    topPadding: dp(10)
+                    topPadding: root.dp(10)
                     horizontalAlignment: Text.AlignHCenter
+                    font.pixelSize: txtTitleSize
                 }
 
                 CustomTextFieldInterativo {
@@ -348,7 +377,7 @@ Page {
                     tfTitleColor: white
                     tfTextColor: greenLight
                     tfColor: grayLight
-                    tfRadius: root.dp(30)
+                    tfRadius: radiusText
                     tfTextTitle: ""
                     tfTextText: ""
                     tfWidth: parent.width
@@ -359,6 +388,7 @@ Page {
                 }
             }
 
+            // Cintura
             Item {
                 id: waist
                 width: parent.width
@@ -374,8 +404,9 @@ Page {
                     anchors.left: parent.left
                     anchors.top: parent.top
                     width: parent.width - root.dp(10)
-                    topPadding: dp(10)
+                    topPadding: root.dp(10)
                     horizontalAlignment: Text.AlignHCenter
+                    font.pixelSize: txtTitleSize
                 }
 
                 CustomTextFieldInterativo {
@@ -387,7 +418,7 @@ Page {
                     tfTitleColor: white
                     tfTextColor: greenLight
                     tfColor: grayLight
-                    tfRadius: root.dp(30)
+                    tfRadius: radiusText
                     tfTextTitle: ""
                     tfTextText: ""
                     tfWidth: parent.width
@@ -398,6 +429,7 @@ Page {
                 }
             }
 
+            // Quadril
             Item {
                 id: hip
                 width: parent.width
@@ -413,8 +445,9 @@ Page {
                     anchors.left: parent.left
                     anchors.top: parent.top
                     width: parent.width - root.dp(10)
-                    topPadding: dp(10)
+                    topPadding: root.dp(10)
                     horizontalAlignment: Text.AlignHCenter
+                    font.pixelSize: txtTitleSize
                 }
 
                 CustomTextFieldInterativo {
@@ -426,7 +459,7 @@ Page {
                     tfTitleColor: white
                     tfTextColor: greenLight
                     tfColor: grayLight
-                    tfRadius: root.dp(30)
+                    tfRadius: radiusText
                     tfTextTitle: ""
                     tfTextText: ""
                     tfWidth: parent.width
@@ -437,6 +470,7 @@ Page {
                 }
             }
 
+            // Perna Direita
             Item {
                 id: rightLeg
                 width: parent.width
@@ -452,10 +486,12 @@ Page {
                     anchors.left: parent.left
                     anchors.top: parent.top
                     width: parent.width - root.dp(10)
-                    topPadding: dp(10)
+                    topPadding: root.dp(10)
                     horizontalAlignment: Text.AlignHCenter
+                    font.pixelSize: txtTitleSize
                 }
 
+                // Coxa Direita
                 CustomTextFieldInterativo {
                     id: rightThigh
                     height: root.dp(70)
@@ -465,7 +501,7 @@ Page {
                     tfTitleColor: white
                     tfTextColor: greenLight
                     tfColor: grayLight
-                    tfRadius: root.dp(30)
+                    tfRadius: radiusText
                     tfTextTitle: "Coxa: "
                     tfTextText: ""
                     tfWidth: parent.width
@@ -475,6 +511,7 @@ Page {
                     sourceImage: "../../assets/Wcoxadireita.png"
                 }
 
+                // Panturrilha Direita
                 CustomTextFieldInterativo {
                     id: rightCalf
                     height: root.dp(70)
@@ -484,7 +521,7 @@ Page {
                     tfTitleColor: white
                     tfTextColor: greenLight
                     tfColor: grayLight
-                    tfRadius: root.dp(30)
+                    tfRadius: radiusText
                     tfTextTitle: "Panturrilha: "
                     tfTextText: ""
                     tfWidth: parent.width
@@ -493,9 +530,9 @@ Page {
 
                     sourceImage: "../../assets/Wpanturrilhadireita.png"
                 }
-
             }
 
+            // Perna Esquerda
             Item {
                 id: leftLeg
                 width: parent.width
@@ -511,10 +548,12 @@ Page {
                     anchors.left: parent.left
                     anchors.top: parent.top
                     width: parent.width - root.dp(10)
-                    topPadding: dp(10)
+                    topPadding: root.dp(10)
                     horizontalAlignment: Text.AlignHCenter
+                    font.pixelSize: txtTitleSize
                 }
 
+                // Coxa Esquerda
                 CustomTextFieldInterativo {
                     id: leftThigh
                     height: root.dp(70)
@@ -524,7 +563,7 @@ Page {
                     tfTitleColor: white
                     tfTextColor: greenLight
                     tfColor: grayLight
-                    tfRadius: root.dp(30)
+                    tfRadius: radiusText
                     tfTextTitle: "Coxa: "
                     tfTextText: ""
                     tfWidth: parent.width
@@ -534,6 +573,7 @@ Page {
                     sourceImage: "../../assets/Wcoxaesquerda.png"
                 }
 
+                // Panturrilha Esquerda
                 CustomTextFieldInterativo {
                     id: leftCalf
                     height: root.dp(70)
@@ -543,7 +583,7 @@ Page {
                     tfTitleColor: white
                     tfTextColor: greenLight
                     tfColor: grayLight
-                    tfRadius: root.dp(30)
+                    tfRadius: radiusText
                     tfTextTitle: "Panturrilha: "
                     tfTextText: ""
                     tfWidth: parent.width
