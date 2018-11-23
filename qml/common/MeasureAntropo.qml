@@ -1,5 +1,6 @@
 import QtQuick 2.11
 import VPlayApps 1.0
+import VPlayPlugins 1.0
 
 Item {
     id: measure
@@ -14,18 +15,118 @@ Item {
     property color textColor: white
     property bool dateAntropoComplete: false
 
-    property string bicepsDireito: "28"
-    property string bicepsEsquerdo: "30"
-    property string antebracoDireito: "13"
-    property string antebracoEsquerdo: "15"
-    property string peitoral: "45"
-    property string cintura: "62"
-    property string quadril: "88"
-    property string coxaDireita: "45"
-    property string coxaEsquerda: "46"
-    property string panturrilhaDireita: "33"
-    property string panturrilhaEsquerda: "33"
-    property string relacaoCinturaQuadril: "1.05"
+    property real bicepsDireito: 0
+    property real bicepsEsquerdo: 0
+    property real antebracoDireito: 0
+    property real antebracoEsquerdo: 0
+    property real peitoral: 0
+    property real cintura: 0
+    property real quadril: 0
+    property real coxaDireita: 0
+    property real coxaEsquerda: 0
+    property real panturrilhaDireita: 0
+    property real panturrilhaEsquerda: 0
+    property real relacaoCinturaQuadril: 0
+    property int j: 0
+
+    function buscaDadosMedidasCorporais() {
+
+        dbFitmass.getValue("medidasCorp", {
+                                 orderByChild: "userCorp",
+                                 equalTo: userID
+                             },
+                             function (success, key, value) {
+                                 if (success) {
+
+                                     noContent2.visible = false
+                                     noContent.visible = false
+                                     content.visible = true
+                                     dates.visible = true
+
+                                     //console.debug("HISTORICO 2 - Read value " + value + " for key " + key)
+                                     for (var prop in value) {
+                                         console.log("ANTROPO - VALUE - " + prop)
+                                         keyMeasureCorp = prop
+                                            if(buscaMedidasCorporais(keyMeasureCorp))
+                                                break
+                                     }
+                                 } else {
+                                     if(qtdeMedidaCorp === 0) {
+                                         noContent2.visible = true
+                                         noContent.visible = false
+                                         content.visible = false
+                                         dates.visible = false
+                                     } else {
+                                         nativeUtils.displayAlertDialog("Error! 3", value3, "OK")
+                                     }
+
+                                     indicator.stopAnimating()
+                                 }
+                             })
+    }
+
+    function buscaMedidasCorporais(keyMedidaCorp) {
+
+        console.log("tst: " + keyMedidaCorp)
+
+        dbFitmass.getValue("medidasCorp/" + keyMedidaCorp, {
+                                 orderByValue: true
+                             }, function (success2, key2, value2) {
+                                 console.log("log: " + success2)
+                                 if (success2) {
+
+                                     console.log("data1: " + Qt.formatDate(value2.dateCorp, "dd/MM/yyyy"))
+                                     console.log("data2: " + dateSelect.btnText)
+
+                                     // se houver na data do datepicker:
+                                     if (Qt.formatDate(value2.dateCorp, "dd/MM/yyyy") === dateSelect.btnText){
+
+                                         noContent2.visible = false
+                                         noContent.visible = false
+                                         content.visible = true
+                                         dates.visible = true
+                                         console.log("Há medidas nesta data SIM")
+
+                                         bicepsDireito = parseFloat(value2.bicepsDir)
+                                         bicepsEsquerdo = parseFloat(value2.bicepsEsq)
+                                         antebracoDireito = parseFloat(value2.antebracoDir)
+                                         antebracoEsquerdo = parseFloat(value2.antebracoEsq)
+                                         peitoral = parseFloat(value2.peitoral)
+                                         cintura = parseFloat(value2.cintura)
+                                         quadril = parseFloat(value2.quadril)
+                                         coxaDireita = parseFloat(value2.coxaDir)
+                                         coxaEsquerda = parseFloat(value2.coxaEsq)
+                                         panturrilhaDireita = parseFloat(value2.panturrilhaDir)
+                                         panturrilhaEsquerda = parseFloat(value2.panturrilhaEsq)
+                                         relacaoCinturaQuadril = cintura / quadril
+
+                                         return true
+
+                                     } else {
+                                         j++
+
+                                         if(j >= qtdeMedidaCorp) {
+                                             noContent2.visible = false
+                                             noContent.visible = true
+                                             content.visible = false
+                                             dates.visible = true
+                                             console.log("não há medidas nesta data")
+                                             return false
+                                         }
+
+
+                                     }
+
+                                 } else {
+                                     console.debug(
+                                                 "Error with message: " + value3)
+                                     nativeUtils.displayAlertDialog(
+                                                 "Error! 1", value3, "OK")
+                                     indicator.stopAnimating()
+                                     return false
+                                 }
+                             })
+    }
 
     AppFlickable {
         id: scrollAntropoPageCompleta
@@ -53,6 +154,7 @@ Item {
             height: dateSelect.height
             anchors.top: spacer1.bottom
             anchors.horizontalCenter: parent.horizontalCenter
+            visible: true
 
             Item {
                 width: parent.width
@@ -98,7 +200,7 @@ Item {
             width: parent.width
             anchors.top: dates.bottom
             anchors.left: parent.left
-            visible: true
+            visible: false
 
             // Bíceps
             Item {
@@ -549,6 +651,10 @@ Item {
             }  // Panturrilha
         }
     }
+
+    Component.onCompleted: {
+        buscaDadosMedidasCorporais()
+    }
     
     ScrollIndicator {
         flickable: scrollAntropoPageCompleta
@@ -563,8 +669,22 @@ Item {
             id: noMeasure
             text: "Não há medidas nesta data."
             anchors.centerIn: parent
-            color: white
-            font.pixelSize: titleTextSize
+            color: greenDark
+            font.pixelSize: root.dp(14)
+        }
+    }
+
+    Item {
+        id: noContent2
+        anchors.fill: parent
+        visible: false
+
+        Text {
+            id: noMeasure2
+            text: "Você ainda não possui medidas corporais."
+            anchors.centerIn: parent
+            color: greenDark
+            font.pixelSize: root.dp(14)
         }
     }
 
@@ -595,17 +715,28 @@ Item {
                     }
 
                     dateSelect.btnText = pickedDate;
-
-                    if(content.visible){
-                        content.visible = false
-                        noContent.visible = true
-                    } else {
-                        content.visible = true
-                        noContent.visible = false
-                    }
                 }
+
+                j = 0
+                buscaDadosMedidasCorporais()
+
+
                 dateAntropoComplete = false
             }
         }
+    }
+
+    FirebaseDatabase {
+        id: dbFitmass
+
+        config: FirebaseConfig {
+             //get these values from the firebase console
+             projectId: "fitmass-2018"
+             databaseUrl: "https://fitmassapp.firebaseio.com/"
+
+             //platform dependent - get these values from the google-services.json / GoogleService-info.plist
+             apiKey:        Qt.platform.os === "android" ? "AIzaSyBh6Kb12xUnOsQDTP2XEbSKtuGsBfmCyic" : "AIzaSyBh6Kb12xUnOsQDTP2XEbSKtuGsBfmCyic"
+             applicationId: Qt.platform.os === "android" ? "1:519505351771:android:28365556727f1ea3" : "1:519505351771:ios:28365556727f1ea3"
+           }
     }
 }

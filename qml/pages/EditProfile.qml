@@ -20,8 +20,8 @@ Page {
     property color backEditField: grayLight
 
     property var pathImage: ""
-
     property var editTextMargin: root.dp(20)
+    property var totalDeMedidas
 
     property bool inicial: true
     property bool genero: false
@@ -46,6 +46,28 @@ Page {
         return valores;
     }
 
+    // Função para calcular idade
+    function calculateAge(birthday) {
+        var yearUser = Qt.formatDateTime(birthday, "yyyy")
+        var monthUser = Qt.formatDateTime(birthday, "MM")
+        var dayUser = Qt.formatDateTime(birthday, "dd")
+
+        var dateNow = new Date()
+        var year = Qt.formatDateTime(dateNow, "yyyy")
+        var month = Qt.formatDateTime(dateNow, "MM")
+        var day = Qt.formatDateTime(dateNow, "dd")
+
+        var age = parseInt(year) - parseInt(yearUser)
+        if (month < monthUser) {
+            age--
+        } else if (month == monthUser) {
+            if (dayUser > day) {
+                age--
+            }
+        }
+        return age
+    }
+
     // Ícones na barra de navegação superior
     rightBarItem: NavigationBarRow {
         id: rightNavBarRow
@@ -59,22 +81,31 @@ Page {
             property bool saveBtn: false
 
             onClicked: {
-                // Código para salvar os dados no banco de dados
-                //
-                //
 
-                // Temporário: aparece uma msg de sucesso
-                editProfile = true;
-                saveBtn = true;
-                nativeUtils.displayAlertDialog("Sucesso!", "Os dados foram alterados.", "OK")
-            }
+                var key = "users/" + root.userID;
+                var birthday = Qt.formatDateTime(Date.fromLocaleString(Qt.locale(), idadeUserTxt.tfTextText, "dd/MM/yyyy"), "dd/MM/yyyy");
 
-            Connections {
-                target: nativeUtils
-                onAlertDialogFinished: {
-                    if(saveProfileBtn.saveBtn)
-                        profileStack.pop();
-                }
+                  dbFitmass.setValue(key, {
+                       "nome": nomeUserTxt.tfTextText,
+                       "email": emailUserTxt.tfTextText,
+                       "age": calculateAge(Date.fromLocaleString(Qt.locale(), birthday, "dd/MM/yyyy")),
+                       "height": alturaUserTxt.cbTextSelected,
+                       "desiredWeight": pesoDesejadoUserTxt.cbTextSelected,
+                       "totalMeasure": totalDeMedidas,
+                       "gender": generoUserTxt.cbTextSelected,
+                       "birthday": birthday,
+                       "photo": pathImage,
+                       "userID": root.userID
+                  }, function(success, message) {
+                           if(success) {
+                             console.log("EDITAR PERFIL - sucesso ao salvar os dados")
+                                editProfile = true;
+                             nativeUtils.displayAlertDialog("Sucesso!", "Os dados foram alterados.", "OK")
+
+                           } else {
+                             console.log("CADASTRO - registro d - DB write error:", message)
+                           }
+                         })
             }
         }
     }
@@ -372,24 +403,16 @@ Page {
             }
 
             Component.onCompleted: {
-                // Código para recuperar dados do banco de dados
-                //
-                //
-
-                // Temporário: pega os valores de um vetor fixo no Main.qml
-                nomeUserTxt.tfTextText = user[0]
-                emailUserTxt.tfTextText = user[1]
-                idadeUserTxt.tfTextText = user[2]
-                generoUserTxt.cbTextSelected = user[3]
-                alturaUserTxt.cbTextSelected = user[4]
-                pesoDesejadoUserTxt.cbTextSelected = user[5]
-                userImage.source = user[6]
+                indicator.visible = true
+                indicator.startAnimating()
+                dbFitmass.getValue(keyUser)
             }
         }
 
         Connections {
             target: nativeUtils
 
+            // @disable-check M16
             onAlertSheetFinished: {
                 if(pesoDesejado){
                     pesoDesejadoUserTxt.cbTextSelected = (40 + (index * 1)).toFixed(0);
@@ -430,6 +453,13 @@ Page {
                         userImageBtnMouseArea.shownEditPhotoDialog = false
                     }
                 }
+
+                if(editProfile){
+                    editProfile = false
+                    profileStack.pop()
+                    indicator.stopAnimating()
+                    indicator.visible = false
+                }
             }
 
             // @disable-check M16
@@ -438,6 +468,9 @@ Page {
 
                 if(accepted){
                     //userImageCadastro.source = Qt.resolvedUrl(path)
+
+                    indicator.visible = true
+                    indicator.startAnimating()
                     storageFitmass.uploadFile(path, "userPhoto" + Date.now() + ".png", function(progress, finished, success, downloadUrl) {
                            if(!finished){
                                console.log("Firebase Storage: progresso " + progress.toFixed(2))
@@ -446,9 +479,12 @@ Page {
                                userImage.source = downloadUrl
                                pathImage = downloadUrl;
                                console.log("Sucesso - Path: " + pathImage)
+                               indicator.stopAnimating()
+                               indicator.visible = false
                            } else {
-
                              console.log("Falha ao carregar imagem  no Firebase Storage" + message)
+                               indicator.stopAnimating()
+                               indicator.visible = false
                            }
                   })
                 }
@@ -460,16 +496,22 @@ Page {
 
                 if(accepted){
                     //userImageCadastro.source = Qt.resolvedUrl(path)
+
+                    indicator.visible = true
+                    indicator.startAnimating()
                     storageFitmass.uploadFile(path, "userPhoto.png", function(progress, finished, success, downloadUrl) {
                            if(!finished){
                                console.log("Firebase Storage: progresso " + progress.toFixed(2))
-
                            } else if(success) {
                                console.log("Sucesso - Path: " + pathImage)
                              userImage.source = downloadUrl
-                             pathImage = downloadUrl;
+                             pathImage = downloadUrl
+                               indicator.stopAnimating()
+                               indicator.visible = false
                            } else {
                              console.log("Falha ao carregar imagem  no Firebase Storage" + message)
+                               indicator.stopAnimating()
+                               indicator.visible = false
                            }
                   })
                 }
@@ -477,6 +519,41 @@ Page {
         }
     }
 
+    FirebaseDatabase {
+        id: dbFitmass
+
+        config: FirebaseConfig {
+             //get these values from the firebase console
+             projectId: "fitmass-2018"
+             databaseUrl: "https://fitmassapp.firebaseio.com/"
+
+             //platform dependent - get these values from the google-services.json / GoogleService-info.plist
+             apiKey:        Qt.platform.os === "android" ? "AIzaSyBh6Kb12xUnOsQDTP2XEbSKtuGsBfmCyic" : "AIzaSyBh6Kb12xUnOsQDTP2XEbSKtuGsBfmCyic"
+             applicationId: Qt.platform.os === "android" ? "1:519505351771:android:28365556727f1ea3" : "1:519505351771:ios:28365556727f1ea3"
+           }
+
+        onReadCompleted: {
+            if(success) {
+                console.debug("EDITAR PERFIL - Read value " +  value + " for key " + key)
+                indicator.stopAnimating()
+                indicator.visible = false
+
+                nomeUserTxt.tfTextText = value.nome
+                emailUserTxt.tfTextText = value.email
+                idadeUserTxt.tfTextText = value.birthday
+                generoUserTxt.cbTextSelected = value.gender
+                alturaUserTxt.cbTextSelected = value.height
+                pesoDesejadoUserTxt.cbTextSelected = value.desiredWeight
+                userImage.source = value.photo
+                totalDeMedidas = value.totalMeasure
+                pathImage = value.photo
+
+            } else {
+                console.debug("EDITAR PERFIL - Error with message: "  + value)
+                nativeUtils.displayAlertDialog("Error!", value, "OK")
+            }
+        }
+    }
 
     ScrollIndicator {
         flickable: scrollProfile

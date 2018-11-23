@@ -1,5 +1,6 @@
 import VPlayApps 1.0
 import QtQuick 2.11
+import VPlayPlugins 1.0
 
 import "../common"
 import "../pages"
@@ -59,8 +60,36 @@ Page {
                                         Qt.locale(), txtDatePickerUser.text,
                                         "dd MMM yyyy"), "yyyyMMdd")
                         console.log("SALVAR medida corporal aceita - key: " + corpKey)
-                        // volta a tela
-                        antropoStack.pop()
+
+                        dbFitmass.setValue("medidasCorp/" + corpKey, {
+                             "dateCorp": Date.fromLocaleString(locale, txtDatePickerUser.text, "dd MMM yyyy"),
+                             "bicepsDir": rightBiceps.tfTextText,
+                             "bicepsEsq": leftBiceps.tfTextText,
+                             "antebracoDir": rightAntebraco.tfTextText,
+                             "antebracoEsq": leftAntebraco.tfTextText,
+                             "peitoral": chestItem.tfTextText,
+                             "cintura": waistItem.tfTextText,
+                             "quadril": hipItem.tfTextText,
+                             "coxaDir": rightThigh.tfTextText,
+                             "coxaEsq": leftThigh.tfTextText,
+                             "panturrilhaDir": rightCalf.tfTextText,
+                             "panturrilhaEsq": leftCalf.tfTextText,
+                             "userCorp": root.userID
+                        }, function(success, message) {
+                                 if(success) {
+                                   console.log("CADASTRO MEDIDA - sucesso")
+
+                                     nativeUtils.displayAlertDialog("Sucesso", "Dados salvos com sucesso!", "OK")
+                                     // volta a tela
+                                     antropoStack.pop()
+                                     antropoStack.push({item: antropoView, replace: true})
+                                     indicator.stopAnimating()
+                                     indicator.visible = false
+
+                                 } else {
+                                   console.log("CADASTRO MEDIDA - DB write error:", message)
+                                 }
+                               })
                     }
                 }
             }
@@ -80,6 +109,51 @@ Page {
             width: parent.width - root.dp(80)
             fillMode: Image.PreserveAspectFit
             anchors.centerIn: parent
+        }
+
+        Item {
+            id: info
+            width: parent.width
+            height: iconInfo.height + space2.height
+            anchors.bottom: parent.bottom
+
+            Item {
+                width: parent.width
+                height: iconInfo.height+ space2.height
+
+                Image {
+                    id: iconInfo
+                    height: root.dp(22)
+                    width: height
+                    source: "../../assets/icon_info.png"
+                    anchors.left: space1.right
+                    anchors.bottom: space2.top
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+//                            var infopage = infoView.createObject()
+//                            fitmassStack.push(infopage)
+                        }
+                    }
+                }
+
+                Rectangle {
+                    id: space1
+                    height: iconInfo.height
+                    width: dp(20)
+                    color: "transparent"
+                    anchors.left: parent.left
+                }
+
+                Rectangle {
+                    id: space2
+                    anchors.bottom: parent.bottom
+                    height: dp(20)
+                    width: iconInfo.height
+                    color: "transparent"
+                }
+            }
         }
     }
 
@@ -599,4 +673,18 @@ Page {
     ScrollIndicator {
         flickable: flickableAntropo
     } // scroll indicator
+
+    FirebaseDatabase {
+        id: dbFitmass
+
+        config: FirebaseConfig {
+             //get these values from the firebase console
+             projectId: "fitmass-2018"
+             databaseUrl: "https://fitmassapp.firebaseio.com/"
+
+             //platform dependent - get these values from the google-services.json / GoogleService-info.plist
+             apiKey:        Qt.platform.os === "android" ? "AIzaSyBh6Kb12xUnOsQDTP2XEbSKtuGsBfmCyic" : "AIzaSyBh6Kb12xUnOsQDTP2XEbSKtuGsBfmCyic"
+             applicationId: Qt.platform.os === "android" ? "1:519505351771:android:28365556727f1ea3" : "1:519505351771:ios:28365556727f1ea3"
+           }
+    }
 }

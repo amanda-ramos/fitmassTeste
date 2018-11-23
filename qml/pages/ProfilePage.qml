@@ -50,6 +50,8 @@ Page {
 
           onClicked: {
             profileStack.push(editProfileView);
+              indicator.stopAnimating()
+              indicator.visible = false
         }
       } // Editar Perfil
     }

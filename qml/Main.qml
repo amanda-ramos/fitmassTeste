@@ -36,8 +36,8 @@ App {
     property color bgColor: grayDark // Cor de fundo (background color)
     property color tfColor: grayLight // Cor de fundo de text fields
 
-    property int screenSizeX: 640
-    property int screenSizeY: 960
+    property int screenSizeX: root.dp(640)
+    property int screenSizeY: root.dp(960)
 
     property var logoFitmassBrancaSource: "../../assets/fitmass_new_logo_branca.png"
     property var logoFitmassSource: "../../assets/fitmass_new_logo.png"
@@ -46,37 +46,23 @@ App {
     property var userTxtPadding: dp(20)
     property var editTextMargin: root.dp(20)
     property var radiusText: root.dp(30)
-
-    //variáveis de teste
-    property var user: ["Maria da Silva", "teste@teste.com.br", "16/04/1990", "Feminino", "1.66", "65", "../../assets/image_perfil.jpeg", "3"]
-    //                      nome                    peso    magra   gorda   agua    imc      pgc      data da medida
-    property var medida0: ["fitmass20180912083026", "74.0", "27.2", "24.6", "36.2", "26.9", "33.2", "2018-09-12T00:00:00.000"]
-    //                           SE      SD       ABD      IE      ID
-    property var medida0Magra: ["2.50", "2.50", "21.40", "7.51", "7.31"]
-    property var medida0Gorda: ["1.70", "1.80", "12.50", "3.70", "3.70"]
-
-    //                      nome                    peso    magra   gorda   agua    imc      pgc      data da medida
-    property var medida1: ["fitmass20181004121555", "70.8", "26.4", "22.9", "35.0", "25.7", "32.4", "2018-04-19T00:00:00.000"]
-    //                           SE      SD       ABD      IE      ID
-    property var medida1Magra: ["2.50", "2.30", "21.00", "7.41", "7.41"]
-    property var medida1Gorda: ["1.50", "1.60", "11.70", "3.50", "3.50"]
-
-    property var medida2: ["fitmass20181024083026", "75.0", "27.2", "24.6", "36.2", "26.9", "33.2", "2018-10-24T00:00:00.000"]
-    //                           SE      SD       ABD      IE      ID
-    property var medida2Magra: ["2.50", "2.50", "21.40", "7.51", "7.31"]
-    property var medida2Gorda: ["1.70", "1.80", "12.50", "3.70", "3.70"]
+    property var indicatorHor
+    property var indicatorVer
 
     property int axisFontSize: 10
     property var userID
     property var userGender
     property var userAge
     property var pesoDesejado
-    property var userEmail: "alc.ramos@yahoo.com.br"
-    property var userSenha: "123456"
+    property var userEmail: "alc.ramos@yahoo.com.br"//"teste@teste.com.br"
+    property var userSenha: "123456"//"teste123"
     property var qtdeMedida: 0
+    property var qtdeMedidaCorp: 0
+    property bool novato: true
 
     property var keyUser: "users/" + root.userID
     property var keyMeasure: ""
+    property var keyMeasureCorp: ""
 
     property var keyCard: ""
     property var keyCard2: ""
@@ -364,5 +350,20 @@ App {
         }
     }
 
+    FirebaseStorage {
+        id: storageFitmass
+
+        config: FirebaseConfig {
+             //get these values from the firebase console
+             projectId: "fitmass-2018"
+             databaseUrl: "https://fitmassapp.firebaseio.com/"
+
+             storageBucket: "fitmassapp.appspot.com"
+
+             //platform dependent - get these values from the google-services.json / GoogleService-info.plist
+             apiKey:        Qt.platform.os === "android" ? "AIzaSyBh6Kb12xUnOsQDTP2XEbSKtuGsBfmCyic" : "AIzaSyBh6Kb12xUnOsQDTP2XEbSKtuGsBfmCyic"
+             applicationId: Qt.platform.os === "android" ? "1:519505351771:android:28365556727f1ea3" : "1:519505351771:ios:28365556727f1ea3"
+           }
+    }
 
 }

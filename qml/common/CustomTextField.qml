@@ -49,7 +49,7 @@ Item {
     TextInput {
         id: tfTextEdit
         width: parent.width
-        height: tfBackground.height
+
         anchors.verticalCenter: tfBackground.verticalCenter
         anchors.left: parent.left
 

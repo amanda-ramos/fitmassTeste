@@ -4,6 +4,8 @@ import QtQuick.Controls 2.0 as Quick2
 import Qt.labs.settings 1.0 as QtLabs
 import QtQuick.Controls.Material 2.0
 import QtCharts 2.2
+import VPlayPlugins 1.0
+import QtQuick.Window 2.2
 
 import "../common"
 import "../pages"
@@ -16,7 +18,6 @@ Page {
 
     property bool initial: true
     property bool dateFilter: false
-    property bool novato: true
 
     property var keyCardFilter
     property var weightDB: ""
@@ -33,6 +34,36 @@ Page {
     property var line3
     property var line4
 
+    property var dataMin: ""
+
+    property int indMenor
+    property int indMaior
+
+    property var maiorPeso
+    property var menorPeso
+    property var maiorMagra
+    property var menorMagra
+    property var maiorGorda
+    property var menorGorda
+
+    function dataMesPassado(){
+        var diaHoje =  Qt.formatDate(new Date(), "dd")
+        var mesPassado
+        var anoHoje = Qt.formatDate(new Date(), "yyyy")
+
+        if (parseInt(Qt.formatDate(new Date(), "MM")) == 01) {
+            mesPassado = 12
+            anoHoje = anoHoje - 1
+        } else {
+            mesPassado = parseInt(Qt.formatDate(new Date(), "MM") - 1)
+        }
+
+        dataMin = diaHoje + "/" + mesPassado + "/" + anoHoje
+
+        dataMin = Date.fromLocaleString(locale, dataMin, "dd/MM/yyyy")
+
+        return dataMin
+    }
 
     // modelo de dados para ListView
     function cardModel(parent) {
@@ -69,94 +100,200 @@ Page {
 
     // Busca os dados do usuário no banco de dados
     function buscaDadosUser() {
+        userID = "ufhxlzxh4XchMt0kfUVBqDajXuQ2"
+        dbFitmass.getValue(keyUser, {
+                                 orderByValue: true
+                             }, function (success3, key3, value3) {
+                                 if (success3) {
+                                     console.debug(
+                                                 "HISTORICO1 - Read value "
+                                                 + value3 + " for key " + key3)
 
-        qtdeMedida = user[7];
-        graficosConfig();
-        userGender = user[3];
+                                     if(initial){
+                                         qtdeMedida = value3.totalMeasure
+                                         qtdeMedidaCorp = value3.totalMeasureCorp
+                                        graficosConfig();
+                                     }
 
-        var age = user[2];
+                                     userGender = value3.gender
+                                     var age = value3.birthday
 
-        userAge = calculateAge(
-                    Date.fromLocaleString(
-                        Qt.locale(), age,
-                        "dd/MM/yyyy"));
+                                     userAge = calculateAge(
+                                                 Date.fromLocaleString(
+                                                     Qt.locale(), age,
+                                                     "dd/MM/yyyy"))
 
-        pesoDesejado = user[5];
+                                     pesoDesejado = value3.desiredWeight
 
-        if (qtdeMedida == 0) {
-            novato = true
-        } else {
-            novato = false
-            filterIcon.visible = true
-        }
+                                     console.log("HISTORICO 1 - idade: " + userAge)
+                                     console.log("HISTORICO 1 - qtde de medidas: " + qtdeMedida)
+
+                                     if(qtdeMedida == 0){
+                                         novato = true;
+                                     }else{
+                                         novato = false;
+                                         filterIcon.visible = true;
+                                     }
+
+
+
+                                 } else {
+                                     console.debug(
+                                                 "HISTORICO1 - Error with message: " + value3)
+                                     nativeUtils.displayAlertDialog(
+                                                 "Error! 2", value3, "OK")
+                                     indicator.stopAnimating()
+                                 }
+                             })
     }
 
     // Busca as medidas deste usuário no banco de dados
     function buscaMedidas() {
-        for(var i=0; i<qtdeMedida; i++){
-            keyMeasure = i
 
-            buscaDadosMedida(keyMeasure)
-        }
+        indMaior = qtdeMedida
+
+        if(indMaior > 10)
+            indMenor = indMaior - 10
+        else
+            indMenor = 0
+
+        console.debug("indMenor: " + indMenor)
+        console.debug("indMaior: " + indMaior)
+
+        dbFitmass.getValue("medidas", {
+                                 orderByChild: "userId",
+                                 equalTo: userID
+                             },
+                             function (success, key, value) {
+                                 if (success) {
+
+                                     graphics.visible = false
+                                     cardsHistorico.visible = true
+                                     msgMedidas.visible = false
+                                     novato = false
+
+                                     //console.debug("HISTORICO 2 - Read value " + value + " for key " + key)
+                                     for (var prop in value) {
+                                         //console.log("VALUE - " + prop)
+                                         keyMeasure = prop
+                                            buscaDadosMedida(keyMeasure);
+                                     }
+                                 } else {
+                                     if(qtdeMedida === 0) {
+                                         novato = true
+                                         graphics.visible = false
+                                         cardsHistorico.visible = false
+                                         msgMedidas.visible = true
+                                         indicator.stopAnimating()
+                                         indicator.visible = false
+                                     } else {
+                                         nativeUtils.displayAlertDialog("Error! 3", value3, "OK")
+                                     }
+
+                                     indicator.stopAnimating()
+                                     indicator.visible = false
+                                 }
+                             })
     }
 
     function buscaDadosMedida(keyMedida) {
-        var indiceX
-        measureIdDB = keyMedida
 
-        if(keyMedida === 0)
-            keyMedida = medida0
-        if(keyMedida === 1)
-            keyMedida = medida1
-        if(keyMedida === 2)
-            keyMedida = medida2
+        //console.log("busca da Medida " + keyMedida)
+        dbFitmass.getValue("medidas/" + keyMedida, {
+                                 orderByValue: true
+                             }, function (success2, key2, value2) {
+                                 if (success2) {
+                                     //console.debug("HISTORICO 3 - Read value " + value2 + " for key " + key2)
 
-        if (initial) {
-            indiceX = k + 1
-            line.append(indiceX, keyMedida[1])
-            line2.append(indiceX, pesoDesejado)
-            line3.append(indiceX, keyMedida[2])
-            line4.append(indiceX, keyMedida[3])
+                                     measureIdDB = value2.measureID
 
-            axisX1.max = indiceX
-            axisX2.max = indiceX
-            axisX3.max = indiceX
+                                     if(k>=indMenor){
 
-            axisY1.min = parseFloat(pesoDesejado) - 20
-            axisY2.min = parseFloat(keyMedida[2]) - 5
-            axisY3.min = parseFloat(keyMedida[3]) - 10
+                                         if(initial) {
+                                             line.append(Date.fromLocaleString(locale, Qt.formatDate(value2.dateMedida, "dd/MM"), "dd/MM"), value2.weight)
+                                             line2.append(Date.fromLocaleString(locale, Qt.formatDate(value2.dateMedida, "dd/MM"), "dd/MM"), pesoDesejado)
+                                             line3.append(Date.fromLocaleString(locale, Qt.formatDate(value2.dateMedida, "dd/MM"), "dd/MM"), value2.leanMass)
+                                             line4.append(Date.fromLocaleString(locale, Qt.formatDate(value2.dateMedida, "dd/MM"), "dd/MM"), value2.bodyFat)
 
-            axisY1.max = parseFloat(pesoDesejado) + 20
-            axisY2.max = parseFloat(keyMedida[2]) + 5
-            axisY3.max = parseFloat(keyMedida[3]) + 10
+                                             if(k === 0) {
+                                                 axisX1.min = Date.fromLocaleString(locale, Qt.formatDate(value2.dateMedida, "dd/MM"), "dd/MM")
+                                                 axisX2.min = Date.fromLocaleString(locale, Qt.formatDate(value2.dateMedida, "dd/MM"), "dd/MM")
+                                                 axisX3.min = Date.fromLocaleString(locale, Qt.formatDate(value2.dateMedida, "dd/MM"), "dd/MM")
+                                                 menorPeso = parseFloat(pesoDesejado) - 10;
+                                                 menorMagra = parseFloat(value2.leanMass) - 5
+                                                 menorGorda = parseFloat(value2.bodyFat) - 5;
+                                                 maiorPeso = parseFloat(pesoDesejado) + 10;
+                                                 maiorMagra = parseFloat(value2.leanMass) + 5;
+                                                 maiorGorda = parseFloat(value2.bodyFat) + 5;
+                                             }
 
-            axisX1.tickCount = k + 1
-            axisX2.tickCount = k + 1
-            axisX3.tickCount = k + 1
+                                             axisX1.max = Date.fromLocaleString(locale, Qt.formatDate(value2.dateMedida, "dd/MM"), "dd/MM")
+                                             axisX2.max = Date.fromLocaleString(locale, Qt.formatDate(value2.dateMedida, "dd/MM"), "dd/MM");
+                                             axisX3.max = Date.fromLocaleString(locale, Qt.formatDate(value2.dateMedida, "dd/MM"), "dd/MM");
 
-            k++
+                                             if (value2.weight < menorPeso)
+                                                 menorPeso = parseFloat(value2.weight) - 2;
 
-            if (k >= qtdeMedida) {
-                initial = false
-            }
-        }
+                                             if (value2.leanMass < menorMagra)
+                                                 menorMagra = parseFloat(value2.leanMass) - 2;
 
-        s2 += "ListElement {measureIdDB: \"" + measureIdDB
-                + "\"; weight: \"" + keyMedida[1] + " kg" + "\"; leanMass: \""
-                + keyMedida[2] + " kg" + "\"; bodyFat: \"" + keyMedida[3]
-                + " kg" + "\"; date: \"" + keyMedida[7] + "\" }\n"
+                                             if (value2.bodyFat < (parseFloat(value2.bodyFat) - 2))
+                                                 menorGorda = parseFloat(value2.bodyFat) - 2;
+
+                                             if (value2.weight > maiorPeso)
+                                                 maiorPeso = parseFloat(value2.weight) + 2;
+
+                                             if (value2.leanMass > maiorMagra)
+                                                 maiorMagra = parseFloat(value2.leanMass) + 2;
+
+                                             if (value2.bodyFat > maiorGorda)
+                                                 maiorGorda = parseFloat(value2.bodyFat) + 2;
+
+                                             axisY1.min = menorPeso
+                                             axisY2.min = menorMagra
+                                             axisY3.min = menorGorda
+
+                                             axisY1.max = maiorPeso
+                                             axisY2.max = maiorMagra
+                                             axisY3.max = maiorGorda
+
+                                             axisX1.tickCount = k + 1 - indMenor;
+                                             axisX2.tickCount = k + 1 - indMenor;
+                                             axisX3.tickCount = k + 1 - indMenor;
+
+                                             if(k >= (qtdeMedida-1)){
+                                                initial = false;
+                                                indicator.stopAnimating()
+                                                 indicator.visible = false
+                                             }
+                                         } else {
+                                             indicator.stopAnimating()
+                                             indicator.visible = false
+                                         }
+                                     }
+                                     k++;
+                                     s2 += "ListElement {measureIdDB: \"" + value2.measureID + "\"; weight: \"" + value2.weight + " kg" + "\"; leanMass: \"" + value2.leanMass + " kg" + "\"; bodyFat: \"" + value2.bodyFat + " kg" + "\"; date: \"" + value2.dateMedida + "\" }\n"
+                                 } else {
+                                     console.debug(
+                                                 "HISTORICO3 - Error with message: " + value3)
+                                     nativeUtils.displayAlertDialog(
+                                                 "Error! 1", value3, "OK")
+                                     indicator.stopAnimating()
+                                 }
+                             })
+
     }
 
     // Configurações dos gráficos
     function graficosConfig() {
-        line = weightChart.createSeries(ChartView.SeriesTypeSpline,
-                                        "Histórico de Peso", axisX1, axisY1)
+        line = weightChart.createSeries(ChartView.SeriesTypeLine,
+                                        "Pesso medido", axisX1, axisY1)
 
-        line2 = weightChart.createSeries(ChartView.SeriesTypeSpline,
-                                         "Peso Desejado", axisX1, axisY1)
+        line2 = weightChart.createSeries(ChartView.SeriesTypeLine,
+                                         "Peso desejado", axisX1, axisY1)
 
         line3 = leanMassChart.createSeries(ChartView.SeriesTypeSpline,
-                                           "Histórico de Massa Magra", axisX2, axisY2)
+                                           "", axisX2, axisY2)
 
         line4 = bodyFatChart.createSeries(ChartView.SeriesTypeSpline,
                                           "Histórico de Massa de Gordura", axisX3, axisY3)
@@ -175,10 +312,6 @@ Page {
         line4.pointsVisible = true
         line4.width = root.dp(3)
         line4.color = greenDark
-
-        axisX1.min = 1
-        axisX2.min = 1
-        axisX3.min = 1
 
         axisY1.tickCount = 4
         axisY2.tickCount = 4
@@ -211,6 +344,9 @@ Page {
 
                         if (accepted) {
 
+                            indicator.visible = true
+                            indicator.startAnimating()
+
                             closeIcon.visible = true
                             filterIcon.visible = false
                             msgFilter.visible = false
@@ -224,17 +360,9 @@ Page {
                             timeShift = Qt.formatDateTime(date, "t")
 
                             if (hour === 00) {
-                                nativeUtils.displayAlertDialog(
-                                            "Data escolhida",
-                                            "Data: " + Qt.formatDate(date,
-                                                                     "dd/MM"), "ok")
+                                pickedDate = Qt.formatDate(date,
+                                                           "yyyyMMdd")
                             } else {
-                                Date.prototype.addDays = function (days) {
-                                    var date = new Date(this.valueOf())
-                                    date.setDate(date.getDate() + days)
-                                    return date
-                                }
-
                                 Date.prototype.addHours = function (h) {
                                     this.setTime(this.getTime(
                                                      ) + (h * 60 * 60 * 1000))
@@ -242,11 +370,13 @@ Page {
                                 }
                                 pickedDate = Qt.formatDate(date.addHours(
                                                                24 - hour),
-                                                           "dd/MM/yyyy")
+                                                           "yyyyMMdd")
                             }
 
+                            console.log("TESTE: " + userID + "_" + pickedDate)
+
                             s2 = ""
-                            databaseFitmass.getValue("medidas", {
+                            dbFitmass.getValue("medidas", {
                                                          orderByChild: "user_date",
                                                          equalTo: userID + "_" + pickedDate
                                                      },
@@ -256,7 +386,7 @@ Page {
                                                                  console.log("FILTRO - VALUE - " + prop5)
                                                                  keyCardFilter = prop5
 
-                                                                 databaseFitmass.getValue(
+                                                                 dbFitmass.getValue(
                                                                              "medidas/" + keyCardFilter, {
                                                                                  orderByValue: true
                                                                              },
@@ -269,6 +399,9 @@ Page {
                                                                                          "\"; leanMass: \"" + value4.leanMass + "\"; bodyFat: \"" + value4.bodyFat + "\"; date: \"" +
                                                                                          value4.dateMedida + "\" }\n"
 
+                                                                                     indicator.stopAnimating()
+                                                                                     indicator.visible = false
+
                                                                                      console.log("s2: " + s2)
                                                                                  } else {
                                                                                      console.debug("HISTORICO FILTRO - Error with message: " + value4)
@@ -279,6 +412,8 @@ Page {
                                                          } else {
                                                              msgFilter.visible = true
                                                              graphics.visible = false
+                                                             indicator.stopAnimating()
+                                                             indicator.visible = false
                                                              console.log("Não possui card nessa data")
                                                          }
                                                      })
@@ -302,6 +437,8 @@ Page {
                 msgFilter.visible = false
                 dateFilter = false
                 s2 = ""
+                indicator.visible = true
+                indicator.startAnimating()
                 buscaMedidas()
             }
         }
@@ -315,6 +452,8 @@ Page {
                 Theme.colors.statusBarStyle = Theme.colors.statusBarStyleHidden
                 firebaseAuth.logoutUser()
                 stack.pop()
+                indicator.stopAnimating()
+                indicator.visible = false
             }
         }
     }
@@ -323,7 +462,7 @@ Page {
         id: content
         width: parent.width
         anchors.horizontalCenter: parent.horizontalCenter
-        height: listCards.height + graphics.height + tabIcons.height
+        height: parent.height//listCards.height + graphics.height + tabIcons.height
 
         // Menu de Tab para alternar entre o histórico e os gráficos
         Item {
@@ -363,13 +502,15 @@ Page {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            listCards.visible = true
-                            graphics.visible = false
+                            if(!novato) {
+                                listCards.visible = true
+                                graphics.visible = false
+                                filterIcon.visible = true
+                            }
                             historicoRec.color = grayLight
                             historicoGreenRec.visible = true
                             graficosGreenRec.visible = false
                             graficosRec.color = bgColor
-                            filterIcon.visible = true
                         }
                     }
                 }
@@ -406,13 +547,15 @@ Page {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            listCards.visible = false
-                            graphics.visible = true
+                            if(!novato) {
+                                listCards.visible = false
+                                graphics.visible = true
+                                filterIcon.visible = false
+                            }
                             historicoRec.color = bgColor
                             historicoGreenRec.visible = false
                             graficosGreenRec.visible = true
                             graficosRec.color = grayLight
-                            filterIcon.visible = false
                         }
                     }
                 }
@@ -425,6 +568,7 @@ Page {
             width: parent.width
             height: listCards.height
             anchors.top: tabIcons.bottom
+            visible: false
             z: -1
 
             ListView {
@@ -432,15 +576,14 @@ Page {
                     width: parent.width
                     height: root.dp(450)
                     anchors.top: parent.top
-                    visible: true //novato ? false : true
 
                     model: cardModel(historicoPage)
                     delegate: AppCard {
                         id: cardView
                         width: parent.width
-                        margin: root.dp(15)
-                        paper.radius: radiusText
-                        paper.background.color: "transparent"
+                        margin: root.dp(10)
+                        paper.radius: root.dp(5)//radiusText
+                        paper.background.color: cardColor
 
                         MouseArea {
                             anchors.fill: parent
@@ -449,10 +592,11 @@ Page {
                                 keyCard = measureId.text
                                 var meapage = measureView.createObject()
                                 meapage.dateValor = Qt.formatDate(
-                                            actionsRow.dateCard) //).split(" ")[0]
-                                meapage.wantedWeightValor = 60
+                                            actionsRow.dateCard)
 
                                 fitmassStack.push(meapage)
+                                indicator.stopAnimating()
+                                indicator.visible = false
                             }
                         }
 
@@ -461,9 +605,9 @@ Page {
                             width: parent.width
                             height: width / 2
                             color: cardColor
-                            radius: dp(30)
+                            radius: root.dp(5)//radiusText
                             anchors.centerIn: cardView
-                            border.color: grayLight
+                            border.color: cardColor
                             border.width: root.dp(1)
 
                             Item {
@@ -591,154 +735,206 @@ Page {
         Item {
             id: graphics
             width: parent.width
-            height: imgSwipeView.height + pageControl.height
-            visible: false //novato ? false : true
+            height: Screen.height - 3 * tabIcons.height
+            visible: false
             anchors.top: tabIcons.bottom
 
-            Quick2.SwipeView {
-                id: imgSwipeView
-                width: parent.width
-                height: width / 1.5
-                anchors.bottom: parent.bottom
+            AppFlickable {
+                id: flickableGraphics
+                anchors.fill: parent
+                //width: parent.width
+                contentHeight: contentGraphics.height
 
-                Item {
-                    ChartView {
-                        id: weightChart
-                        title: ""
-                        width: parent.width
-                        height: width / 1.5
-                        antialiasing: true
-                        backgroundColor: grayLight
-                        titleColor: white
-                        legend.font.pixelSize: root.sp(12)
-                        legend.labelColor: white
-
-                        ValueAxis {
-                            id: axisY1
-                            gridVisible: true
-                            tickCount: 0
-                            min: 0
-                            max: 1
-                            labelsColor: white
-                            labelsFont.pixelSize: root.sp(8)
-                        }
-
-                        ValueAxis {
-                            id: axisX1
-                            min: 0
-                            max: 1
-                            gridVisible: true
-                            tickCount: 5
-                            labelsColor: white
-                            labelsFont.pixelSize: root.sp(8)
-                        }
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        flickableGraphics.forceActiveFocus()
                     }
                 }
 
                 Item {
-                    ChartView {
-                        id: leanMassChart
-                        title: ""
+                    id: contentGraphics
+                    width: parent.width
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    height: weightChartItem.height + leanMassChartItem.height + bodyFatChartItem.height + root.dp(30)
+
+                    Item {
+                        id: weightChartItem
+                        anchors.top: parent.top
+                        anchors.horizontalCenter: parent.horizontalCenter
                         width: parent.width
                         height: width / 1.5
-                        antialiasing: true
-                        backgroundColor: grayLight
-                        legend.font.pixelSize: root.sp(12)
-                        legend.labelColor: white
 
-                        ValueAxis {
-                            id: axisY2
-                            gridVisible: true
-                            tickCount: 5
-                            min: 0
-                            max: 1
-                            labelsColor: white
-                            labelsFont.pixelSize: root.sp(10)
-                        }
+                        ChartView {
+                            id: weightChart
+                            title: "Histórico de peso"
+                            anchors.fill: parent
+                            antialiasing: true
+                            backgroundColor: grayLight
+                            titleColor: white
+                            legend.font.pixelSize: root.sp(12)
+                            legend.labelColor: white
 
-                        ValueAxis {
-                            id: axisX2
-                            min: 0
-                            max: 1
-                            gridVisible: true
-                            tickCount: 0
-                            labelsColor: white
-                            labelsFont.pixelSize: root.sp(10)
+                            ValueAxis {
+                                id: axisY1
+                                gridVisible: false
+                                tickCount: 0
+                                min: 0
+                                max: 1
+                                labelsColor: white
+                                labelsFont.pixelSize: root.sp(8)
+                                color: grayDark
+                            }
+
+                            DateTimeAxis {
+                                id: axisX1
+                                format: "dd/MM"
+                                labelsVisible: true
+                                gridVisible: true
+                                gridLineColor: grayDark
+                                lineVisible: true
+                                tickCount: 4
+                                labelsColor: white
+                                labelsFont.pixelSize: root.sp(8)
+                                color: grayDark
+                            }
                         }
                     }
-                }
 
-                Item {
-                    ChartView {
-                        id: bodyFatChart
-                        title: ""
+                    Item {
+                        id: leanMassChartItem
+                        anchors.top: weightChartItem.bottom
+                        anchors.horizontalCenter: parent.horizontalCenter
                         width: parent.width
                         height: width / 1.5
-                        antialiasing: true
-                        backgroundColor: grayLight
-                        legend.font.pixelSize: root.sp(12)
-                        legend.labelColor: white
 
-                        ValueAxis {
-                            id: axisY3
-                            gridVisible: true
-                            tickCount: 5
-                            min: 0
-                            max: 1
-                            labelsColor: white
-                            labelsFont.pixelSize: root.sp(10)
+                        ChartView {
+                            id: leanMassChart
+                            title: "Histórico de Massa Magra"
+                            titleColor: white
+                            anchors.fill: parent
+                            antialiasing: true
+                            backgroundColor: grayLight
+                            legend.visible: false
+
+                            ValueAxis {
+                                id: axisY2
+                                gridVisible: false
+                                tickCount: 5
+                                min: 0
+                                max: 1
+                                labelsColor: white
+                                labelsFont.pixelSize: root.sp(10)
+                                color: grayDark
+                            }
+
+                            DateTimeAxis {
+                                id: axisX2
+                                format: "dd/MM"
+                                labelsVisible: true
+                                gridVisible: true
+                                gridLineColor: grayDark
+                                lineVisible: true
+                                tickCount: 4
+                                labelsColor: white
+                                labelsFont.pixelSize: root.sp(8)
+                                color: grayDark
+                            }
                         }
+                    }
 
-                        ValueAxis {
-                            id: axisX3
-                            min: 0
-                            max: 1
-                            gridVisible: true
-                            tickCount: 0
-                            labelsColor: white
-                            labelsFont.pixelSize: root.sp(10)
+                    Item {
+                        id: bodyFatChartItem
+                        anchors.top: leanMassChartItem.bottom
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        width: parent.width
+                        height: width / 1.5
+
+                        ChartView {
+                            id: bodyFatChart
+                            title: "Histórico de Massa de Gordura"
+                            titleColor: white
+                            anchors.fill: parent
+                            antialiasing: true
+                            backgroundColor: grayLight
+                            legend.visible: false
+
+                            ValueAxis {
+                                id: axisY3
+                                gridVisible: false
+                                tickCount: 5
+                                min: 0
+                                max: 1
+                                labelsColor: white
+                                labelsFont.pixelSize: root.sp(10)
+                                color: grayDark
+                            }
+
+                            DateTimeAxis {
+                                id: axisX3
+                                format: "dd/MM"
+                                labelsVisible: true
+                                gridVisible: true
+                                gridLineColor: grayDark
+                                lineVisible: true
+                                tickCount: 4
+                                labelsColor: white
+                                labelsFont.pixelSize: root.sp(8)
+                                color: grayDark
+                            }
                         }
                     }
                 }
             }
 
-            PageControl {
-                id: pageControl
-                height: 30 + root.dp(5)
-                pages: 3
-                currentPage: imgSwipeView.currentIndex
-                clickableIndicator: true
-                spacing: root.dp(10)
-                onPageSelected: imgSwipeView.currentIndex = index
-                tintColor: grayLight
-                activeTintColor: greenDark
+            ScrollIndicator {
+                flickable: flickableGraphics
             }
+
         } // gráficos histórico
+    }
 
-        // Mensagem para o filtro de cards por data
-        Text {
-            id: msgFilter
-            text: qsTr("Não há medidas nessa data.")
-            visible: false
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: graphics.verticalCenter
-            color: greenDark
-        }
+    // Mensagem caso não possua medidas
+    Text {
+        id: msgMedidas
+        text: qsTr("Você ainda não possui medidas na Fitmass.")
+        visible: false
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        color: greenDark
+        font.pixelSize: root.dp(14)
+    }
 
-        // Mensagem caso não possua medidas
-        Text {
-            id: msgMedidas
-            text: qsTr("Você ainda não possui medidas.")
-            visible: novato ? true : false
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: graphics.verticalCenter
-            color: greenDark
-        }
+    // Mensagem para o filtro de cards por data
+    Text {
+        id: msgFilter
+        text: qsTr("Não há medidas nessa data.")
+        visible: false
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        color: greenDark
+        font.pixelSize: root.dp(14)
     }
 
     Component.onCompleted: {
         Theme.colors.statusBarStyle = Theme.colors.statusBarStyleWhite
+        indicator.visible = true
+        indicator.startAnimating()
         buscaDadosUser()
         buscaMedidas()
+    }
+
+    FirebaseDatabase {
+        id: dbFitmass
+
+        config: FirebaseConfig {
+             //get these values from the firebase console
+             projectId: "fitmass-2018"
+             databaseUrl: "https://fitmassapp.firebaseio.com/"
+
+             //platform dependent - get these values from the google-services.json / GoogleService-info.plist
+             apiKey:        Qt.platform.os === "android" ? "AIzaSyBh6Kb12xUnOsQDTP2XEbSKtuGsBfmCyic" : "AIzaSyBh6Kb12xUnOsQDTP2XEbSKtuGsBfmCyic"
+             applicationId: Qt.platform.os === "android" ? "1:519505351771:android:28365556727f1ea3" : "1:519505351771:ios:28365556727f1ea3"
+           }
     }
 }

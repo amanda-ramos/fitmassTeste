@@ -1,6 +1,7 @@
 import QtQuick 2.11
 import VPlayApps 1.0
 import QtCharts 2.2
+import VPlayPlugins 1.0
 
 Item {
     id: measure
@@ -9,6 +10,199 @@ Item {
 
     property real measureHeight: 960
     property real measureWidth: 640
+    property int j: 0
+    property bool leftSideBool: true
+    property bool rightSideBool: true
+    property bool centralBool: false
+    property real valorMaxE: 0
+    property real valorMinE: 0
+    property real valorMedE: 0
+    property real valorMaxD: 0
+    property real valorMinD: 0
+    property real valorMedD: 0
+    property real valorAtualE: 0
+    property real valorAtualD: 0
+    property real valorMax: 0
+    property real valorMin: 0
+
+    function buscaDadosMedidasCorporais(musculo) {
+
+        console.log("ANTROPO - Quantidade de medidas: " + qtdeMedidaCorp)
+        dbFitmass.getValue("medidasCorp", {
+                                 orderByChild: "userCorp",
+                                 equalTo: userID
+                             },
+                             function (success, key, value) {
+                                 if (success) {
+
+                                     graficoMuscle.visible = true
+                                     footer.visible = true
+                                     muscleSelect.visible = true
+                                     dates.visible = true
+                                     noContent.visible = false
+
+                                     //console.debug("HISTORICO 2 - Read value " + value + " for key " + key)
+                                     for (var prop in value) {
+                                         console.log("ANTROPO - VALUE - " + prop)
+                                         keyMeasureCorp = prop
+                                            buscaMedidasCorporais(musculo, keyMeasureCorp);
+                                     }
+                                 } else {
+                                     if(qtdeMedidaCorp === 0) {
+                                         graficoMuscle.visible = false
+                                         footer.visible = false
+                                         muscleSelect.visible = false
+                                         dates.visible = false
+                                         noContent.visible = true
+
+                                     } else {
+                                         nativeUtils.displayAlertDialog("Error! 3", value3, "OK")
+                                     }
+                                 }
+                                 indicator.stopAnimating()
+                             })
+    }
+
+    function buscaMedidasCorporais(musculo, keyMedidaCorp) {
+        var mediaValores = 0;
+        var valor1 = 0;
+        var valor2 = 0;
+
+        dbFitmass.getValue("medidasCorp/" + keyMedidaCorp, {
+                                 orderByValue: true
+                             }, function (success2, key2, value2) {
+                                 if (success2) {
+
+                                     if(centralBool) {
+                                         switch (muscleSelectUser.cbTextSelected) {
+                                             case "Peitoral": {
+                                                 valor1 = parseFloat(value2.peitoral)
+                                                 break;
+                                             }
+                                             case "Cintura": {
+                                                 valor1 = parseFloat(value2.cintura)
+                                                 break;
+                                             }
+                                             case "Quadril": {
+                                                 valor1 = parseFloat(value2.quadril)
+                                                 break;
+                                             }
+                                             case "Relação Cintura-Quadril": {
+                                                 valor1 = (parseFloat(value2.cintura)/parseFloat(value2.quadril))
+                                                 break;
+                                             }
+                                         }
+
+                                         central.append(Date.fromLocaleString(locale, Qt.formatDate(value2.dateCorp, "dd/MM/yyyy"), "dd/MM/yyyy"), valor1)
+
+                                         if(j === 0) {
+                                             valorMaxE = valor1
+                                             valorMinE = valor1
+                                         }
+
+                                         if (valor1 > valorMaxE)
+                                             valorMaxE = valor1
+                                         if (valor1 < valorMinE)
+                                             valorMinE = valor1
+
+                                         valorMedE = valorMedE + valor1
+
+                                         if (valorMinE < 1)
+                                            axisY1.min = 0;
+                                         else
+                                            axisY1.min = valorMinE - 1;
+
+                                         axisY1.max = valorMaxE + 1;
+
+                                         valorAtualE = valor1
+
+                                     } else {
+                                         switch (muscleSelectUser.cbTextSelected) {
+                                             case "Bíceps": {
+                                                 valor1 = parseFloat(value2.bicepsEsq)
+                                                 valor2 = parseFloat(value2.bicepsDir)
+                                                 break;
+                                             }
+                                             case "Antebraço": {
+                                                 valor1 = parseFloat(value2.antebracoEsq)
+                                                 valor2 = parseFloat(value2.antebracoDir)
+                                                 break;
+                                             }
+                                             case "Coxa": {
+                                                 valor1 = parseFloat(value2.coxaEsq)
+                                                 valor2 = parseFloat(value2.coxaDir)
+                                                 break;
+                                             }
+                                             case "Panturrilha": {
+                                                 valor1 = parseFloat(value2.panturrilhaEsq)
+                                                 valor2 = parseFloat(value2.panturrilhaDir)
+                                                 break;
+                                             }
+                                         }
+
+                                         leftSide.append(Date.fromLocaleString(locale, Qt.formatDate(value2.dateCorp, "dd/MM/yyyy"), "dd/MM/yyyy"), valor1)
+                                         rightSide.append(Date.fromLocaleString(locale, Qt.formatDate(value2.dateCorp, "dd/MM/yyyy"), "dd/MM/yyyy"), valor2)
+
+                                         if(j === 0) {
+                                             valorMaxE = valor1
+                                             valorMinE = valor1
+                                             valorMaxD = valor2
+                                             valorMinD = valor2                                             
+                                         }
+
+                                         if (valor1 > valorMaxE)
+                                             valorMaxE = valor1
+                                         if (valor1 < valorMinE)
+                                             valorMinE = valor1
+                                         if (valor2 > valorMaxD)
+                                             valorMaxD = valor2
+                                         if (valor2 < valorMinD)
+                                             valorMinD = valor2
+
+                                         if (valorMinD < valorMinE)
+                                             valorMin = valorMinD
+                                         else
+                                             valorMin = valorMinE
+
+                                         if (valorMaxD > valorMaxE)
+                                             valorMax = valorMaxD
+                                         else
+                                             valorMax = valorMaxE
+
+                                         valorMedE = valorMedE + valor1
+                                         valorMedD = valorMedD + valor2
+
+                                         if (valorMin < 1)
+                                            axisY1.min = 0;
+                                         else
+                                            axisY1.min = valorMin - 1;
+
+                                         axisY1.max = valorMax + 1.0;
+
+                                         valorAtualE = valor1
+                                         valorAtualD = valor2
+                                     }
+
+                                     axisX1.tickCount = j + 1;
+
+                                         j++;
+
+                                         if(j >= qtdeMedidaCorp){
+                                            valorMedD = (valorMedD / (j)).toFixed(2)
+                                            valorMedE = (valorMedE / (j)).toFixed(2)
+
+                                            indicator.stopAnimating()
+                                            indicator.visible = false
+                                     }
+                                 } else {
+                                     console.debug(
+                                                 "HISTORICO3 - Error with message: " + value3)
+                                     nativeUtils.displayAlertDialog(
+                                                 "Error! 1", value3, "OK")
+                                     indicator.stopAnimating()
+                                 }
+                             })
+    }
 
     AppFlickable {
         id: scrollAntropoPageSecao
@@ -37,6 +231,7 @@ Item {
             height: root.dp(70)
             anchors.top: spacer.bottom
             anchors.horizontalCenter: parent.horizontalCenter
+            visible: false
 
             CustomComboBox {
                 id: muscleSelectUser
@@ -53,6 +248,7 @@ Item {
                     anchors.fill: parent
                     onClicked: {
                         muscleSelectUser.forceActiveFocus()
+
                         nativeUtils.displayAlertSheet("Selecione o grupo muscular", muscles, true)
                     }
 
@@ -65,18 +261,31 @@ Item {
                                 muscleSelectUser.cbTextSelected = muscles[index]
 
                                 if(index === 0 || index === 1 || index === 5 || index === 6){
-                                    leftSide.visible = true
-                                    rightSide.visible = true
-                                    central.visible = false
-                                    direitoesquerdo.visible = true
-                                    centro.visible = false
+                                    leftSideBool = true
+                                    rightSideBool = true
+                                    centralBool = false
                                 } else {
-                                    leftSide.visible = false
-                                    rightSide.visible = false
-                                    central.visible = true
-                                    direitoesquerdo.visible = false
-                                    centro.visible = true
+                                    leftSideBool = false
+                                    rightSideBool = false
+                                    centralBool = true
                                 }
+                                leftSide.removePoints(0, j)
+                                rightSide.removePoints(0, j)
+                                central.removePoints(0, j)
+
+                                j = 0
+                                valorMedD = 0
+                                valorMedE = 0
+                                valorMin = 0
+                                valorMax = 0
+                                valorMinD = 0
+                                valorMinE = 0
+                                valorMaxD = 0
+                                valorMaxE = 0
+                                valorAtualD = 0
+                                valorAtualE = 0
+
+                                buscaDadosMedidasCorporais(muscleSelectUser.cbTextSelected)
                             }
                         }
                     }
@@ -99,6 +308,7 @@ Item {
             height: dateFromSelect.height
             anchors.top: spacer4.bottom
             anchors.horizontalCenter: parent.horizontalCenter
+            visible: false
 
             // Seleciona data inicial
             Item {
@@ -186,6 +396,7 @@ Item {
             width: parent.width
             height: grafico.height
             anchors.top: spacer3.bottom
+            visible: false
 
             Item {
                 id: grafico
@@ -213,50 +424,50 @@ Item {
                         tickCount: 3
                         labelsColor: grayLight
                         labelsFont.pixelSize: root.sp(12)
-                        labelFormat: "%d"
+                        labelFormat: "%0.1f"
                     }
 
                     DateTimeAxis {
                         id: axisX1
                         format: "dd/MM"
-                        min: Date.fromLocaleString(locale, "09/11", "dd/MM")
-                        max: Date.fromLocaleString(locale, "12/11", "dd/MM")
                         labelsVisible: true
                         gridVisible: false
                         lineVisible: false
-                        tickCount: 4
+                        tickCount: 3
                         labelsColor: grayLight
                         labelsFont.pixelSize: root.sp(12)
+                        min: Date.fromLocaleString(Qt.locale(), dateFromSelect.btnText, "dd/MM/yyyy")
+                        max: Date.fromLocaleString(Qt.locale(), dateToSelect.btnText, "dd/MM/yyyy")
                     }
 
-                    SplineSeries {
+                    LineSeries {
                         id: leftSide
                         width: root.dp(3)
                         color: greenDark
                         name: "esquerdo"
                         axisX: axisX1
                         axisY: axisY1
-                        visible: true
+                        visible: leftSideBool ? true : false
                     }
 
-                    SplineSeries {
+                    LineSeries {
                         id: rightSide
                         width: root.dp(3)
                         color: contrastColor3
                         name: "direito"
                         axisX: axisX1
                         axisY: axisY1
-                        visible: true
+                        visible: rightSideBool ? true : false
                     }
 
-                    SplineSeries {
+                    LineSeries {
                         id: central
                         width: root.dp(3)
                         color: contrastColor3
                         name: muscleSelectUser.cbTextSelected
                         axisX: axisX1
                         axisY: axisY1
-                        visible: false
+                        visible: centralBool ? true : false
                     }
                 }
             }
@@ -267,6 +478,7 @@ Item {
         id: footer
         width: muscleSelect.width
         height: txtItem.height + valueNowItem.height + valueMaxItem.height + valueMinItem.height + valueMedItem.height
+        visible: false
 
         anchors.top: graficoMuscle.bottom
         anchors.left: muscleSelect.left
@@ -275,7 +487,7 @@ Item {
             Item {
                 id: direitoesquerdo
                 anchors.fill: parent
-                visible: true
+                visible: rightSideBool ? true : false
 
                 Item {
                     id: txtItem
@@ -324,7 +536,7 @@ Item {
                         anchors.left: parent.left
                         horizontalAlignment: Text.AlignHCenter
 
-                        text: "Atual: 27 cm"
+                        text: "Atual: " + valorAtualE.toFixed(2) + " cm"
                         color: greenDark
                         font.pixelSize: root.sp(14)
                     }
@@ -335,7 +547,7 @@ Item {
                         anchors.right: parent.right
                         horizontalAlignment: Text.AlignHCenter
 
-                        text: "Atual: 29 cm"
+                        text: "Atual: " + valorAtualD.toFixed(2) + " cm"
                         color: contrastColor3
                         font.pixelSize: root.sp(14)
                     }
@@ -355,7 +567,7 @@ Item {
                         anchors.left: parent.left
                         horizontalAlignment: Text.AlignHCenter
 
-                        text: "máx: 30 cm"
+                        text: "máx: " + valorMaxE.toFixed(2) + " cm"
                         font.pixelSize: root.sp(12)
                         color: white
                     }
@@ -366,7 +578,7 @@ Item {
                         anchors.right: parent.right
                         horizontalAlignment: Text.AlignHCenter
 
-                        text: "máx: 29 cm"
+                        text: "máx: " + valorMaxD.toFixed(2) + " cm"
                         font.pixelSize: root.sp(12)
                         color: white
                     }
@@ -386,7 +598,7 @@ Item {
                         anchors.left: parent.left
                         horizontalAlignment: Text.AlignHCenter
 
-                        text: "min: 26 cm"
+                        text: "min: " + valorMinE.toFixed(2) + " cm"
                         font.pixelSize: root.sp(12)
                         color: white
                     }
@@ -397,7 +609,7 @@ Item {
                         anchors.right: parent.right
                         horizontalAlignment: Text.AlignHCenter
 
-                        text: "min: 24 cm"
+                        text: "min: " + valorMinD.toFixed(2) + " cm"
                         font.pixelSize: root.sp(12)
                         color: white
                     }
@@ -417,7 +629,7 @@ Item {
                         anchors.left: parent.left
                         horizontalAlignment: Text.AlignHCenter
 
-                        text: "méd: 28.7 cm"
+                        text: "méd: " + valorMedE.toFixed(2) + " cm"
                         font.pixelSize: root.sp(12)
                         color: white
                     }
@@ -428,7 +640,7 @@ Item {
                         anchors.right: parent.right
                         horizontalAlignment: Text.AlignHCenter
 
-                        text: "méd: 26.3 cm"
+                        text: "méd: " + valorMedD.toFixed(2) + " cm"
                         font.pixelSize: root.sp(12)
                         color: white
                     }
@@ -439,7 +651,7 @@ Item {
             Item {
                 id: centro
                 anchors.fill: parent
-                visible: false
+                visible: centralBool ? true : false
 
                 Item {
                     id: txtCentroItem
@@ -476,7 +688,7 @@ Item {
                         anchors.right: parent.right
                         horizontalAlignment: Text.AlignHCenter
 
-                        text: "Atual: 29 cm"
+                        text: "Atual: " + valorAtualE + " cm"
                         color: contrastColor3
                         font.pixelSize: root.sp(14)
                     }
@@ -496,7 +708,7 @@ Item {
                         anchors.right: parent.right
                         horizontalAlignment: Text.AlignHCenter
 
-                        text: "máx: 29 cm"
+                        text: "máx: " + valorMaxE.toFixed(2) + " cm"
                         font.pixelSize: root.sp(12)
                         color: white
                     }
@@ -516,7 +728,7 @@ Item {
                         anchors.right: parent.right
                         horizontalAlignment: Text.AlignHCenter
 
-                        text: "min: 24 cm"
+                        text: "min: " + valorMinE.toFixed(2) + " cm"
                         font.pixelSize: root.sp(12)
                         color: white
                     }
@@ -536,11 +748,69 @@ Item {
                         anchors.right: parent.right
                         horizontalAlignment: Text.AlignHCenter
 
-                        text: "méd: 26.3 cm"
+                        text: "méd: " + valorMedE.toFixed(2) + " cm"
                         font.pixelSize: root.sp(12)
                         color: white
                     }
             }
+            }
+        }
+    }
+
+    Item {
+        id: noContent
+        anchors.fill: parent
+        visible: false
+
+        Text {
+            id: noMeasure
+            text: "Você ainda não possui medidas corporais."
+            anchors.centerIn: parent
+            color: greenDark
+            font.pixelSize: root.dp(14)
+        }
+    }
+
+    Connections {
+        target: nativeUtils
+
+        onDatePickerFinished: {
+            var pickedDate
+            var dateFormated
+            if(accepted){
+
+                var hour = ""
+                var dateStr = ""
+                var timeShift = ""
+
+                dateStr = date.toLocaleTimeString(Qt.locale("pt_BR"))
+                hour = parseInt(dateStr.split(":")[0])
+                timeShift = Qt.formatDateTime(date, "t")
+
+                if (hour === 00) {
+                    dateFormated = Qt.formatDate(date, "dd/MM/yyyy")
+                    pickedDate = date
+                } else {
+                    Date.prototype.addHours = function (h) {
+                        this.setTime(this.getTime() + (h * 60 * 60 * 1000))
+                        return this
+                    }
+
+                    dateFormated = Qt.formatDate(date.addHours(24 - hour), "dd/MM/yyyy")
+                    pickedDate = date.addHours(24 - hour)
+                }
+
+                if(dateTo){
+                    dateTo = false;
+                    dateToSelect.btnText = dateFormated;
+                    axisX1.max = Date.fromLocaleString(Qt.locale(), dateFormated, "dd/MM/yyyy")
+                }
+
+                if(dateFrom){
+                    dateFrom = false;
+                    dateFromSelect.btnText = dateFormated;
+                    axisX1.min = Date.fromLocaleString(Qt.locale(), dateFormated, "dd/MM/yyyy")
+                }
             }
         }
     }
@@ -550,20 +820,23 @@ Item {
     } // scroll indicator
 
     Component.onCompleted: {
-        // plotagem dos dados no gráfico
-        leftSide.append(Date.fromLocaleString(locale, "09/11", "dd/MM"), 27)
-        leftSide.append(Date.fromLocaleString(locale, "10/11", "dd/MM"), 30)
-        leftSide.append(Date.fromLocaleString(locale, "11/11", "dd/MM"), 28)
-        leftSide.append(Date.fromLocaleString(locale, "12/11", "dd/MM"), 26)
+        indicator.visible = true
+        indicator.startAnimating()
+        // leitura das medidas corporais no banco de dados para tal usuário para o grupo muscular biceps
+        buscaDadosMedidasCorporais()
+    }
 
-        rightSide.append(Date.fromLocaleString(locale, "09/11", "dd/MM"), 26)
-        rightSide.append(Date.fromLocaleString(locale, "10/11", "dd/MM"), 28)
-        rightSide.append(Date.fromLocaleString(locale, "11/11", "dd/MM"), 30)
-        rightSide.append(Date.fromLocaleString(locale, "12/11", "dd/MM"), 27)
+    FirebaseDatabase {
+        id: dbFitmass
 
-        central.append(Date.fromLocaleString(locale, "09/11", "dd/MM"), 26)
-        central.append(Date.fromLocaleString(locale, "10/11", "dd/MM"), 28)
-        central.append(Date.fromLocaleString(locale, "11/11", "dd/MM"), 30)
-        central.append(Date.fromLocaleString(locale, "12/11", "dd/MM"), 27)
+        config: FirebaseConfig {
+             //get these values from the firebase console
+             projectId: "fitmass-2018"
+             databaseUrl: "https://fitmassapp.firebaseio.com/"
+
+             //platform dependent - get these values from the google-services.json / GoogleService-info.plist
+             apiKey:        Qt.platform.os === "android" ? "AIzaSyBh6Kb12xUnOsQDTP2XEbSKtuGsBfmCyic" : "AIzaSyBh6Kb12xUnOsQDTP2XEbSKtuGsBfmCyic"
+             applicationId: Qt.platform.os === "android" ? "1:519505351771:android:28365556727f1ea3" : "1:519505351771:ios:28365556727f1ea3"
+           }
     }
 }

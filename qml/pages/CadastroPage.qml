@@ -4,6 +4,7 @@ import QtQuick 2.9
 import QtQuick.Controls 2.0 as Quick2
 import QtMultimedia 5.5
 import QtQml 2.11
+import VPlayPlugins 1.0
 
 import "../common"
 import "../pages"
@@ -175,6 +176,17 @@ Page {
                                     }
                                 }
                             }
+
+                            AppActivityIndicator {
+                                id: indicatorCadastro
+                                z: 1
+                                animating: false
+                                visible: false
+                                anchors.horizontalCenter: userImageCadastroBtn.horizontalCenter
+                                anchors.verticalCenter: userImageCadastroBtn.verticalCenter
+                                hidesWhenStopped: true
+                                color: greenDark
+                            }
                         }
                     } // Botão para foto
                 } // Imagem do Usuário
@@ -295,7 +307,7 @@ Page {
                         id: alturaUserTxtCadastro
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.horizontalCenter: parent.horizontalCenter
-                        cbTextTitle: "Altura: *"
+                        cbTextTitle: "Altura: *   (m)"
                         cbTitleColor: white
                         cbTextColor: greenLight
                         cbColor: grayLight
@@ -326,7 +338,7 @@ Page {
                         id: pesoDesejadoUserTxtCadastro
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.horizontalCenter: parent.horizontalCenter
-                        cbTextTitle: "Peso Desejado: *"
+                        cbTextTitle: "Peso Desejado: *   (kg)"
                         cbTitleColor: white
                         cbTextColor: greenLight
                         cbColor: grayLight
@@ -400,6 +412,7 @@ Page {
                             id: btCadastroMouseArea
                             anchors.fill: parent
                             onClicked: {
+                                // validação dos campos obrigatórios
                                 if (emailUserTxtCadastro.tfTextText === "" || senhaUserTxtCadastro.tfTextText
                                         === "" || nomeUserTxtCadastro.tfTextText
                                         === "" || idadeUserTxtCadastro.tfTextText
@@ -411,15 +424,8 @@ Page {
                                                 "Nem todos os campos obrigatórios foram preenchidos",
                                                 "OK")
                                 } else {
-                                    userID = "ufhxlzxh4XchMt0kfUVBqDajXuQ2"
-
-                                    // Salvar dados no banco de dados
-                                    //
-                                    //
-
-                                    // Temporário: Entra direto na página principal
-                                    entrarStack.pop()
-                                    stack.push(mainView)
+                                    // resgistro do e-mail e senha do usuário em questão
+                                    firebaseAuth.registerUser(emailUserTxtCadastro.tfTextText, senhaUserTxtCadastro.tfTextText)
                                 }
                             }
                         }
@@ -443,7 +449,7 @@ Page {
                 if(index>-1) {
                     if (pesoDesejado) {
                         value = (40 + (index * 1)).toFixed(0)
-                        pesoDesejadoUserTxtCadastro.cbTextSelected = value + " kg"
+                        pesoDesejadoUserTxtCadastro.cbTextSelected = value
                         pesoDesejado = false
                     }
                     if (genero) {
@@ -461,7 +467,7 @@ Page {
                     }
                     if (altura) {
                         value = (1.50 + (index * 0.01)).toFixed(2)
-                        alturaUserTxtCadastro.cbTextSelected = value + " m"
+                        alturaUserTxtCadastro.cbTextSelected = value
                         altura = false
                     }
                     if(foto){
@@ -485,6 +491,9 @@ Page {
                 if (accepted) {
                     //userImageCadastro.source = Qt.resolvedUrl(path)
 
+                    userImageCadastroBtn.visible = false
+                    indicatorCadastro.visible = true
+                    indicatorCadastro.startAnimating()
                     // Salva a imagem no Storage do Firebase
                     storageFitmass.uploadFile(
                                 path, "userPhoto.png",
@@ -495,8 +504,14 @@ Page {
                                         console.log("Sucesso - Path: " + pathImage)
                                         userImageCadastro.source = downloadUrl
                                         pathImage = downloadUrl
+                                        indicatorCadastro.stopAnimating()
+                                        indicatorCadastro.visible = false
+                                        userImageCadastroBtn.visible = true
                                     } else {
                                         console.log("Falha ao carregar imagem  no Firebase Storage" + message)
+                                        indicatorCadastro.stopAnimating()
+                                        indicatorCadastro.visible = false
+                                        userImageCadastroBtn.visible = true
                                     }
                                 })
                 }
@@ -509,6 +524,9 @@ Page {
                 if (accepted) {
                     //userImageCadastro.source = Qt.resolvedUrl(path)
 
+                    userImageCadastroBtn.visible = false
+                    indicatorCadastro.visible = true
+                    indicatorCadastro.startAnimating()
                     // Salva a imagem no Storage do Firebase
                     storageFitmass.uploadFile(path, "userPhoto" + Date.now() + ".png",
                                 function (progress, finished, success, downloadUrl) {
@@ -518,12 +536,103 @@ Page {
                                         userImageCadastro.source = downloadUrl
                                         pathImage = downloadUrl
                                         console.log("Sucesso - Path: " + pathImage)
+                                        indicatorCadastro.stopAnimating()
+                                        indicatorCadastro.visible = false
+                                        userImageCadastroBtn.visible = true
                                     } else {
                                         console.log("Falha ao carregar imagem  no Firebase Storage" + message)
+                                        indicatorCadastro.stopAnimating()
+                                        indicatorCadastro.visible = false
+                                        userImageCadastroBtn.visible = true
                                     }
                                 })
                 }
             }
+        }
+    }
+
+    FirebaseAuth {
+        id: firebaseAuth
+
+        config: FirebaseConfig {
+             //get these values from the firebase console
+             projectId: "fitmass-2018"
+             databaseUrl: "https://fitmassapp.firebaseio.com/"
+
+             //platform dependent - get these values from the google-services.json / GoogleService-info.plist
+             apiKey:        Qt.platform.os === "android" ? "AIzaSyBh6Kb12xUnOsQDTP2XEbSKtuGsBfmCyic" : "AIzaSyBh6Kb12xUnOsQDTP2XEbSKtuGsBfmCyic"
+             applicationId: Qt.platform.os === "android" ? "1:519505351771:android:28365556727f1ea3" : "1:519505351771:ios:28365556727f1ea3"
+           }
+
+        onLoggedIn: {
+            if(success){
+                console.log("CADASTRO - login - Sucesso ao fazer o login!");
+                root.userID = firebaseAuth.userId;
+                entrarStack.pop();
+                stack.push(mainView);
+                indicator.stopAnimating()
+                indicator.visible = false
+            } else {
+                console.log("CADASTRO - login - Error: " + message)
+            }
+        }
+
+        onUserRegistered: {
+            indicator.stopAnimating()
+
+            if(success){
+                console.log("CADASTRO - registro es - Sucesso ao fazer o registro!");
+                root.userID = firebaseAuth.userId;
+
+                  var key = "users/" + root.userID;
+                  var birthday = Qt.formatDateTime(Date.fromLocaleString(Qt.locale(), idadeUserTxtCadastro.tfTextText, "dd/MM/yyyy"), "dd/MM/yyyy");
+
+                    dbFitmass.setValue(key, {
+                         "nome": nomeUserTxtCadastro.tfTextText,
+                         "email": emailUserTxtCadastro.tfTextText,
+                         "age": calculateAge(Date.fromLocaleString(Qt.locale(), birthday, "dd/MM/yyyy")),
+                         "height": alturaUserTxtCadastro.cbTextSelected,
+                         "desiredWeight": pesoDesejadoUserTxtCadastro.cbTextSelected,
+                         "totalMeasure": "0",
+                         "gender": generoUserTxtCadastro.cbTextSelected,
+                         "birthday": birthday,
+                         "photo": pathImage,
+                         "userID": root.userID
+                    }, function(success, message) {
+                             if(success) {
+                               console.log("CADASTRO - registro d - sucesso")
+
+                                 firebaseAuth.loginUser(emailUserTxtCadastro.tfTextText, senhaUserTxtCadastro.tfTextText)
+
+                             } else {
+                               console.log("CADASTRO - registro d - DB write error:", message)
+                             }
+                           })
+            } else {
+                console.log("CADASTRO - registro es - Error: " + message);
+                nativeUtils.displayAlertDialod("Atenção", "CADASTRO - registro - Erro: " + message, "OK")
+            }
+        }
+    }
+
+    FirebaseDatabase {
+        id: dbFitmass
+
+        config: FirebaseConfig {
+             //get these values from the firebase console
+             projectId: "fitmass-2018"
+             databaseUrl: "https://fitmassapp.firebaseio.com/"
+
+             //platform dependent - get these values from the google-services.json / GoogleService-info.plist
+             apiKey:        Qt.platform.os === "android" ? "AIzaSyBh6Kb12xUnOsQDTP2XEbSKtuGsBfmCyic" : "AIzaSyBh6Kb12xUnOsQDTP2XEbSKtuGsBfmCyic"
+             applicationId: Qt.platform.os === "android" ? "1:519505351771:android:28365556727f1ea3" : "1:519505351771:ios:28365556727f1ea3"
+           }
+
+        onWriteCompleted: {
+            if(success)
+                    console.log("CADASTRO - Sucesso ao salvar dados no db!");
+            else
+                console.log("CADASTRO - DB write error:", message)
         }
     }
 

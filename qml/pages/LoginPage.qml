@@ -26,7 +26,9 @@ Page {
 
         MouseArea {
             anchors.fill: parent
-            onClicked: scrollProfile.forceActiveFocus()
+            onClicked: {
+                scrollProfile.forceActiveFocus()
+            }
         }
 
         Column {
@@ -171,8 +173,10 @@ Page {
                             onClicked: {
                                 loginPage.forceActiveFocus()
 
-                                indicator.visible = true
-                                indicator.startAnimating()
+                                indicatorLogin.visible = true
+                                indicatorLogin.startAnimating()
+                                botaoEntrarLogin.visible = false
+                                botaoCadastro.visible = false
 
                                 firebaseAuth.loginUser(emailUserTxtLogin.text, senhalUserTxtLogin.text)
                             }
@@ -202,7 +206,12 @@ Page {
                             id: btnCadastroMouseArea
                             anchors.fill: parent
                             onClicked: {
-                                 entrarStack.push(cadastroView)
+                                botaoEntrarLogin.visible = false
+                                botaoCadastro.visible = false
+
+                                entrarStack.push(cadastroView)
+                                indicator.stopAnimating()
+                                indicator.visible = false
                             }
                         }
                     }
@@ -246,6 +255,18 @@ Page {
                         }
                     }
                 } // Botão para recuperação de senha (não funcional)
+
+                AppActivityIndicator {
+                    id: indicatorLogin
+                    z: 1
+                    animating: false
+                    visible: false
+                    anchors.horizontalCenter: botaoLogin.horizontalCenter
+                    anchors.verticalCenter: botaoLogin.verticalCenter
+                    hidesWhenStopped: true
+                    color: greenDark
+                }
+
             }
         }
     }

@@ -36,6 +36,8 @@ Page {
 
             onClicked: {
               antropoStack.push(antropoNewView)
+                indicator.stopAnimating()
+                indicator.visible = false
             }
         }
     }
@@ -169,44 +171,6 @@ Page {
                     measureWidth: parent.width
                 }
             } // medida completa
-        }
-    }
-
-    Connections {
-        target: nativeUtils
-
-        onDatePickerFinished: {
-            var pickedDate
-            if(accepted){
-
-                var hour = ""
-                var dateStr = ""
-                var timeShift = ""
-
-                dateStr = date.toLocaleTimeString(Qt.locale("pt_BR"))
-                hour = parseInt(dateStr.split(":")[0])
-                timeShift = Qt.formatDateTime(date, "t")
-
-                if (hour === 00) {
-                    pickedDate = Qt.formatDate(date, "dd/MM/yyyy")
-                } else {
-                    Date.prototype.addHours = function (h) {
-                        this.setTime(this.getTime() + (h * 60 * 60 * 1000))
-                        return this
-                    }
-
-                    pickedDate = Qt.formatDate(date.addHours(24 - hour), "dd/MM/yyyy")
-                }
-
-                if(dateTo){
-                    dateTo = false;
-                    dateToSelect.btnText = pickedDate;
-                }
-                if(dateFrom){
-                    dateFrom = false;
-                    dateFromSelect.btnText = pickedDate;
-                }
-            }
         }
     }
 }

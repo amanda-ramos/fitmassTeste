@@ -2,6 +2,7 @@ import VPlayApps 1.0
 import QtQuick 2.9
 import QtQuick.Controls 2.0 as Quick2
 import QtQuick.Controls.Material 2.0
+import VPlayPlugins 1.0
 
 import "../common"
 import "../pages"
@@ -31,6 +32,8 @@ Page {
     property color titleColor: greenDark
     property color textColor: greenLight
 
+
+
     // Ícones na barra de navegação superior
     rightBarItem:  NavigationBarRow {
       id: rightNavBarRowMeasure
@@ -41,12 +44,22 @@ Page {
           icon: IconType.sharealt
 
           onClicked: {
-            var teste = contentMeasure.grabToImage(function(result){
-                    teste2 = result.saveToFile("medida2.jpg")
-                    nativeUtils.share("Link da imagem: " + result.url, "")
-                    console.log("SAVE IMAGE: " + teste2)
-            })
-             console.log("GRAB IMAGE: " + teste)
+            //var teste = grabImage(contentMeasure)
+
+              //iconPeso.source = teste
+
+              /*function(result){
+
+
+
+                    teste2 = result.saveToFile("file:///var/mobile/Containers/Data/Application/E8981280-9A2C-4988-8B0B-2FA95FD8351C/Library/Caches/medida2.jpg")
+
+                    iconPeso.source = result.url
+
+                    //console.log("SAVE IMAGE: " + teste2)
+            })*/
+             //console.log("GRAB IMAGE: " + teste)
+              nativeUtils.share("Link da imagem: ", "")
         }
       }
 
@@ -65,9 +78,22 @@ Page {
 
               onAlertDialogFinished: {
                   if(accepted){
-                      // Código para deletar medida
-                      //
-                      //
+                      console.log("DELETAR aceito - key: " + keyCard)
+                      dbFitmass.setValue("medidas/"+keyCard, null, function(success, key, value){
+                        if(success){
+                            qtdeMedida --;
+
+                            // diminuir qtde de medida no banco de dados
+
+                            fitmassStack.pop()
+                            fitmassStack.push({item: historicoView, replace: true})
+                            indicator.stopAnimating()
+                            indicator.visible = false
+                            console.log("DELETAR MEDIDA - realizado com sucessso")
+                        } else{
+                            console.log("DELETAR MEDIDA - falha")
+                        }
+                      });
                   }
               }
           }
@@ -631,7 +657,7 @@ Page {
                             anchors.left: controlePeso2.right
 
                             Text {
-                                id: pesoDesejado
+                                id: pesoDesejadoTxt
                                 text: "Peso desejado"
                                 color: grayLight2
                                 font.bold: true
@@ -642,11 +668,11 @@ Page {
 
                             Text {
                                 id: pesoDesejadoValor
-                                text: wantedWeightValor + " kg"
+                                text: pesoDesejado + " kg"
                                 color: contrastColor3
                                 font.bold: true
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                anchors.top: pesoDesejado.bottom
+                                anchors.top: pesoDesejadoTxt.bottom
                                 font.pixelSize: root.sp(12)
                             }
                         }
@@ -675,6 +701,8 @@ Page {
                                 onClicked: {
                                     var infopage = infoView.createObject()
                                     fitmassStack.push(infopage)
+                                    indicator.stopAnimating()
+                                    indicator.visible = false
                                 }
                             }
                         }
@@ -702,57 +730,63 @@ Page {
         }
 
         Component.onCompleted: {
-            console.log(keyCard)
+            console.log("MEDIDA CARD - keycard: " + keyCard)
 
-            // Código para recuperar dados do banco de dados
-            //
-            //
+            dbFitmass.getValue("medidas/" + keyCard, {orderByValue: true}, function(success, key, value) {
+                if(success){
+                    console.debug("MEDIDA CARD - Read value " + value + " for key " + key)
+                    weightValor = value.weight
 
-            // Temporário: pega os valores de um vetor fixo no Main.qml
+                    weightValue.text = value.weight + " kg"
+                    muscleValue.text = value.leanMass + " kg"
+                    bodyFatValue.text = value.bodyFat + " kg"
+                    waterValue.text = value.water + " L"
 
-            if(keyCard == 0){
-                keyCard = medida0
-                keyCard2 = medida0Magra
-                keyCard3 = medida0Gorda
-            }
-            if(keyCard == 1){
-                keyCard = medida1
-                keyCard2 = medida1Magra
-                keyCard3 = medida1Gorda
-            }
-            if(keyCard == 2){
-                keyCard = medida2
-                keyCard2 = medida2Magra
-                keyCard3 = medida2Gorda
-            }
+                    weightBar.value = parseFloat(value.weight)
+                    muscleBar.value = parseFloat(value.leanMass)
+                    bodyFatBar.value = parseFloat(value.bodyFat)
 
-            console.log("MEDIDA CARD - keycard: " + keyCard[0])
+                    imcBar.value = parseFloat(value.imc)
+                    pgcBar.value = parseFloat(value.pgc)
 
-                    weightValue.text = keyCard[1]+ " kg"
-                    muscleValue.text = keyCard[2] + " kg"
-                    bodyFatValue.text = keyCard[3] + " kg"
-                    waterValue.text = keyCard[4] + " L"
+                    pesoAtualValor.text = value.weight + " kg"
 
-                    weightBar.value = parseFloat(keyCard[1])
-                    muscleBar.value = parseFloat(keyCard[2])
-                    bodyFatBar.value = parseFloat(keyCard[3])
+                    dbFitmass.getValue("medidas/" + keyCard + "/analiseSegmentarMagra", {orderByValue: true}, function(success, key, value) {
+                        if(success){
+                            console.debug("MEDIDA CARD MAGRA - Read value " + value + " for key " + key)
 
-                    imcBar.value = parseFloat(keyCard[5])
-                    pgcBar.value = parseFloat(keyCard[6])
+                            segmentarMagra.membSupEsqValor = value.upperMembersLeft + " kg"
+                            segmentarMagra.membSupDirValor = value.upperMembersRight + " kg"
+                            segmentarMagra.abdValor = value.abdominal + " kg"
+                            segmentarMagra.membInfEsqValor = value.lowerMembersLeft + " kg"
+                            segmentarMagra.membInfDirValor = value.lowerMembersRight + " kg"
 
-                    pesoAtualValor.text = keyCard[1] + " kg"
+                    }else{
+                            console.debug("MEDIDA CARD MAGRA - Error with message: "  + value)
+                            nativeUtils.displayAlertDialog("Error!", value, "OK")
+                        }
+                    });
 
-                    segmentarMagra.membSupEsqValor = keyCard2[0] + " kg"
-                    segmentarMagra.membSupDirValor = keyCard2[1] + " kg"
-                    segmentarMagra.abdValor = keyCard2[2] + " kg"
-                    segmentarMagra.membInfEsqValor = keyCard2[3] + " kg"
-                    segmentarMagra.membInfDirValor = keyCard2[4] + " kg"
+                    dbFitmass.getValue("medidas/" + keyCard + "/analiseSegmentarGorda", {orderByValue: true}, function(success, key, value) {
+                        if(success){
+                            console.debug("MEDIDA CARD GORDA - Read value " + value + " for key " + key)
 
-                    segmentarGorda.membSupEsqValor = keyCard3[0] + " kg"
-                    segmentarGorda.membSupDirValor = keyCard3[1] + " kg"
-                    segmentarGorda.abdValor = keyCard3[2] + " kg"
-                    segmentarGorda.membInfEsqValor = keyCard3[3] + " kg"
-                    segmentarGorda.membInfDirValor = keyCard3[4] + " kg"
+                            segmentarGorda.membSupEsqValor = value.upperMembersLeft + " kg"
+                            segmentarGorda.membSupDirValor = value.upperMembersRight + " kg"
+                            segmentarGorda.abdValor = value.abdominal + " kg"
+                            segmentarGorda.membInfEsqValor = value.lowerMembersLeft + " kg"
+                            segmentarGorda.membInfDirValor = value.lowerMembersRight + " kg"
+
+                    }else{
+                            console.debug("MEDIDA CARD GORDA - Error with message: "  + value)
+                            nativeUtils.displayAlertDialog("Error!", value, "OK")
+                        }
+                    });
+                }else{
+                    console.debug("MEDIDA CARD - Error with message: "  + value)
+                    nativeUtils.displayAlertDialog("Error!", value, "OK")
+                }
+            });
         }
 
     } // flickable
@@ -760,4 +794,18 @@ Page {
     ScrollIndicator {
         flickable: scrollMeasure
     } // scroll indicator
+
+    FirebaseDatabase {
+        id: dbFitmass
+
+        config: FirebaseConfig {
+             //get these values from the firebase console
+             projectId: "fitmass-2018"
+             databaseUrl: "https://fitmassapp.firebaseio.com/"
+
+             //platform dependent - get these values from the google-services.json / GoogleService-info.plist
+             apiKey:        Qt.platform.os === "android" ? "AIzaSyBh6Kb12xUnOsQDTP2XEbSKtuGsBfmCyic" : "AIzaSyBh6Kb12xUnOsQDTP2XEbSKtuGsBfmCyic"
+             applicationId: Qt.platform.os === "android" ? "1:519505351771:android:28365556727f1ea3" : "1:519505351771:ios:28365556727f1ea3"
+           }
+    }
 }
