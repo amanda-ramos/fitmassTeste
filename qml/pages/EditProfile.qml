@@ -23,7 +23,6 @@ Page {
     property var editTextMargin: root.dp(20)
     property var totalDeMedidas
 
-    property bool inicial: true
     property bool genero: false
     property bool pesoDesejado: false
     property bool altura: false
@@ -81,25 +80,39 @@ Page {
             property bool saveBtn: false
 
             onClicked: {
+                scrollProfile.forceActiveFocus()
 
-                var key = "users/" + root.userID;
-                var birthday = Qt.formatDateTime(Date.fromLocaleString(Qt.locale(), idadeUserTxt.tfTextText, "dd/MM/yyyy"), "dd/MM/yyyy");
+                indicatorEdit.visible = true
+                indicatorEdit.startAnimating()
+
+                var key = "users/" + userID
+                var birthday = Qt.formatDateTime(Date.fromLocaleString(Qt.locale(), idadeUserTxt.tfTextText, "dd/MM/yyyy"), "dd/MM/yyyy")
+
+                userName = nomeUserTxt.tfTextText
+                userEmail = emailUserTxt.tfTextText
+                userAge = calculateAge(Date.fromLocaleString(Qt.locale(), birthday, "dd/MM/yyyy"))
+                userHeight = alturaUserTxt.cbTextSelected
+                userPesoDesejado = pesoDesejadoUserTxt.cbTextSelected
+                userGender = generoUserTxt.cbTextSelected
+                userBirthday = birthday
+                userPhoto = pathImage
 
                   dbFitmass.setValue(key, {
-                       "nome": nomeUserTxt.tfTextText,
-                       "email": emailUserTxt.tfTextText,
-                       "age": calculateAge(Date.fromLocaleString(Qt.locale(), birthday, "dd/MM/yyyy")),
-                       "height": alturaUserTxt.cbTextSelected,
-                       "desiredWeight": pesoDesejadoUserTxt.cbTextSelected,
-                       "totalMeasure": totalDeMedidas,
-                       "gender": generoUserTxt.cbTextSelected,
-                       "birthday": birthday,
-                       "photo": pathImage,
-                       "userID": root.userID
+                       "nome": userName,
+                       "email": userEmail,
+                       "age": userAge,
+                       "height": userHeight,
+                       "desiredWeight": userPesoDesejado,
+                       "totalMeasure": qtdeMedida,
+                       "totalMeasureCorp": qtdeMedidaCorp,
+                       "gender": userGender,
+                       "birthday": userBirthday,
+                       "photo": userPhoto,
+                       "userID": userID
                   }, function(success, message) {
                            if(success) {
                              console.log("EDITAR PERFIL - sucesso ao salvar os dados")
-                                editProfile = true;
+                             editProfile = true;
                              nativeUtils.displayAlertDialog("Sucesso!", "Os dados foram alterados.", "OK")
 
                            } else {
@@ -403,9 +416,15 @@ Page {
             }
 
             Component.onCompleted: {
-                indicator.visible = true
-                indicator.startAnimating()
-                dbFitmass.getValue(keyUser)
+                nomeUserTxt.tfTextText = userName
+                emailUserTxt.tfTextText = userEmail
+                idadeUserTxt.tfTextText = userBirthday
+                generoUserTxt.cbTextSelected = userGender
+                alturaUserTxt.cbTextSelected = userHeight
+                pesoDesejadoUserTxt.cbTextSelected = userPesoDesejado
+                totalDeMedidas = qtdeMedida
+                userImage.source = userPhoto
+                pathImage = userPhoto
             }
         }
 
@@ -453,8 +472,12 @@ Page {
                         userImageBtnMouseArea.shownEditPhotoDialog = false
                     }
                 }
+            }
 
+            // @disable-check M16
+            onAlertDialogFinished: {
                 if(editProfile){
+                    scrollProfile.forceActiveFocus()
                     editProfile = false
                     profileStack.pop()
                     indicator.stopAnimating()
@@ -532,30 +555,24 @@ Page {
              applicationId: Qt.platform.os === "android" ? "1:519505351771:android:28365556727f1ea3" : "1:519505351771:ios:28365556727f1ea3"
            }
 
-        onReadCompleted: {
-            if(success) {
-                console.debug("EDITAR PERFIL - Read value " +  value + " for key " + key)
-                indicator.stopAnimating()
-                indicator.visible = false
-
-                nomeUserTxt.tfTextText = value.nome
-                emailUserTxt.tfTextText = value.email
-                idadeUserTxt.tfTextText = value.birthday
-                generoUserTxt.cbTextSelected = value.gender
-                alturaUserTxt.cbTextSelected = value.height
-                pesoDesejadoUserTxt.cbTextSelected = value.desiredWeight
-                userImage.source = value.photo
-                totalDeMedidas = value.totalMeasure
-                pathImage = value.photo
-
-            } else {
-                console.debug("EDITAR PERFIL - Error with message: "  + value)
-                nativeUtils.displayAlertDialog("Error!", value, "OK")
-            }
+        onWriteCompleted: {
+            indicatorEdit.stopAnimating()
+            indicatorEdit.visible = false
         }
     }
 
     ScrollIndicator {
         flickable: scrollProfile
+    }
+
+    AppActivityIndicator {
+        id: indicatorEdit
+        z: 1
+        animating: false
+        visible: false
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        hidesWhenStopped: true
+        color: greenDark
     }
 }

@@ -18,7 +18,7 @@ Page {
     property var txtTitleSize: root.sp(12)
     property var txtUserSize: root.sp(12)
 
-    property bool inicial: true
+    property bool inicialP: true
 
     // Função para pegar o primeiro e último nome do usuário
     function splitString (str){
@@ -118,14 +118,14 @@ Page {
                     Rectangle {
                         id: backName
                         width: userImageBack.width + root.dp(10)
-                        height: userName.height + root.dp(10)
+                        height: userNameField.height + root.dp(10)
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.bottom: userImageBack.bottom
                         color: grayDark
                     }
 
                     Text {
-                        id: userName
+                        id: userNameField
                         anchors.horizontalCenter: backName.horizontalCenter
                         anchors.verticalCenter: backName.verticalCenter
                         color: greenDark
@@ -309,9 +309,16 @@ Page {
             }
 
             Component.onCompleted: {
-                indicator.visible = true
-                indicator.startAnimating()
-                dbFitmass.getValue(keyUser)
+                userNameField.text = splitString(userName)
+                emailUserTxt.txtText = userEmail
+                idadeUserTxt.txtText = userAge + " anos"
+                generoUserTxt.txtText = userGender
+                alturaUserTxt.txtText = userHeight + " m"
+                pesoDesejadoUserTxt.txtText = userPesoDesejado + " kg"
+                medidasTotal.text = qtdeMedida
+                userImage.source = userPhoto
+
+                inicialP = false
             }
         } // Coluna Conteúdo
     } // Flickable
@@ -335,73 +342,62 @@ Page {
 
         realtimeValueKeys: [keyUser + "/nome", keyUser + "/email",
             keyUser + "/age", keyUser + "/gender", keyUser + "/height",
-            keyUser + "/desiredWeight", keyUser + "/totalMeasure", keyUser + "/photo"]
+            keyUser + "/desiredWeight", keyUser + "/totalMeasure",
+            keyUser + "/photo", keyUser + "/totalMeasureCorp"]
 
         onRealtimeValueChanged: {
-            if(!inicial){
+
+            if(!inicialP){
                 if(success){
-                    dbFitmass.getValue(keyUser);
 
                     switch (key) {
                         case "nome": {
-                            userName.text = splitString(value);
-                            break;
+                            userName = value
+                            userNameField.text = splitString(userName)
+                            break
                         }
                         case "email": {
-                            emailUserTxt.txtText = value;
-                            break;
+                            userEmail = value
+                            emailUserTxt.txtText = userEmail
+                            break
                         }
                         case "age": {
-                            idadeUserTxt.txtText = value + " anos";
-                            break;
+                            userAge = value
+                            idadeUserTxt.txtText = userAge + " anos"
+                            break
                         }
                         case "gender": {
-                            generoUserTxt.txtText = value;
-                            break;
+                            userGender = value
+                            generoUserTxt.txtText = userGender
+                            break
                         }
                         case "height": {
-                            alturaUserTxt.txtText = value + " m";
-                            break;
+                            userHeight = value
+                            alturaUserTxt.txtText = userHeight + " m"
+                            break
                         }
                         case "desiredWeight": {
-                            pesoDesejadoUserTxt.txtText = value + " kg";
-                            break;
+                            userPesoDesejado = value
+                            pesoDesejadoUserTxt.txtText = userPesoDesejado + " kg"
+                            break
                         }
                         case "totalMeasure": {
-                            medidasTotal.text = value;
-                            break;
+                            qtdeMedida = value
+                            medidasTotal.text = qtdeMedida
+                            break
+                        }
+                        case "totalMeasureCorp": {
+                            qtdeMedidaCorp = value
+                            //medidasTotal.text = qtdeMedidaCorp
+                            break
                         }
                         case "photo": {
-                            userImage.source = value;
-                            break;
+                            userPhoto = value
+                            userImage.source = userPhoto
+                            break
                         }
                     }
                 }
-            }
-        }
-
-        onReadCompleted: {
-
-            if(inicial){
-                if(success) {
-                    console.debug("PERFIL - Read value " +  value + " for key " + key)
-                    indicator.stopAnimating()
-                    indicator.visible = false
-
-                    userName.text = splitString(value.nome)
-                    emailUserTxt.txtText = value.email
-                    idadeUserTxt.txtText = value.age + " anos"
-                    generoUserTxt.txtText = value.gender
-                    alturaUserTxt.txtText = value.height + " m"
-                    pesoDesejadoUserTxt.txtText = value.desiredWeight + " kg"
-                    medidasTotal.text = value.totalMeasure
-                    userImage.source = value.photo
-
-                } else {
-                    console.debug("PERFIL - Error with message: "  + value)
-                    nativeUtils.displayAlertDialog("Error!", value, "OK")
-                }
-                inicial = false;
             }
         }
     }

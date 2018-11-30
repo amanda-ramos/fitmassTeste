@@ -53,19 +53,25 @@ App {
     property var userTxtPadding: dp(20)
     property var editTextMargin: root.dp(20)
     property var radiusText: root.dp(30)
-    property var indicatorHor
-    property var indicatorVer
+    property bool visibleAux: true
 
     property int axisFontSize: 10
-    property var userID
-    property var userGender
-    property var userAge
-    property var pesoDesejado
-    property var userEmail: "alc.ramos@yahoo.com.br"//"teste@teste.com.br"
-    property var userSenha: "123456"//"teste123"
-    property var qtdeMedida: 0
-    property var qtdeMedidaCorp: 0
+
+    // Dados Usuário
+    property int userAge
+    property string userBirthday
+    property string userPesoDesejado
+    property string userID
+    property string userGender
+    property string userEmail: "alc.ramos@yahoo.com.br"//"teste@teste.com.br"
+    property string userSenha: "123456"//"teste123"
+    property int qtdeMedida: 0
+    property int qtdeMedidaCorp: 0
+    property string userHeight
+    property string userName
+    property string userPhoto
     property bool novato: true
+    property bool initial: true
 
     property var keyUser: "users/" + root.userID
     property var keyMeasure: ""
@@ -338,25 +344,25 @@ App {
            }
 
         onLoggedIn: {
-            indicator.stopAnimating()
-            indicator.visible = false
+            visibleAux = true
 
             if(success){
-                    console.log("LOGIN - Sucesso ao fazer o login!");
+                    console.log("Sucesso ao fazer o login!");
                     root.userID = firebaseAuth.userId;
-                    console.log("LOGIN - UserID: " + root.userID)
-                    userEmail = ""
-                    userSenha = ""
+                    console.log("UserID: " + root.userID)
 
                     stack.push(mainView)
             } else {
-                console.log("LOGIN - Error: " + message);
+                console.log("Erro ao realizar o login.")
+                console.log("Erro: " + message)
                 nativeUtils.displayAlertDialog("Erro no login", "Erro ao realizar o login.\n\nErro: " + message, "OK")
             }
         }
 
         onPasswordResetEmailSent: {
             indicator.stopAnimating()
+
+            console.log("recuperação de senha");
 
             if(success){
                 console.log("LOGIN - Link para recuperação de senha enviado ao seu e-mail.");

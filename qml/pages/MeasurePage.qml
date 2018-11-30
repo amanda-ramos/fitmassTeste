@@ -13,7 +13,7 @@ Page {
     height: screenSizeY
     width: screenSizeX
 
-    property var teste2
+    property bool deleta: false
 
     property var weightValor
     property var muscleValor
@@ -32,7 +32,37 @@ Page {
     property color titleColor: greenDark
     property color textColor: greenLight
 
+    function diminuiQtdeMedidas () {
+        console.log("chamou função")
 
+        var key = "users/" + userID
+
+        dbFitmass.setValue(key, {
+             "nome": userName,
+             "email": userEmail,
+             "age": userAge,
+             "height": userHeight,
+             "desiredWeight": userPesoDesejado,
+             "totalMeasure": qtdeMedida,
+             "totalMeasureCorp": qtdeMedidaCorp,
+             "gender": userGender,
+             "birthday": userBirthday,
+             "photo": userPhoto,
+             "userID": userID
+        }, function(success, message) {
+                 if(success) {
+                   console.log("Deletar medida - sucesso ao diminuir valor")
+                     fitmassStack.pop()
+                     fitmassStack.push({item: historicoView, replace: true})
+                     indicator.stopAnimating()
+                     indicator.visible = false
+                     initial = true
+                     console.log("DELETAR MEDIDA - realizado com sucessso")
+                 } else {
+                   console.log("CADASTRO - registro d - DB write error:", message)
+                 }
+               })
+    }
 
     // Ícones na barra de navegação superior
     rightBarItem:  NavigationBarRow {
@@ -79,17 +109,13 @@ Page {
               onAlertDialogFinished: {
                   if(accepted){
                       console.log("DELETAR aceito - key: " + keyCard)
+
                       dbFitmass.setValue("medidas/"+keyCard, null, function(success, key, value){
                         if(success){
                             qtdeMedida --;
 
-                            // diminuir qtde de medida no banco de dados
-
-                            fitmassStack.pop()
-                            fitmassStack.push({item: historicoView, replace: true})
-                            indicator.stopAnimating()
-                            indicator.visible = false
-                            console.log("DELETAR MEDIDA - realizado com sucessso")
+                            diminuiQtdeMedidas()
+                            console.log("deletou com sucesso a medida do db")
                         } else{
                             console.log("DELETAR MEDIDA - falha")
                         }
@@ -668,7 +694,7 @@ Page {
 
                             Text {
                                 id: pesoDesejadoValor
-                                text: pesoDesejado + " kg"
+                                text: userPesoDesejado + " kg"
                                 color: contrastColor3
                                 font.bold: true
                                 anchors.horizontalCenter: parent.horizontalCenter

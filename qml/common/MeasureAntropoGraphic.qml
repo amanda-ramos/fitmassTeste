@@ -28,6 +28,8 @@ Item {
     function buscaDadosMedidasCorporais(musculo) {
 
         console.log("ANTROPO - Quantidade de medidas: " + qtdeMedidaCorp)
+        console.log("ANTROPO - user id: " + userID)
+
         dbFitmass.getValue("medidasCorp", {
                                  orderByChild: "userCorp",
                                  equalTo: userID
@@ -48,7 +50,9 @@ Item {
                                             buscaMedidasCorporais(musculo, keyMeasureCorp);
                                      }
                                  } else {
-                                     if(qtdeMedidaCorp === 0) {
+                                     console.log("Usuário não possui medidas corporais")
+
+                                     if(qtdeMedidaCorp === "0") {
                                          graficoMuscle.visible = false
                                          footer.visible = false
                                          muscleSelect.visible = false
@@ -56,7 +60,8 @@ Item {
                                          noContent.visible = true
 
                                      } else {
-                                         nativeUtils.displayAlertDialog("Error! 3", value3, "OK")
+                                         console.log("ERRO: Não foi possível carregar as medidas corporais dos usuários")
+                                         nativeUtils.displayAlertDialog("Erro", "Não foi possível carregar as suas medidas corporais. Tente novamente mais tarde", "OK")
                                      }
                                  }
                                  indicator.stopAnimating()

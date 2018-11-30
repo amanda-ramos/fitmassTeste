@@ -16,7 +16,6 @@ Page {
     height: screenSizeY
     width: screenSizeX
 
-    property bool initial: true
     property bool dateFilter: false
 
     property var keyCardFilter
@@ -105,29 +104,39 @@ Page {
                                  orderByValue: true
                              }, function (success3, key3, value3) {
                                  if (success3) {
+                                     console.log("Reconheceu usuário")
 
-                                     if(initial){
+                                     if (initial) {
                                          qtdeMedida = value3.totalMeasure
                                          qtdeMedidaCorp = value3.totalMeasureCorp
-                                        graficosConfig();
+                                         console.log(qtdeMedida + " " +   qtdeMedidaCorp)
+                                         graficosConfig();
+
                                      }
 
-                                     userGender = value3.gender
                                      var age = value3.birthday
-
                                      userAge = calculateAge(
                                                  Date.fromLocaleString(
                                                      Qt.locale(), age,
                                                      "dd/MM/yyyy"))
 
-                                     pesoDesejado = value3.desiredWeight
+                                     userBirthday = value3.birthday
+                                     userPesoDesejado = value3.desiredWeight
+                                     userHeight = value3.height
+                                     userName = value3.nome
+                                     userPhoto = value3.photo
+                                     userGender = value3.gender
 
-                                     if(qtdeMedida == 0){
+                                     if (qtdeMedida == 0) {
                                          novato = true;
-                                     }else{
+                                         msgMedidas.visible = true
+                                         indicator.stopAnimating()
+                                         indicator.visible = false
+                                     } else {
                                          novato = false;
                                          filterIcon.visible = true;
                                      }
+                                     console.log("novato: " + novato)
                                  } else {
                                      console.debug(
                                                  "ERRO: Não foi possível encontrar dados do usuário " + userID)
@@ -205,7 +214,7 @@ Page {
 
                                              // primeira vez que gera o gráfico
                                              line.append(Date.fromLocaleString(locale, Qt.formatDate(value2.dateMedida, "dd/MM"), "dd/MM"), value2.weight)
-                                             line2.append(Date.fromLocaleString(locale, Qt.formatDate(value2.dateMedida, "dd/MM"), "dd/MM"), pesoDesejado)
+                                             line2.append(Date.fromLocaleString(locale, Qt.formatDate(value2.dateMedida, "dd/MM"), "dd/MM"), userPesoDesejado)
                                              line3.append(Date.fromLocaleString(locale, Qt.formatDate(value2.dateMedida, "dd/MM"), "dd/MM"), value2.leanMass)
                                              line4.append(Date.fromLocaleString(locale, Qt.formatDate(value2.dateMedida, "dd/MM"), "dd/MM"), value2.bodyFat)
 
@@ -215,10 +224,10 @@ Page {
                                                  axisX2.min = Date.fromLocaleString(locale, Qt.formatDate(value2.dateMedida, "dd/MM"), "dd/MM")
                                                  axisX3.min = Date.fromLocaleString(locale, Qt.formatDate(value2.dateMedida, "dd/MM"), "dd/MM")
 
-                                                 menorPeso = parseFloat(pesoDesejado) - 10;
+                                                 menorPeso = parseFloat(userPesoDesejado) - 10;
                                                  menorMagra = parseFloat(value2.leanMass) - 5
                                                  menorGorda = parseFloat(value2.bodyFat) - 5;
-                                                 maiorPeso = parseFloat(pesoDesejado) + 10;
+                                                 maiorPeso = parseFloat(userPesoDesejado) + 10;
                                                  maiorMagra = parseFloat(value2.leanMass) + 5;
                                                  maiorGorda = parseFloat(value2.bodyFat) + 5;
                                              }
@@ -262,6 +271,7 @@ Page {
                                                 initial = false;
                                                 indicator.stopAnimating()
                                                 indicator.visible = false
+                                                 console.log("TESTE 4 " + k)
                                              }
                                          } else {
                                              // apenas a apartir da segunda vez que gerar o gráfico
@@ -269,6 +279,7 @@ Page {
                                              indicator.visible = false
                                          }
                                      }
+
                                      k++;
                                      s2 += "ListElement {measureIdDB: \"" + value2.measureID + "\"; weight: \"" + value2.weight + " kg" + "\"; leanMass: \"" + value2.leanMass + " kg" + "\"; bodyFat: \"" + value2.bodyFat + " kg" + "\"; date: \"" + value2.dateMedida + "\" }\n"
                                  } else {
@@ -427,6 +438,7 @@ Page {
                 filterIcon.visible = true
                 msgFilter.visible = false
                 dateFilter = false
+                k = 0
                 s2 = ""
                 indicator.visible = true
                 indicator.startAnimating()

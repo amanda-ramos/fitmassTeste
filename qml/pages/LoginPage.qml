@@ -156,6 +156,7 @@ Page {
                     height: botaoEntrarLogin.height
                     anchors.top: botaoEsqueceuSenha.bottom
                     anchors.left: parent.left
+                    visible: visibleAux
 
                     CustomButtom {
                         id: botaoEntrarLogin
@@ -173,10 +174,8 @@ Page {
                             onClicked: {
                                 loginPage.forceActiveFocus()
 
-                                indicatorLogin.visible = true
+                                visibleAux = false
                                 indicatorLogin.startAnimating()
-                                botaoEntrarLogin.visible = false
-                                botaoCadastro.visible = false
 
                                 firebaseAuth.loginUser(emailUserTxtLogin.text, senhalUserTxtLogin.text)
                             }
@@ -191,6 +190,7 @@ Page {
                     height: botaoEntrarLogin.height
                     anchors.top: botaoEsqueceuSenha.bottom
                     anchors.right: parent.right
+                    visible: visibleAux
 
                     CustomButtom {
                         id: btnCriarCadastro
@@ -257,13 +257,12 @@ Page {
                     id: indicatorLogin
                     z: 1
                     animating: false
-                    visible: false
+                    visible: !visibleAux
                     anchors.horizontalCenter: botaoLogin.horizontalCenter
                     anchors.verticalCenter: botaoLogin.verticalCenter
                     hidesWhenStopped: true
                     color: greenDark
                 }
-
             }
         }
     }

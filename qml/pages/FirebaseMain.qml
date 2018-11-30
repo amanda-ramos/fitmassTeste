@@ -34,7 +34,7 @@ Page {
 
                                      qtdeMedida = value.totalMeasure;
                                      userGender = value.gender;
-                                     pesoDesejado = value.desiredWeight;
+                                     userPesoDesejado = value.desiredWeight;
 
                                      var age = value.birthday;
 
