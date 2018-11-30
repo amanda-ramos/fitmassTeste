@@ -71,7 +71,7 @@ Page {
         var s = 'import QtQuick 2.0; ListModel {\n'
         s += s2
         s += "}\n"
-        console.log("DADOS: " + s)
+        // console.log("DADOS: " + s)
 
         return Qt.createQmlObject(s, parent, "mainModel")
     }
@@ -100,14 +100,11 @@ Page {
 
     // Busca os dados do usuário no banco de dados
     function buscaDadosUser() {
-        userID = "ufhxlzxh4XchMt0kfUVBqDajXuQ2"
+
         dbFitmass.getValue(keyUser, {
                                  orderByValue: true
                              }, function (success3, key3, value3) {
                                  if (success3) {
-                                     console.debug(
-                                                 "HISTORICO1 - Read value "
-                                                 + value3 + " for key " + key3)
 
                                      if(initial){
                                          qtdeMedida = value3.totalMeasure
@@ -125,23 +122,20 @@ Page {
 
                                      pesoDesejado = value3.desiredWeight
 
-                                     console.log("HISTORICO 1 - idade: " + userAge)
-                                     console.log("HISTORICO 1 - qtde de medidas: " + qtdeMedida)
-
                                      if(qtdeMedida == 0){
                                          novato = true;
                                      }else{
                                          novato = false;
                                          filterIcon.visible = true;
                                      }
-
-
-
                                  } else {
                                      console.debug(
-                                                 "HISTORICO1 - Error with message: " + value3)
-                                     nativeUtils.displayAlertDialog(
-                                                 "Error! 2", value3, "OK")
+                                                 "ERRO: Não foi possível encontrar dados do usuário " + userID)
+                                     nativeUtils.displayAlertDialog("Erro",
+                                                 "ERRO: Não foi possível carregar os dados do usuário. Tente novamente mais tarde.", "OK")
+                                     firebaseAuth.logoutUser()
+                                     stack.pop()
+                                     console.log("ERRO: Logout forçado")
                                      indicator.stopAnimating()
                                  }
                              })
@@ -150,6 +144,7 @@ Page {
     // Busca as medidas deste usuário no banco de dados
     function buscaMedidas() {
 
+        // indicadores para limitar em 10 medidas para os gráficos
         indMaior = qtdeMedida
 
         if(indMaior > 10)
@@ -157,9 +152,7 @@ Page {
         else
             indMenor = 0
 
-        console.debug("indMenor: " + indMenor)
-        console.debug("indMaior: " + indMaior)
-
+        // busca de medidas para cada usuário
         dbFitmass.getValue("medidas", {
                                  orderByChild: "userId",
                                  equalTo: userID
@@ -172,9 +165,8 @@ Page {
                                      msgMedidas.visible = false
                                      novato = false
 
-                                     //console.debug("HISTORICO 2 - Read value " + value + " for key " + key)
+                                     console.debug("O usuário " + userID + " possui medidas Fitmass.")
                                      for (var prop in value) {
-                                         //console.log("VALUE - " + prop)
                                          keyMeasure = prop
                                             buscaDadosMedida(keyMeasure);
                                      }
@@ -186,10 +178,11 @@ Page {
                                          msgMedidas.visible = true
                                          indicator.stopAnimating()
                                          indicator.visible = false
-                                     } else {
-                                         nativeUtils.displayAlertDialog("Error! 3", value3, "OK")
-                                     }
 
+                                         cosole.log("O usuário " + userID + " não possui medidas Fitmass ainda")
+                                     } else {
+                                         cosole.log("ERRO: Não foi possível ler as medidas Fitmass do usuário " + userID)
+                                     }
                                      indicator.stopAnimating()
                                      indicator.visible = false
                                  }
@@ -198,27 +191,30 @@ Page {
 
     function buscaDadosMedida(keyMedida) {
 
-        //console.log("busca da Medida " + keyMedida)
+        // busca de medidas de um usuário específico
         dbFitmass.getValue("medidas/" + keyMedida, {
                                  orderByValue: true
                              }, function (success2, key2, value2) {
                                  if (success2) {
-                                     //console.debug("HISTORICO 3 - Read value " + value2 + " for key " + key2)
 
                                      measureIdDB = value2.measureID
 
                                      if(k>=indMenor){
 
                                          if(initial) {
+
+                                             // primeira vez que gera o gráfico
                                              line.append(Date.fromLocaleString(locale, Qt.formatDate(value2.dateMedida, "dd/MM"), "dd/MM"), value2.weight)
                                              line2.append(Date.fromLocaleString(locale, Qt.formatDate(value2.dateMedida, "dd/MM"), "dd/MM"), pesoDesejado)
                                              line3.append(Date.fromLocaleString(locale, Qt.formatDate(value2.dateMedida, "dd/MM"), "dd/MM"), value2.leanMass)
                                              line4.append(Date.fromLocaleString(locale, Qt.formatDate(value2.dateMedida, "dd/MM"), "dd/MM"), value2.bodyFat)
 
+                                             // definição dos eixos
                                              if(k === 0) {
                                                  axisX1.min = Date.fromLocaleString(locale, Qt.formatDate(value2.dateMedida, "dd/MM"), "dd/MM")
                                                  axisX2.min = Date.fromLocaleString(locale, Qt.formatDate(value2.dateMedida, "dd/MM"), "dd/MM")
                                                  axisX3.min = Date.fromLocaleString(locale, Qt.formatDate(value2.dateMedida, "dd/MM"), "dd/MM")
+
                                                  menorPeso = parseFloat(pesoDesejado) - 10;
                                                  menorMagra = parseFloat(value2.leanMass) - 5
                                                  menorGorda = parseFloat(value2.bodyFat) - 5;
@@ -231,6 +227,7 @@ Page {
                                              axisX2.max = Date.fromLocaleString(locale, Qt.formatDate(value2.dateMedida, "dd/MM"), "dd/MM");
                                              axisX3.max = Date.fromLocaleString(locale, Qt.formatDate(value2.dateMedida, "dd/MM"), "dd/MM");
 
+                                             // atualização dos máximos e mínimos dos eixos
                                              if (value2.weight < menorPeso)
                                                  menorPeso = parseFloat(value2.weight) - 2;
 
@@ -264,9 +261,10 @@ Page {
                                              if(k >= (qtdeMedida-1)){
                                                 initial = false;
                                                 indicator.stopAnimating()
-                                                 indicator.visible = false
+                                                indicator.visible = false
                                              }
                                          } else {
+                                             // apenas a apartir da segunda vez que gerar o gráfico
                                              indicator.stopAnimating()
                                              indicator.visible = false
                                          }
@@ -274,11 +272,10 @@ Page {
                                      k++;
                                      s2 += "ListElement {measureIdDB: \"" + value2.measureID + "\"; weight: \"" + value2.weight + " kg" + "\"; leanMass: \"" + value2.leanMass + " kg" + "\"; bodyFat: \"" + value2.bodyFat + " kg" + "\"; date: \"" + value2.dateMedida + "\" }\n"
                                  } else {
-                                     console.debug(
-                                                 "HISTORICO3 - Error with message: " + value3)
-                                     nativeUtils.displayAlertDialog(
-                                                 "Error! 1", value3, "OK")
+                                     console.debug("Não foi possível ler a medida " + keyMedida + " do usuário " + userID)
+                                     nativeUtils.displayAlertDialog("Não foi possível carregar a medida. Tente novamente mais tarde.", "OK")
                                      indicator.stopAnimating()
+                                     indicator.visible = false
                                  }
                              })
 
@@ -286,6 +283,7 @@ Page {
 
     // Configurações dos gráficos
     function graficosConfig() {
+
         line = weightChart.createSeries(ChartView.SeriesTypeLine,
                                         "Pesso medido", axisX1, axisY1)
 
@@ -373,9 +371,8 @@ Page {
                                                            "yyyyMMdd")
                             }
 
-                            console.log("TESTE: " + userID + "_" + pickedDate)
-
                             s2 = ""
+
                             dbFitmass.getValue("medidas", {
                                                          orderByChild: "user_date",
                                                          equalTo: userID + "_" + pickedDate
@@ -383,7 +380,6 @@ Page {
                                                      function (success5, key5, value5) {
                                                          if (success5) {
                                                              for (var prop5 in value5) {
-                                                                 console.log("FILTRO - VALUE - " + prop5)
                                                                  keyCardFilter = prop5
 
                                                                  dbFitmass.getValue(
@@ -392,20 +388,15 @@ Page {
                                                                              },
                                                                              function (success4, key4, value4) {
                                                                                  if (success4) {
-                                                                                     console.debug("HISTORICO FILTRO - Read value " + value4 + " for key " + key4)
-
-                                                                                     console.log("Data card: " + Qt.formatDate(value4.dateMedida, "dd/MM/yyyy") + " Data escolhida: " + pickedDate)
                                                                                          s2 += "ListElement {measureIdDB: \"" + value4.measureID + "\"; weight: \"" + value4.weight +
                                                                                          "\"; leanMass: \"" + value4.leanMass + "\"; bodyFat: \"" + value4.bodyFat + "\"; date: \"" +
                                                                                          value4.dateMedida + "\" }\n"
 
                                                                                      indicator.stopAnimating()
                                                                                      indicator.visible = false
-
-                                                                                     console.log("s2: " + s2)
                                                                                  } else {
-                                                                                     console.debug("HISTORICO FILTRO - Error with message: " + value4)
-                                                                                     nativeUtils.displayAlertDialog("Error!", value4, "OK")
+                                                                                     console.debug("Não foi possível ler a medida " + keyMedida + " do usuário " + userID)
+                                                                                     nativeUtils.displayAlertDialog("Não foi possível carregar a medida. Tente novamente mais tarde.", "OK")
                                                                                  }
                                                                              })
                                                              }
@@ -414,7 +405,7 @@ Page {
                                                              graphics.visible = false
                                                              indicator.stopAnimating()
                                                              indicator.visible = false
-                                                             console.log("Não possui card nessa data")
+                                                             console.log("Filtro por data - Não possui medida Fitmass nessa data")
                                                          }
                                                      })
                         }
@@ -439,12 +430,16 @@ Page {
                 s2 = ""
                 indicator.visible = true
                 indicator.startAnimating()
+
+                console.log("Limpar filtro por data - Medidas Fitmass")
+
                 buscaMedidas()
             }
         }
 
         // Ícone para realizar logout
         IconButtonBarItem {
+            id: logoutIcon
             title: "Sair"
             icon: IconType.signout
 
@@ -454,6 +449,7 @@ Page {
                 stack.pop()
                 indicator.stopAnimating()
                 indicator.visible = false
+                console.log("Usuário realizou logout")
             }
         }
     }
@@ -606,7 +602,6 @@ Page {
                             height: width / 2
                             color: cardColor
                             radius: root.dp(5)//radiusText
-                            anchors.centerIn: cardView
                             border.color: cardColor
                             border.width: root.dp(1)
 
@@ -742,7 +737,6 @@ Page {
             AppFlickable {
                 id: flickableGraphics
                 anchors.fill: parent
-                //width: parent.width
                 contentHeight: contentGraphics.height
 
                 MouseArea {
@@ -918,8 +912,10 @@ Page {
 
     Component.onCompleted: {
         Theme.colors.statusBarStyle = Theme.colors.statusBarStyleWhite
+
         indicator.visible = true
         indicator.startAnimating()
+
         buscaDadosUser()
         buscaMedidas()
     }

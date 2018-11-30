@@ -36,7 +36,7 @@ Page {
     }
 
     Timer {
-        interval: 4000;
+        interval: 1000;
         running: true; repeat: false
         onTriggered: {
             // Código para direcionar para página principal caso já esteja logado

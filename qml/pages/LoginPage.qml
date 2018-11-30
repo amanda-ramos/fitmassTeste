@@ -206,9 +206,6 @@ Page {
                             id: btnCadastroMouseArea
                             anchors.fill: parent
                             onClicked: {
-                                botaoEntrarLogin.visible = false
-                                botaoCadastro.visible = false
-
                                 entrarStack.push(cadastroView)
                                 indicator.stopAnimating()
                                 indicator.visible = false

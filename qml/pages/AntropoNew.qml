@@ -18,6 +18,16 @@ Page {
     rightBarItem: NavigationBarRow {
         id: rightNavBarRowMeasureCorp
 
+        IconButtonBarItem {
+            title: "Informações"
+            icon: IconType.info
+
+            onClicked: {
+                var infopage = antropoInfoView.createObject()
+                antropoStack.push(infopage)
+            }
+        }
+
         // Ícone para salvar a nova medida no banco de dados
         IconButtonBarItem {
             title: "Salvar"
@@ -109,51 +119,7 @@ Page {
             width: parent.width - root.dp(80)
             fillMode: Image.PreserveAspectFit
             anchors.centerIn: parent
-        }
-
-        Item {
-            id: info
-            width: parent.width
-            height: iconInfo.height + space2.height
-            anchors.bottom: parent.bottom
-
-            Item {
-                width: parent.width
-                height: iconInfo.height+ space2.height
-
-                Image {
-                    id: iconInfo
-                    height: root.dp(22)
-                    width: height
-                    source: "../../assets/icon_info.png"
-                    anchors.left: space1.right
-                    anchors.bottom: space2.top
-
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-//                            var infopage = infoView.createObject()
-//                            fitmassStack.push(infopage)
-                        }
-                    }
-                }
-
-                Rectangle {
-                    id: space1
-                    height: iconInfo.height
-                    width: dp(20)
-                    color: "transparent"
-                    anchors.left: parent.left
-                }
-
-                Rectangle {
-                    id: space2
-                    anchors.bottom: parent.bottom
-                    height: dp(20)
-                    width: iconInfo.height
-                    color: "transparent"
-                }
-            }
+            z: 0
         }
     }
 

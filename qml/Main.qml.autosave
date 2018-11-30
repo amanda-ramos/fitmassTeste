@@ -342,15 +342,14 @@ App {
             indicator.visible = false
 
             if(success){
-                    console.log("LOGIN - Sucesso ao fazer o login!");
+                    console.log("Sucesso ao fazer o login!");
                     root.userID = firebaseAuth.userId;
-                    console.log("LOGIN - UserID: " + root.userID)
-                    userEmail = ""
-                    userSenha = ""
+                    console.log("UserID: " + root.userID)
 
                     stack.push(mainView)
             } else {
-                console.log("LOGIN - Error: " + message);
+                console.log("Erro ao realizar o login.")
+                console.log("Erro: " + message)
                 nativeUtils.displayAlertDialog("Erro no login", "Erro ao realizar o login.\n\nErro: " + message, "OK")
             }
         }

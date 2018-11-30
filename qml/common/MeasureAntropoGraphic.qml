@@ -251,44 +251,6 @@ Item {
 
                         nativeUtils.displayAlertSheet("Selecione o grupo muscular", muscles, true)
                     }
-
-                    Connections {
-                        target: nativeUtils
-
-                        onAlertSheetFinished: {
-                            if(index>=0) {
-
-                                muscleSelectUser.cbTextSelected = muscles[index]
-
-                                if(index === 0 || index === 1 || index === 5 || index === 6){
-                                    leftSideBool = true
-                                    rightSideBool = true
-                                    centralBool = false
-                                } else {
-                                    leftSideBool = false
-                                    rightSideBool = false
-                                    centralBool = true
-                                }
-                                leftSide.removePoints(0, j)
-                                rightSide.removePoints(0, j)
-                                central.removePoints(0, j)
-
-                                j = 0
-                                valorMedD = 0
-                                valorMedE = 0
-                                valorMin = 0
-                                valorMax = 0
-                                valorMinD = 0
-                                valorMinE = 0
-                                valorMaxD = 0
-                                valorMaxE = 0
-                                valorAtualD = 0
-                                valorAtualE = 0
-
-                                buscaDadosMedidasCorporais(muscleSelectUser.cbTextSelected)
-                            }
-                        }
-                    }
                 }
             }
         }
@@ -688,7 +650,7 @@ Item {
                         anchors.right: parent.right
                         horizontalAlignment: Text.AlignHCenter
 
-                        text: "Atual: " + valorAtualE + " cm"
+                        text: "Atual: " + valorAtualE.toFixed(2) + " cm"
                         color: contrastColor3
                         font.pixelSize: root.sp(14)
                     }
@@ -811,6 +773,39 @@ Item {
                     dateFromSelect.btnText = dateFormated;
                     axisX1.min = Date.fromLocaleString(Qt.locale(), dateFormated, "dd/MM/yyyy")
                 }
+            }
+        }
+
+        onAlertSheetFinished: {
+            if(index>=0) {
+                muscleSelectUser.cbTextSelected = muscles[index]
+
+                if(index === 0 || index === 1 || index === 5 || index === 6){
+                    leftSideBool = true
+                    rightSideBool = true
+                    centralBool = false
+                    leftSide.removePoints(0, j)
+                    rightSide.removePoints(0, j)
+                } else {
+                    leftSideBool = false
+                    rightSideBool = false
+                    centralBool = true
+                    central.removePoints(0, j)
+                }
+
+                j = 0
+                valorMedD = 0
+                valorMedE = 0
+                valorMin = 0
+                valorMax = 0
+                valorMinD = 0
+                valorMinE = 0
+                valorMaxD = 0
+                valorMaxE = 0
+                valorAtualD = 0
+                valorAtualE = 0
+
+                buscaDadosMedidasCorporais(muscleSelectUser.cbTextSelected)
             }
         }
     }

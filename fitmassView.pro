@@ -56,4 +56,5 @@ DISTFILES += \
     qml/common/CustomTextView.qml \
     qml/common/CustomTextFieldInterativo.qml \
     qml/common/MeasureAntropo.qml \
-    qml/common/MeasureAntropoGraphic.qml
+    qml/common/MeasureAntropoGraphic.qml \
+    qml/pages/AntropoInfo.qml

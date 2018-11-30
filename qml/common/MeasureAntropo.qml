@@ -38,10 +38,10 @@ Item {
                              function (success, key, value) {
                                  if (success) {
 
-                                     noContent2.visible = false
-                                     noContent.visible = false
-                                     content.visible = true
-                                     dates.visible = true
+//                                     noContent2.visible = false
+//                                     noContent.visible = false
+//                                     content.visible = true
+//                                     dates.visible = true
 
                                      //console.debug("HISTORICO 2 - Read value " + value + " for key " + key)
                                      for (var prop in value) {
@@ -81,11 +81,7 @@ Item {
                                      // se houver na data do datepicker:
                                      if (Qt.formatDate(value2.dateCorp, "dd/MM/yyyy") === dateSelect.btnText){
 
-                                         noContent2.visible = false
-                                         noContent.visible = false
-                                         content.visible = true
-                                         dates.visible = true
-                                         console.log("Há medidas nesta data SIM")
+                                         indicator.stopAnimating()
 
                                          bicepsDireito = parseFloat(value2.bicepsDir)
                                          bicepsEsquerdo = parseFloat(value2.bicepsEsq)
@@ -100,12 +96,21 @@ Item {
                                          panturrilhaEsquerda = parseFloat(value2.panturrilhaEsq)
                                          relacaoCinturaQuadril = cintura / quadril
 
+                                         noContent2.visible = false
+                                         noContent.visible = false
+                                         content.visible = true
+                                         dates.visible = true
+                                         console.log("Há medidas nesta data SIM")
+
                                          return true
 
                                      } else {
                                          j++
 
                                          if(j >= qtdeMedidaCorp) {
+
+                                             indicator.stopAnimating()
+
                                              noContent2.visible = false
                                              noContent.visible = true
                                              content.visible = false
@@ -122,7 +127,6 @@ Item {
                                                  "Error with message: " + value3)
                                      nativeUtils.displayAlertDialog(
                                                  "Error! 1", value3, "OK")
-                                     indicator.stopAnimating()
                                      return false
                                  }
                              })
@@ -693,6 +697,14 @@ Item {
 
         onDatePickerFinished: {
             if(dateAntropoComplete){
+                indicator.visible = true
+                indicator.startAnimating()
+
+                noContent2.visible = false
+                noContent.visible = false
+                content.visible = false
+                dates.visible = true
+
                 var pickedDate
                 if(accepted){
                     var hour = ""
